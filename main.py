@@ -1,26 +1,15 @@
-import numpy as np
-import pandas as pd
+def main():
+    from sklearn.metrics import average_precision_score
 
-data = pd.read_csv('file', usecols=[])
-data.drop(columns=['time', 'click'])
-data['key'].value_counts()
-data.count()
+    # モデルの出力と真のラベルを準備する
+    y_true = [0, 1, 1, 0, 1]
+    y_scores = [0.1, 0.8, 0.6, 0.3, 0.9]
+    y_true_1 = [1, 0, 1, 0, 1]
+    y_scores_1 = [0.8, 0.1, 0.6, 0.3, 0.9]
 
-# これはサンプルの Python スクリプトです。
-
-# ⌃R を押して実行するか、ご自身のコードに置き換えてください。
-# ⇧ を2回押す を押すと、クラス/ファイル/ツールウィンドウ/アクション/設定を検索します。
-
-
-def print_hi(name):
-    # スクリプトをデバッグするには以下のコード行でブレークポイントを使用してください。
-    print(f'Hi, {name}')  # ⌘F8を押すとブレークポイントを切り替えます。
-
-
-# ガター内の緑色のボタンを押すとスクリプトを実行します。
+    # average_precision_scoreを計算する
+    score = average_precision_score(y_true_1, y_scores)
+    print("Average Precision Score:", score)
+2
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# PyCharm のヘルプは https://www.jetbrains.com/help/pycharm/ を参照してください
-
-#%%
+    main()
