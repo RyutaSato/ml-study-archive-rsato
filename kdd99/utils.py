@@ -10,9 +10,12 @@ import lightgbm as lgb
 from sklearn.metrics import precision_recall_curve, average_precision_score, roc_curve, auc, log_loss
 from sklearn.model_selection import train_test_split, StratifiedKFold
 import matplotlib.pyplot as plt
-
-from keras.src.layers import Dense, Dropout
-from keras.src import regularizers
+try:
+    from keras.src.layers import Dense, Dropout
+    from keras.src import regularizers
+except ImportError:
+    from keras.layers import Dense, Dropout
+    from keras import regularizers
 
 RANDOM_SEED = 2018
 
@@ -62,3 +65,20 @@ def plot_results(true_labels, anomaly_scores_, return_preds=False):
 
     if return_preds:
         return preds, average_precision
+
+# anomaly_score関数を改名したもの
+def reconstruction_errors(original_df: pd.DataFrame, reconstructed_df: pd.DataFrame) -> np.ndarray:
+    """
+    元の特徴量行列と，新たに再構成された特徴量行列の間の再構成誤差を計算する．
+    各特徴量ごとの再構成前後の誤差を二乗し，全ての特徴量を足し合わせる．正規化して0〜1に納める．
+    0に近いほど正常，１に近いほど異常
+    :param original_df: 元の特徴量の行列
+    :param reconstructed_df: 再構成された特徴量の行列
+    :param reversed:
+    :return:
+    """
+    loss: np.ndarray = np.sum((np.array(original_df) - np.array(reconstructed_df)) ** 2, axis=1)
+    loss: pd.Series = pd.Series(loss, index=original_df.index)
+    loss: np.ndarray = (loss - np.min(loss)) / (np.max(loss) - np.min(loss))
+    return loss
+

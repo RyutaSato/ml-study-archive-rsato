@@ -11,8 +11,7 @@ from sklearn.metrics import precision_recall_curve, average_precision_score, roc
 from sklearn.model_selection import train_test_split, StratifiedKFold
 import matplotlib.pyplot as plt
 
-from keras.src.layers import Dense, Dropout
-from keras.src import regularizers
+from keras.layers import Dense, Dropout
 
 RANDOM_SEED = 2018
 
