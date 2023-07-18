@@ -7,17 +7,31 @@ import pandas as pd
 import tomli
 import lightgbm as lgb
 
-from sklearn.metrics import precision_recall_curve, average_precision_score, roc_curve, auc, log_loss
+from sklearn.metrics import precision_recall_curve, average_precision_score, roc_curve, auc, log_loss, \
+    accuracy_score, classification_report, multilabel_confusion_matrix
 from sklearn.model_selection import train_test_split, StratifiedKFold
 import matplotlib.pyplot as plt
+
 try:
+    # colab環境上
+    from google.colab import drive
+
+    drive.mount('/content/drive')
+    pwd = '/content/drive/MyDrive/dataset/'
+    is_colab = True
     from keras.src.layers import Dense, Dropout
     from keras.src import regularizers
 except ImportError:
+    import os
+
+    # ローカル環境
+    pwd = os.getcwd() + '/../dataset/'
+    is_colab = False
     from keras.layers import Dense, Dropout
     from keras import regularizers
 
 RANDOM_SEED = 2018
+
 
 def print_version():
     print(f"python:      {platform.python_version()}")
@@ -26,6 +40,7 @@ def print_version():
     print(f"keras:       {keras.__version__}")
     print(f"numpy:       {np.__version__}")
     print(f"pandas:      {pd.__version__}")
+
 
 def plot_results(true_labels, anomaly_scores_, return_preds=False):
     preds = pd.concat([true_labels, anomaly_scores_], axis=1)
@@ -66,6 +81,7 @@ def plot_results(true_labels, anomaly_scores_, return_preds=False):
     if return_preds:
         return preds, average_precision
 
+
 # anomaly_score関数を改名したもの
 def reconstruction_errors(original_df: pd.DataFrame, reconstructed_df: pd.DataFrame) -> np.ndarray:
     """
@@ -82,3 +98,49 @@ def reconstruction_errors(original_df: pd.DataFrame, reconstructed_df: pd.DataFr
     loss: np.ndarray = (loss - np.min(loss)) / (np.max(loss) - np.min(loss))
     return loss
 
+
+def load_data(use_full_dataset=False):
+    """
+    データの読み込み
+    :return:
+    """
+    # 特徴量名の読み込み
+    with open(pwd + "kddcup.names") as fp:
+        # 一行目は不要なので無視
+        _ = fp.readline()
+        # `:`より手前がラベルなので，その部分を抽出してリストに追加
+        names = [line.split(':')[0] for line in fp]
+    print(f"特徴量の数：{len(names)}")
+    print(f"各特徴量の名前：{', '.join(names)}")
+    # 　正解ラベルを追加
+    names.append("true_label")
+    if use_full_dataset:
+        data = pd.read_csv(pwd + "kddcup.data", names=names, index_col=False)
+    else:
+        data = pd.read_csv(pwd + "kddcup.data_10_percent", names=names, index_col=False)
+    data_x = data.copy()
+    data_x = data_x.drop(columns=['protocol_type', 'service', 'flag'], axis=1)
+    true_label = data_x.pop('true_label')  # 正解ラベルのピリオドを外す．
+    names = data_x.columns
+    from sklearn.preprocessing import StandardScaler
+    data_x = StandardScaler().fit_transform(data_x)
+    data_x = pd.DataFrame(data_x, columns=names)
+    true_label = true_label.map(lambda x: x.replace('.', ''))
+    print(true_label.value_counts())
+    print(data_x.shape)
+    return data_x, true_label
+
+
+# attack_class_labels -> key: class, value: list[label]
+attack_class_labels = {
+    'normal': ['normal'],
+    'dos': ['back', 'land', 'neptune', 'pod', 'smurf', 'teardrop'],
+    'u2r': ['buffer_overflow', 'loadmodule', 'perl', 'rootkit'],
+    'r2l': ['ftp_write', 'guess_passwd', 'imap', 'multihop', 'phf', 'spy', 'warezclient', 'warezmaster'],
+    'probe': ['ipsweep', 'nmap', 'portsweep', 'satan']
+}
+# attack_class_label -> key: label, value: class
+attack_label_class = {}
+for c, labels in attack_class_labels.items():
+    for label in labels:
+        attack_label_class[label] = c
