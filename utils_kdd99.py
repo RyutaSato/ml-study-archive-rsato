@@ -99,7 +99,7 @@ def reconstruction_errors(original_df: pd.DataFrame, reconstructed_df: pd.DataFr
     return loss
 
 
-def load_data(use_full_dataset=False):
+def load_data(use_full_dataset=False, standard_scale=True, verbose=1):
     """
     データの読み込み
     :return:
@@ -110,8 +110,9 @@ def load_data(use_full_dataset=False):
         _ = fp.readline()
         # `:`より手前がラベルなので，その部分を抽出してリストに追加
         names = [line.split(':')[0] for line in fp]
-    print(f"特徴量の数：{len(names)}")
-    print(f"各特徴量の名前：{', '.join(names)}")
+    if verbose:
+        print(f"特徴量の数：{len(names)}")
+        print(f"各特徴量の名前：{', '.join(names)}")
     # 　正解ラベルを追加
     names.append("true_label")
     if use_full_dataset:
@@ -122,12 +123,14 @@ def load_data(use_full_dataset=False):
     data_x = data_x.drop(columns=['protocol_type', 'service', 'flag'], axis=1)
     true_label = data_x.pop('true_label')  # 正解ラベルのピリオドを外す．
     names = data_x.columns
-    from sklearn.preprocessing import StandardScaler
-    data_x = StandardScaler().fit_transform(data_x)
-    data_x = pd.DataFrame(data_x, columns=names)
+    if standard_scale:
+        from sklearn.preprocessing import StandardScaler
+        data_x = StandardScaler().fit_transform(data_x)
+        data_x = pd.DataFrame(data_x, columns=names)
     true_label = true_label.map(lambda x: x.replace('.', ''))
-    print(true_label.value_counts())
-    print(data_x.shape)
+    if verbose:
+        print(true_label.value_counts())
+        print(data_x.shape)
     return data_x, true_label
 
 
@@ -139,6 +142,16 @@ attack_class_labels = {
     'r2l': ['ftp_write', 'guess_passwd', 'imap', 'multihop', 'phf', 'spy', 'warezclient', 'warezmaster'],
     'probe': ['ipsweep', 'nmap', 'portsweep', 'satan']
 }
+
+# class -> int
+correspondences = {
+    'dos': 0,
+    'normal': 1,
+    'probe': 2,
+    'r2l': 3,
+    'u2r': 4
+}
+
 # attack_class_label -> key: label, value: class
 attack_label_class = {}
 for c, labels in attack_class_labels.items():
