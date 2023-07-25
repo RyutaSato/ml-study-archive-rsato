@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import tomli
 import lightgbm as lgb
+from imblearn.over_sampling import SMOTE
 
 from sklearn.metrics import precision_recall_curve, average_precision_score, roc_curve, auc, log_loss, \
     accuracy_score, classification_report, multilabel_confusion_matrix
@@ -25,7 +26,7 @@ except ImportError:
     import os
 
     # ローカル環境
-    pwd = os.getcwd() + '/../dataset/'
+    pwd = os.getcwd() + '/dataset/'
     is_colab = False
     from keras.layers import Dense, Dropout
     from keras import regularizers
