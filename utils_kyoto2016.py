@@ -22,6 +22,7 @@ def print_version():
     print(f"keras:       {keras.__version__}")
     print(f"numpy:       {np.__version__}")
     print(f"pandas:      {pd.__version__}")
+    print(f"lightgbm:    {lgb.__version__}")
 
 def plot_results(true_labels, anomaly_scores_, return_preds=False):
     preds = pd.concat([true_labels, anomaly_scores_], axis=1)
