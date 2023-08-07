@@ -1,3 +1,4 @@
+import os.path
 import pickle
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
@@ -8,11 +9,10 @@ logger = logging.getLogger('LR')
 logging.basicConfig(level=logging.INFO)
 
 def main():
-    # input train and test data
-    X, y = load_data(use_full_dataset=False, standard_scale=True, verbose=0, )
-    # 分類モデルによっては数値ラベルしか対応していないため、目的変数を分類クラスから数値へ変換
-    y = y.map(lambda x: attack_label_class[x]).map(lambda x: correspondences[x])
-    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=RANDOM_SEED, stratify=y)
+    x_train = pd.read_pickle('models/kdd99_features/x_train+ae_43_df&activation=relu&epochs=5&batch_size=32.pkl')
+    x_test = pd.read_pickle('models/kdd99_features/x_test+ae_43_df&activation=relu&epochs=5&batch_size=32.pkl')
+    y_train = pd.read_pickle('models/kdd99_features/y_train_df.pkl')
+    y_test = pd.read_pickle('models/kdd99_features/y_test_df.pkl')
     # customize parameters
     parameters = {
         'penalty': ['l1', 'l2'],
@@ -22,10 +22,13 @@ def main():
     }
     for penalty in ['l1', 'l2']:
         for solver in ['liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga']:
-            for C in [10 ** i for i in range(-5, 6)]:
-                param_str = f"models/logistic_regression/kdd99_38&penalty={penalty}&solver={solver}&C={C}.pkl"
+            for C in [10 ** i for i in range(-5, 2)]:
+                param_str = f"models/logistic_regression/kdd99+ae_43&penalty={penalty}&solver={solver}&C={C}.pkl"
+                if os.path.isfile(param_str):
+                    logger.info("skipped: " + param_str)
+                    continue
                 logger.info("start: " + param_str)
-                model = LogisticRegression(penalty, C=C, solver=solver)
+                model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12)
                 model.fit(x_train, y_train)
                 pickle.dump(model, open(param_str, 'wb'))
                 logger.info("saved: " + param_str)
