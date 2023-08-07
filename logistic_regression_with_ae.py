@@ -28,8 +28,13 @@ def main():
                     logger.info("skipped: " + param_str)
                     continue
                 logger.info("start: " + param_str)
-                model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12)
-                model.fit(x_train, y_train)
+                try:
+                    model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12)
+                    model.fit(x_train, y_train)
+                except ValueError as e:
+                    logger.error("skipped: " + param_str)
+                    logger.error(e)
+                    continue
                 pickle.dump(model, open(param_str, 'wb'))
                 logger.info("saved: " + param_str)
     logger.info("competed")
