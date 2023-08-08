@@ -8,6 +8,7 @@ import tomli
 import lightgbm as lgb
 from imblearn.over_sampling import SMOTE
 import optuna
+import pickle
 
 from sklearn.metrics import precision_recall_curve, average_precision_score, roc_curve, auc, log_loss, \
     accuracy_score, classification_report, multilabel_confusion_matrix

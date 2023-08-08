@@ -33,6 +33,8 @@ def main():
     x_test_new_feature.to_pickle("models/kdd99_features/x_test+ae_43_df&activation=relu&epochs=5&batch_size=32.pkl")
     y_train.to_pickle("models/kdd99_features/y_train_df.pkl")
     y_test.to_pickle("models/kdd99_features/y_test_df.pkl")
+    x_train.to_pickle("models/kdd99_features/x_train_df.pkl")
+    x_test.to_pickle("models/kdd99_features/x_test_df.pkl")
 
 
 if __name__ == '__main__':
