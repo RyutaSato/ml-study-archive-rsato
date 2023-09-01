@@ -11,9 +11,11 @@ import optuna
 import pickle
 
 from sklearn.metrics import precision_recall_curve, average_precision_score, roc_curve, auc, log_loss, \
-    accuracy_score, classification_report, multilabel_confusion_matrix
+    accuracy_score, classification_report, multilabel_confusion_matrix, confusion_matrix
 from sklearn.model_selection import train_test_split, StratifiedKFold
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+
 
 try:
     # colab環境上
@@ -160,3 +162,8 @@ attack_label_class = {}
 for c, labels in attack_class_labels.items():
     for label in labels:
         attack_label_class[label] = c
+
+def confusion_matrix_df(y_true, y_pred, labels=correspondences.keys()):
+    return pd.DataFrame(confusion_matrix(y_true, y_pred),
+                        index=["true_" + label for label in labels],
+                        columns=labels)
