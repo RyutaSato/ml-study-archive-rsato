@@ -9,10 +9,10 @@ logger = logging.getLogger('LR')
 logging.basicConfig(level=logging.INFO)
 
 def main():
-    x_train = pd.read_pickle('models/kdd99_features/x_train+ae_43_df&activation=relu&epochs=5&batch_size=32.pkl')
-    x_test = pd.read_pickle('models/kdd99_features/x_test+ae_43_df&activation=relu&epochs=5&batch_size=32.pkl')
+    x_train = pd.read_pickle('models/kdd99_features/x_train-drop+ae_35_df&activation=relu&epochs=5&batch_size=32.pkl')
+    # x_test = pd.read_pickle('models/kdd99_features/x_test+ae_43_df&activation=relu&epochs=5&batch_size=32.pkl')
     y_train = pd.read_pickle('models/kdd99_features/y_train_df.pkl')
-    y_test = pd.read_pickle('models/kdd99_features/y_test_df.pkl')
+    # y_test = pd.read_pickle('models/kdd99_features/y_test_df.pkl')
     # customize parameters
     parameters = {
         'penalty': ['l1', 'l2'],
@@ -21,15 +21,17 @@ def main():
         'C': [10 ** i for i in range(-5, 6)]
     }
     for penalty in ['l1', 'l2']:
-        for solver in ['liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga']:
-            for C in [10 ** i for i in range(-5, 2)]:
-                param_str = f"models/logistic_regression/kdd99+ae_43&penalty={penalty}&solver={solver}&C={C}.pkl"
+        # for solver in ['liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga']:
+        for solver in ['liblinear']:
+            # for C in [10 ** i for i in range(-5, 2)]:
+            for C in [10 ** -5, 10 ** -1, 1, 10]:
+                param_str = f"models/logistic_regression/kdd99-drop+ae_35&penalty={penalty}&solver={solver}&C={C}.pkl"
                 if os.path.isfile(param_str):
                     logger.info("skipped: " + param_str)
                     continue
                 logger.info("start: " + param_str)
                 try:
-                    model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12)
+                    model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12, random_state=RANDOM_SEED)
                     model.fit(x_train, y_train)
                 except ValueError as e:
                     logger.error("skipped: " + param_str)

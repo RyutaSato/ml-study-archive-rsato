@@ -20,7 +20,7 @@ def classification_anomalies(X: pd.DataFrame, model: LogisticRegression | lgb.Bo
     return y_pred
 
 
-def two_step_classification(X, y, model_1st, model_2nd, verbose=2):
+def two_step_classification(X, y, model_1st, model_2nd, verbose=2, return_value='cm'):
     """二段階分類用の関数
     1段階目：正常と異常の2値分類を行う．
     二段階目：異常と判断されたデータのみを抽出し，4つの異常ラベルに分類する．
@@ -34,8 +34,13 @@ def two_step_classification(X, y, model_1st, model_2nd, verbose=2):
             2の場合: 混合行列および，分類レポートを出力する．
             1の場合: 混合行列を出力する．
             0の場合: 何も出力しない．
+        return_value (Literal['cm', 'predict']):
+            'cm': returns confusion matrix
+            'predict': returns predicted Y
     Returns:
-        (pd.DataFrame, pd.DataFrame): 1段階目の混合行列，2段階目の混合行列のタプルを返す．
+        (pd.DataFrame, pd.DataFrame) | (pd.Series, pd.Series):
+            'cm'：1段階目と，2段階目の混合行列のタプルを返す．
+            'predict'：1段階目と，2段階目の予測のタプルを返す．
     """
     y_pred_binary = classification_normal_and_anomaly(X, model_1st)
     predicted_indexes = y_pred_binary[y_pred_binary == 1].index
@@ -57,4 +62,7 @@ def two_step_classification(X, y, model_1st, model_2nd, verbose=2):
     if verbose > 0:
         print(cm_1st)
         print(cm_2nd)
-    return cm_1st, cm_2nd
+    if return_value == 'cm':
+        return cm_1st, cm_2nd
+    elif return_value == 'predict':
+        return y_pred_binary, y_pred_anomalies

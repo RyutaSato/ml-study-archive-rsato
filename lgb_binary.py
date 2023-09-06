@@ -7,8 +7,10 @@ from utils_kdd99 import *
 
 def main():
     print_version()
-    # load data
-    with open("models/kdd99_features/x_train_df.pkl", 'rb') as f:
+    # # load data
+    # with open("models/kdd99_features/x_train_df.pkl", 'rb') as f:
+    #     x_train: pd.DataFrame = pickle.load(f)
+    with open("models/kdd99_features/x_train-drop_25_df.pkl", 'rb') as f:
         x_train: pd.DataFrame = pickle.load(f)
     with open("models/kdd99_features/y_train_df.pkl", 'rb') as f:
         y_train: pd.Series = pickle.load(f)
@@ -38,8 +40,8 @@ def main():
                       callbacks=[lgb.early_stopping(50, verbose=False)],
                       )
     print("train done")
-    model.save_model('models/lightgbm/lgb_binary_tuned_booster.model')
-    with open('models/lightgbm/lgb_binary_tuned_booster.pkl', 'wb') as fp:
+    model.save_model('models/lightgbm/lgb_dropped_binary_tuned_booster.model')
+    with open('models/lightgbm/lgb_dropped_binary_tuned_booster.pkl', 'wb') as fp:
         pickle.dump(model.dump_model(), fp)
 
 if __name__ == '__main__':

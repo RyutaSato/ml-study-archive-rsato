@@ -156,6 +156,12 @@ correspondences = {
     'r2l': 3,
     'u2r': 4
 }
+correspondences_anomaly = {
+    'dos': 0,
+    'probe': 1,
+    'r2l': 2,
+    'u2r': 3
+}
 
 # attack_class_label -> key: label, value: class
 attack_label_class = {}
@@ -164,6 +170,7 @@ for c, labels in attack_class_labels.items():
         attack_label_class[label] = c
 
 def confusion_matrix_df(y_true, y_pred, labels=correspondences.keys()):
+
     return pd.DataFrame(confusion_matrix(y_true, y_pred),
                         index=["true_" + label for label in labels],
                         columns=labels)

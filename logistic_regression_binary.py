@@ -17,19 +17,22 @@ def main():
     # x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=RANDOM_SEED, stratify=y)
 
     x_train: pd.DataFrame = pd.read_pickle(
-        "models/kdd99_features/x_train+ae_48_df&activation=relu&epochs=5&batch_size=32.pkl")
+        "models/kdd99_features/x_train-drop_25_df.pkl")
     y_train: pd.Series = pd.read_pickle("models/kdd99_features/y_train_df.pkl")
 
     y_train_b = y_train.map(lambda x: 0 if x == 1 else 1)
     for penalty in ['l1', 'l2']:
-        for solver in ['liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga']:
-            for C in [10 ** i for i in range(-5, 2)]:
-                param_str = f"models/logistic_regression_binary/kdd99+ae_48&penalty={penalty}&solver={solver}&C={C}.pkl"
+        # for solver in ['liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga']:
+        for solver in ['liblinear']:
+            # for C in [10 ** i for i in range(-5, 2)]:
+            for C in [10 ** -5, 10 ** -1, 1, 10]:
+                param_str = f"models/logistic_regression_binary/kdd99-drop_25&penalty={penalty}&solver={solver}&C" \
+                            f"={C}.pkl"
                 if os.path.isfile(param_str):
                     logger.info("skipped: " + param_str)
                 logger.info("start: " + param_str)
                 try:
-                    model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12)
+                    model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12, random_state=RANDOM_SEED)
                     model.fit(x_train, y_train_b)
                 except ValueError as e:
                     logger.error("skipped: " + param_str)
