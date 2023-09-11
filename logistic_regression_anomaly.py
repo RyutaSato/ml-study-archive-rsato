@@ -14,12 +14,13 @@ def main():
     # y = y.map(lambda x: attack_label_class[x]).map(lambda x: correspondences[x])
     # x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=RANDOM_SEED, stratify=y)
 
-    x_train: pd.DataFrame = pd.read_pickle(
-        "models/kdd99_features/x_train_dropped_anomaly_df.pkl")
+    x_train: pd.DataFrame = pd.read_pickle("models/kdd99_features/x_train_dropped_anomaly_df.pkl")
     y_train: pd.Series = pd.read_pickle("models/kdd99_features/y_train_dropped_mapped_series.pkl")
     #
     # y_train_anomaly = y_train[y_train != 1]
     # x_train_anomaly = x_train[y_train != 1]
+    logger.info(f"x_train shape: {x_train.shape}, y_train len: {len(y_train)}")
+    logger.info(f"y_train value_counts: \n{y_train.value_counts()}")
 
     for penalty in ['l1', 'l2']:
         # for solver in ['liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga']:

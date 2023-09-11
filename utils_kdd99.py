@@ -163,6 +163,7 @@ correspondences_anomaly = {
     'u2r': 3
 }
 
+
 # attack_class_label -> key: label, value: class
 attack_label_class = {}
 for c, labels in attack_class_labels.items():

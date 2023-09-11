@@ -26,10 +26,11 @@ def main():
         for solver in ['liblinear']:
             # for C in [10 ** i for i in range(-5, 2)]:
             for C in [10 ** -5, 10 ** -1, 1, 10]:
-                param_str = f"models/logistic_regression_binary/kdd99-drop_25&penalty={penalty}&solver={solver}&C" \
+                param_str = f"models/logistic_regression_binary/kdd99-dropped_25&penalty={penalty}&solver" \
+                            f"={solver}&C" \
                             f"={C}.pkl"
-                if os.path.isfile(param_str):
-                    logger.info("skipped: " + param_str)
+                # if os.path.isfile(param_str):
+                #     logger.info("skipped: " + param_str)
                 logger.info("start: " + param_str)
                 try:
                     model = LogisticRegression(penalty=penalty, C=C, solver=solver, n_jobs=12, random_state=RANDOM_SEED)
