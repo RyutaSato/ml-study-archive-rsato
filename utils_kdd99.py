@@ -15,7 +15,7 @@ from sklearn.metrics import precision_recall_curve, average_precision_score, roc
 from sklearn.model_selection import train_test_split, StratifiedKFold
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
-
+import datetime
 
 try:
     # colab環境上
@@ -39,6 +39,7 @@ RANDOM_SEED = 2018
 
 
 def print_version():
+    print("ran: ", datetime.datetime.now())
     print(f"python:      {platform.python_version()}")
     print(f"sklearn:     {sklearn.__version__}")
     print(f"tensorflow:  {tf.__version__}")
@@ -156,6 +157,9 @@ correspondences = {
     'r2l': 3,
     'u2r': 4
 }
+
+swapped_correspondences = {v: k for k, v in correspondences.items()}
+
 correspondences_anomaly = {
     'dos': 0,
     'probe': 1,
@@ -163,6 +167,12 @@ correspondences_anomaly = {
     'u2r': 3
 }
 
+ignore_columns = ["hot", "num_compromised", "num_file_creations", "num_outbound_cmds", "is_host_login", "srv_count",
+                  "srv_serror_rate", "same_srv_rate", "srv_diff_host_rate", "dst_host_count", "dst_host_srv_count",
+                  "dst_host_diff_srv_rate"]
+
+
+wrapper = {0: 0, 1: 2, 2: 3, 3: 4}
 
 # attack_class_label -> key: label, value: class
 attack_label_class = {}

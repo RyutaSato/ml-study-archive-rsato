@@ -4,7 +4,7 @@ from utils_kdd99 import *
 # 第一段階　2値分類
 def classification_normal_and_anomaly(X: pd.DataFrame, model: LogisticRegression | lgb.Booster) -> pd.Series:
     y_pred = model.predict(X)
-    y_pred = np.round(y_pred)
+    y_pred = np.round(y_pred).astype("int64")
     if len(y_pred.shape) == 2:
         y_pred = np.argmax(y_pred, axis=1)
     y_pred = pd.Series(y_pred, index=X.index, )

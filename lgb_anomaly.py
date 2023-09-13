@@ -1,24 +1,26 @@
-import pickle
-
-import pandas as pd
-
 from utils_kdd99 import *
+import optuna.integration.lightgbm as lgb
 
 
 def main():
     print_version()
     # load data
-    with open("models/kdd99_features/x_train_dropped_anomaly_df.pkl", 'rb') as f:
+    # with open("models/kdd99_features/x_train-drop+ae_40_anomaly_df&activation=relu&epochs=5&batch_size=32.pkl",
+
+    with open("models/kdd99_features/x_train+ae_48_df&activation=relu&epochs=5&batch_size=32.pkl",
+              'rb') as f:
         x_train_dropped: pd.DataFrame = pickle.load(f)
+
     with open("models/kdd99_features/y_train_dropped_mapped_series.pkl", 'rb') as f:
         y_train_dropped: pd.Series = pickle.load(f)
 
     # 正常ラベルのみをdrop
-    # y_train_anomaly = y_train[y_train != 1]
+    x_train_dropped = x_train_dropped.loc[y_train_dropped.index]
 
     # x_train_anomaly = x_train[y_train != 1]
-    print(f"x_train shape: {x_train_dropped.shape}")
-    print(f"y_train value: {y_train_dropped.value_counts()}")
+    print(f"x_train shape: \n{x_train_dropped.shape}")
+    print(f"y_train shape: \n{y_train_dropped.shape}")
+    print(f"y_train value: \n{y_train_dropped.value_counts()}")
 
     params = {
         'task': 'train',
@@ -46,9 +48,9 @@ def main():
                       callbacks=[lgb.early_stopping(50, verbose=False)],
                       )
     print("train done")
-    model.save_model('models/lightgbm/lgb_dropped_mapped_anomaly_tuned_booster.model')
-    with open('models/lightgbm/lgb_mapped_anomaly_tuned_booster.pkl', 'wb') as fp:
-        pickle.dump(model.dump_model(), fp)
+    model.save_model('models/lightgbm/lgb+ae_48_mapped_anomaly_tuned_booster.model')
+    # with open('models/lightgbm/lgb_mapped_anomaly_tuned_booster.pkl', 'wb') as fp:
+    #     pickle.dump(model.dump_model(), fp)
 
 if __name__ == '__main__':
     main()
