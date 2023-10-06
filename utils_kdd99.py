@@ -32,11 +32,51 @@ except ImportError:
     # ローカル環境
     pwd = os.getcwd() + '/dataset/'
     is_colab = False
+
     from keras.layers import Dense, Dropout
     from keras import regularizers
 
 RANDOM_SEED = 2018
 
+# attack_class_labels -> key: class, value: list[label]
+attack_class_labels = {
+    'normal': ['normal'],
+    'dos': ['back', 'land', 'neptune', 'pod', 'smurf', 'teardrop'],
+    'u2r': ['buffer_overflow', 'loadmodule', 'perl', 'rootkit'],
+    'r2l': ['ftp_write', 'guess_passwd', 'imap', 'multihop', 'phf', 'spy', 'warezclient', 'warezmaster'],
+    'probe': ['ipsweep', 'nmap', 'portsweep', 'satan']
+}
+
+# class -> int
+correspondences = {
+    'dos': 0,
+    'normal': 1,
+    'probe': 2,
+    'r2l': 3,
+    'u2r': 4
+}
+
+swapped_correspondences = {v: k for k, v in correspondences.items()}
+
+correspondences_anomaly = {
+    'dos': 0,
+    'probe': 1,
+    'r2l': 2,
+    'u2r': 3
+}
+
+ignore_columns = ["hot", "num_compromised", "num_file_creations", "num_outbound_cmds", "is_host_login", "srv_count",
+                  "srv_serror_rate", "srv_rerror_rate", "same_srv_rate", "srv_diff_host_rate", "dst_host_count", "dst_host_srv_count",
+                  "dst_host_diff_srv_rate"]
+
+
+wrapper = {0: 0, 1: 2, 2: 3, 3: 4}
+
+# attack_class_label -> key: label, value: class
+attack_label_class = {}
+for c, labels in attack_class_labels.items():
+    for label in labels:
+        attack_label_class[label] = c
 
 def print_version():
     print("ran: ", datetime.datetime.now())
@@ -105,7 +145,7 @@ def reconstruction_errors(original_df: pd.DataFrame, reconstructed_df: pd.DataFr
     return loss
 
 
-def load_data(use_full_dataset=False, standard_scale=True, verbose=1):
+def load_data(use_full_dataset=False, standard_scale=True, verbose=1, to_number_labels=False, drop_columns=None):
     """
     データの読み込み
     :return:
@@ -125,60 +165,27 @@ def load_data(use_full_dataset=False, standard_scale=True, verbose=1):
         data = pd.read_csv(pwd + "kddcup.data", names=names, index_col=False)
     else:
         data = pd.read_csv(pwd + "kddcup.data_10_percent", names=names, index_col=False)
-    data_x = data.copy()
+    data_x: pd.DataFrame = data.copy()
     data_x = data_x.drop(columns=['protocol_type', 'service', 'flag'], axis=1)
-    true_label = data_x.pop('true_label')  # 正解ラベルのピリオドを外す．
+    if drop_columns is not None:
+        data_x = data_x.drop(columns=drop_columns, axis=1)
+    # xとyに切り分ける
+    true_label = data_x.pop('true_label')
     names = data_x.columns
     if standard_scale:
         from sklearn.preprocessing import StandardScaler
-        data_x = StandardScaler().fit_transform(data_x)
+        data_x: np.ndarray = StandardScaler().fit_transform(data_x)
         data_x = pd.DataFrame(data_x, columns=names)
     true_label = true_label.map(lambda x: x.replace('.', ''))
+
+    if to_number_labels:
+        true_label = true_label.map(lambda x: attack_label_class[x]).map(lambda x: correspondences[x])
+
     if verbose:
         print(true_label.value_counts())
         print(data_x.shape)
     return data_x, true_label
 
-
-# attack_class_labels -> key: class, value: list[label]
-attack_class_labels = {
-    'normal': ['normal'],
-    'dos': ['back', 'land', 'neptune', 'pod', 'smurf', 'teardrop'],
-    'u2r': ['buffer_overflow', 'loadmodule', 'perl', 'rootkit'],
-    'r2l': ['ftp_write', 'guess_passwd', 'imap', 'multihop', 'phf', 'spy', 'warezclient', 'warezmaster'],
-    'probe': ['ipsweep', 'nmap', 'portsweep', 'satan']
-}
-
-# class -> int
-correspondences = {
-    'dos': 0,
-    'normal': 1,
-    'probe': 2,
-    'r2l': 3,
-    'u2r': 4
-}
-
-swapped_correspondences = {v: k for k, v in correspondences.items()}
-
-correspondences_anomaly = {
-    'dos': 0,
-    'probe': 1,
-    'r2l': 2,
-    'u2r': 3
-}
-
-ignore_columns = ["hot", "num_compromised", "num_file_creations", "num_outbound_cmds", "is_host_login", "srv_count",
-                  "srv_serror_rate", "same_srv_rate", "srv_diff_host_rate", "dst_host_count", "dst_host_srv_count",
-                  "dst_host_diff_srv_rate"]
-
-
-wrapper = {0: 0, 1: 2, 2: 3, 3: 4}
-
-# attack_class_label -> key: label, value: class
-attack_label_class = {}
-for c, labels in attack_class_labels.items():
-    for label in labels:
-        attack_label_class[label] = c
 
 def confusion_matrix_df(y_true, y_pred, labels=correspondences.keys()):
 

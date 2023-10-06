@@ -14,7 +14,7 @@ def main():
     x_test = pd.read_pickle('models/kdd99_features/x_test-drop_25_df.pkl')
     y_train = pd.read_pickle('models/kdd99_features/y_train_df.pkl')
     y_test = pd.read_pickle('models/kdd99_features/y_test_df.pkl')
-    hidden_size = 20
+    hidden_size = 5
     model = Sequential([
         Dense(units=20, activation='relu', input_dim=25, name='encoder1'),
         Dense(units=hidden_size, activation='relu', name='encoder2'),

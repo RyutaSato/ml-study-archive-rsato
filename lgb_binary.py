@@ -8,7 +8,7 @@ def main():
     # with open("models/kdd99_features/x_train_df.pkl", 'rb') as f:
     #     x_train: pd.DataFrame = pickle.load(f)
     size = 40
-    with open(f"models/kdd99_features/x_train+ae_48_df&activation=relu&epochs=5&batch_size=32.pkl", 'rb') as f:
+    with open(f"models/kdd99_features/x_train-drop_25_df.pkl", 'rb') as f:
         x_train: pd.DataFrame = pickle.load(f)
     with open("models/kdd99_features/y_train_df.pkl", 'rb') as f:
         y_train: pd.Series = pickle.load(f)
@@ -35,11 +35,15 @@ def main():
     model = lgb.train(params,  # パラメータ
                       lgb_train,  # トレーニングデータの指定
                       valid_sets=[lgb_train],  # 検証データの指定
-                      callbacks=[lgb.early_stopping(50, verbose=False)],
+                      callbacks=[lgb.early_stopping(10, verbose=False)],
                       )
     print("train done")
     # model.save_model(f'models/lightgbm/lgb_dropped+ae_{size}_binary_tuned_booster.model')
-    model.save_model(f'models/lightgbm/lgb+ae_48_binary_tuned_booster.model')
+    model.save_model(f'models/lightgbm/lgb_dropped_25_stopping=10_binary_tuned_booster.model')
+    y_pred = model.predict(x_train_binary)
+    y_pred = np.round(y_pred)  # 予測確率を0か1に変換
+    y_pred = pd.Series(y_pred, index=y_train_binary.index)
+    print(confusion_matrix(y_train_binary, y_pred))
 
     # with open('models/lightgbm/lgb_dropped__25_binary_tuned_booster.pkl', 'wb') as fp:
     #     pickle.dump(model.dump_model(), fp)
