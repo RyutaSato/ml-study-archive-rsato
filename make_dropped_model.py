@@ -7,10 +7,7 @@ def main():
     X, y = load_data(use_full_dataset=False, standard_scale=True, verbose=0, )
 
     y = y.map(lambda x: attack_label_class[x]).map(lambda x: correspondences[x])
-    split_data: tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series] = train_test_split(X, y,
-                                                                                           test_size=0.33,
-                                                                                           random_state=RANDOM_SEED,
-                                                                                           stratify=y)
+    split_data: tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series] = train_test_split(X, y, test_size=0.33, random_state=RANDOM_SEED, stratify=y)
     x_train, x_test, y_train, y_test = split_data
     # x_train.drop(ignore_columns)
     x_train_dropped_column = x_train.drop(columns=ignore_columns)

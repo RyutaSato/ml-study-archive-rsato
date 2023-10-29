@@ -1,2 +1,7 @@
 /unsupervised-learning/
 /models/kdd99_features/
+datasets/kddcup.data
+datasets/kddcup.data_10_percent
+datasets/kddcup.names
+datasets/training_attack_types
+.vscode/settings.json
