@@ -22,7 +22,7 @@ try:
     from google.colab import drive
 
     drive.mount('/content/drive')
-    pwd = '/content/drive/MyDrive/dataset/'
+    pwd = '/content/drive/MyDrive/datasets/'
     is_colab = True
     from keras.src.layers import Dense, Dropout
     from keras.src import regularizers
@@ -30,7 +30,7 @@ except ImportError:
     import os
 
     # ローカル環境
-    pwd = os.getcwd() + '/dataset/'
+    pwd = os.getcwd() + '/datasets/'
     is_colab = False
 
     from keras.layers import Dense, Dropout
