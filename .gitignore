@@ -5,3 +5,5 @@ datasets/kddcup.data_10_percent
 datasets/kddcup.names
 datasets/training_attack_types
 .vscode/settings.json
+.env
+/results/
