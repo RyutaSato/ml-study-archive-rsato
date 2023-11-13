@@ -1,5 +1,6 @@
 from asyncio import futures
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from http import client
 from multiprocessing import cpu_count
 from itertools import product
 from loguru import logger
@@ -7,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from kdd99 import KDD99Model
+from notifier import LineClient
 logger.add('logs/ex_kdd99.log', rotation='5 MB', retention='10 days', level='INFO')
 
 def main():
@@ -22,9 +24,8 @@ def main():
 
     default_params = {
         'use_full': False,
-        'dropped': True,
         'encoder_param': {
-            'epochs': 1,
+            'epochs': 10,
             'activation': 'relu',
             'batch_size': 32,
         },
@@ -59,7 +60,7 @@ def main():
             params['dropped'] = dropped
             params['model_param'] = {
                 'solver': 'lbfgs',
-                'max_iter': 50,
+                'max_iter': 200,
             }
             params['model_name'] = 'LogisticRegression'
             model = KDD99Model(LogisticRegression, **params)
@@ -77,6 +78,7 @@ def main():
                 'kernel': 'rbf',
                 'gamma': 'scale',
                 'C': 1.0,
+
             }
             model = KDD99Model(SVC, **params)
             future = executor.submit(model.run)
@@ -105,6 +107,8 @@ def main():
                 raise e
             else:
                 logger.info(f"finished: {future.result()}")
+                
+    LineClient().send_text("finished")
 
 if __name__ == '__main__':
     main()
