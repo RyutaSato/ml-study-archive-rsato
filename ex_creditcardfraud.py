@@ -7,7 +7,7 @@ from loguru import logger
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from kdd99 import KDD99Model
+from creditcardfraud import CreditCardFraudModel
 from notifier import LineClient
 logger.add('logs/ex_kdd99.log', rotation='5 MB', retention='10 days', level='INFO')
 
@@ -49,7 +49,7 @@ def main():
                 'max_iter': 200,
             }
             params['model_name'] = 'LogisticRegression'
-            model = KDD99Model(LogisticRegression, **params)
+            model = CreditCardFraudModel(LogisticRegression, **params)
             future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
 
@@ -66,7 +66,7 @@ def main():
                 'C': 1.0,
 
             }
-            model = KDD99Model(SVC, **params)
+            model = CreditCardFraudModel(SVC, **params)
             future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
 
@@ -82,7 +82,7 @@ def main():
                 'warm_start': False,
                 'ccp_alpha': 0.0,
             }
-            model = KDD99Model(RandomForestClassifier, **params)
+            model = CreditCardFraudModel(RandomForestClassifier, **params)
             executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
         for k in futures:

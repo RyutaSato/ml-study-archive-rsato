@@ -5,3 +5,4 @@
 .env
 /results/
 logs/base_model.log
+logs/ex_kdd99.log
