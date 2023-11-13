@@ -22,6 +22,7 @@ def main():
 
     default_params = {
         'use_full': False,
+        'debug': False,
         'encoder_param': {
             'epochs': 10,
             'activation': 'relu',

@@ -24,6 +24,7 @@ def main():
 
     default_params = {
         'use_full': False,
+        'debug': False,
         'encoder_param': {
             'epochs': 10,
             'activation': 'relu',
@@ -34,7 +35,7 @@ def main():
     }
 
     with ProcessPoolExecutor(max_workers=max(1, cpu_count() - 2)) as executor:
-        futures = list()
+        futures = dict()
         for as_used_data, layers, dropped in product(ae_used_datas, 
                                                     layers_patterns, 
                                                     dropped_patterns):
@@ -50,7 +51,7 @@ def main():
             params['model_name'] = 'LogisticRegression'
             model = KDD99Model(LogisticRegression, **params)
             future = executor.submit(model.run)
-            futures.append(future)
+            futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
 
 
             # Support Vector Machine
@@ -67,7 +68,7 @@ def main():
             }
             model = KDD99Model(SVC, **params)
             future = executor.submit(model.run)
-            futures.append(future)
+            futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
 
             # RandomForestClassifier
             params = default_params.copy()
@@ -83,15 +84,12 @@ def main():
             }
             model = KDD99Model(RandomForestClassifier, **params)
             executor.submit(model.run)
-            futures.append(future)
-        for future in as_completed(futures):
+            futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
+        for k in futures:
             try:
-                future.result()
+                logger.info(f"finished: {futures[k].result()}")
             except Exception as e:
                 logger.error(e)
-                raise e
-            else:
-                logger.info(f"finished: {future.result()}")
                 
     LineClient().send_text("finished")
 
