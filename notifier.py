@@ -1,6 +1,7 @@
 import os
 import dotenv
 import requests
+import yaml
 dotenv.load_dotenv()
 SlackURL = "https://slack.com/api/chat.postMessage"
 LineURL = "https://notify-api.line.me/api/notify"
@@ -36,8 +37,9 @@ class LineClient:
         print("return ", r.json())
     
     def send_dict(self, data: dict):
-        text = "\n".join([f"{k}: {v}" for k, v in data.items()])
-        self.send_text(text)
+        # text = "\n".join([f"{k}: {v}" for k, v in data.items()])
+        # self.send_text(text)
+        self.send_text(yaml.dump(data))
 
 if __name__ == '__main__':
     client = LineClient()

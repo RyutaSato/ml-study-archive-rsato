@@ -7,3 +7,4 @@ datasets/training_attack_types
 .vscode/settings.json
 .env
 /results/
+logs/base_model.log
