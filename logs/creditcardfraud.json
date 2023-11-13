@@ -1,0 +1,45 @@
+{
+    "datetime": "2023-11-13T20:48:30.200126+09:00",
+    "random_seed": 2023,
+    "splits": 5,
+    "model_name": "LogisticRegression",
+    "encoder_param": {
+        "layers": [],
+        "epochs": 1,
+        "batch_size": 2,
+        "activation": "relu"
+    },
+    "model_param": {
+        "max_iter": 10,
+        "random_state": 2023
+    },
+    "result": {
+        "normal": {
+            "precision": 0.9993,
+            "recall": 0.9999,
+            "f1-score": 0.9996,
+            "support": 284315,
+            "pred_normal": 284274,
+            "pred_anomaly": 41
+        },
+        "anomaly": {
+            "precision": 0.8757,
+            "recall": 0.5854,
+            "f1-score": 0.7012,
+            "support": 492,
+            "pred_normal": 204,
+            "pred_anomaly": 288
+        },
+        "macro avg": {
+            "precision": 0.9375,
+            "recall": 0.7927,
+            "f1-score": 0.8504,
+            "support": 284807
+        }
+    },
+    "dataset": {
+        "name": "creditcardfraud",
+        "ae_used_data": "all"
+    },
+    "feature_num": 30
+}

@@ -1,4 +1,6 @@
+from asyncio import futures
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from http import client
 from multiprocessing import cpu_count
 from itertools import product
 from loguru import logger
@@ -17,7 +19,7 @@ def main():
         [20, 15, 10, 5],
         [20, 15, 10],
     )
-    ae_used_datas = ('all', 'normal', 'u2r')
+    ae_used_datas = ('all', 'normal', 'anomaly')
     dropped_patterns = (True, False)
 
     default_params = {
@@ -61,6 +63,7 @@ def main():
                 'kernel': 'rbf',
                 'gamma': 'scale',
                 'C': 1.0,
+
             }
             model = KDD99Model(SVC, **params)
             future = executor.submit(model.run)

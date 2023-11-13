@@ -25,6 +25,7 @@ class ModelBase(ABC):
         self.datetime: datetime = datetime.now(tz=timezone(timedelta(hours=9)))
         self.config: dict = config
         self.Model = None
+        self.debug: bool = False if config['debug'] is None else config['debug']
         self.random_seed: int = config['random_seed']
         self.splits: int = config['splits']
         self.ae_used_data = config['ae_used_data'] # all or specific class
@@ -134,12 +135,12 @@ class ModelBase(ABC):
                 _encoder = generate_encoder(x_train_ae, **self.encoder_param)
                 # 新たな特徴量を生成
                 x_train_new_features = pd.DataFrame(
-                    _encoder.predict(x_train),
+                    _encoder.predict(x_train, verbose="0"),
                     columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
                     index=x_train.index
                     )
                 x_test_new_features = pd.DataFrame(
-                    _encoder.predict(x_test),
+                    _encoder.predict(x_test, verbose="0"),
                     columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
                     index=x_test.index
                     )
@@ -195,7 +196,9 @@ class ModelBase(ABC):
         for true_label, pred_labels in confision_dict.items():
             for pred_label, value in pred_labels.items():
                 self.output['result'][true_label]["pred_" + pred_label] = value
-        insert_results(self.output)
+        
+        if not self.debug:
+            insert_results(self.output)
 
         # 特徴量の数を出力に追加
         self.output['feature_num'] = self.feature_size
