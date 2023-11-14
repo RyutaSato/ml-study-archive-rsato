@@ -48,7 +48,7 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
     _model.compile(optimizer="adam", loss="mse")
     _model.fit(x, x, epochs=config['epochs'],
                batch_size=config['batch_size'],
-               verbose='0'  # 0: silent, 1: progress bar, 2: one line per epoch,
+               verbose=0  # 0: silent, 1: progress bar, 2: one line per epoch, # type: ignore
                )
     return keras.Sequential(_model.layers[: len(layers)])
 
@@ -85,6 +85,7 @@ def output_to_csv(name, keys) -> None:
 
     # 結果をcsvファイルに出力
     df.to_csv(os.getcwd() + f'/logs/{name}.csv', index=False)
+
 
 
 def fit_and_predict(_x,
@@ -129,8 +130,9 @@ def fit_and_predict(_x,
 
 if __name__ == '__main__':
     output_to_csv('kdd99',
-                  ['_id', 'datetime', 'dataset.name', 'model_name', 'encoder_param.layers', 'result.u2r.f1-score',
+                  ['_id', 'datetime', 'dataset.name', 
+                   'model_name', 'dataset.dropped', 'dataset.ae_used_data' , 'encoder_param.layers', 'result.u2r.f1-score',
                    'result.macro avg.f1-score'])
-    output_to_csv('creditcardfraud', ['_id', 'datetime', 'dataset.name', 'model_name', 'encoder_param.layers',
-                                      'result.anomaly.f1-score',
-                                      'result.macro avg.f1-score'])
+    # output_to_csv('creditcardfraud', ['_id', 'datetime', 'dataset.name', 'dataset.ae_used_data' , 'model_name', 'encoder_param.layers',
+    #                                   'result.anomaly.f1-score',
+    #                                   'result.macro avg.f1-score'])

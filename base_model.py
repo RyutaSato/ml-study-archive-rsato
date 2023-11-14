@@ -1,6 +1,6 @@
 
 from abc import ABC, abstractmethod
-from datetime import datetime, timezone, timedelta
+from datetime import datetime as dt, timezone, timedelta
 import os
 from typing import Optional
 import warnings
@@ -11,7 +11,6 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
-import tensorflow as tf
 import keras
 
 
@@ -22,7 +21,7 @@ class ModelBase(ABC):
 
     def __init__(self, **config) -> None:
         self._current_task: str = 'not_started'
-        self.datetime: datetime = datetime.now(tz=timezone(timedelta(hours=9)))
+        self.start_time: dt = dt.now(tz=timezone(timedelta(hours=9))) # 実際には、runが呼ばれた時点での時刻
         self.config: dict = config
         self.Model = None
         self.debug: bool = False if config['debug'] is None else config['debug']
@@ -46,7 +45,6 @@ class ModelBase(ABC):
         self.labels: Optional[list[str]] = None 
         self.correspondence: Optional[dict[str, int]] = None
         self.output = {
-            'datetime': self.datetime,
             'random_seed': self.random_seed,
             'splits': self.splits,
             'model_name': self.model_name,
@@ -55,7 +53,6 @@ class ModelBase(ABC):
             'result': dict()
             }
         logger.info(f"started: {self.model_name} {self.layers} {self.ae_used_data}")
-
 
 
         assert type(self.config) is dict, f"config is {type(self.config)}"
@@ -76,6 +73,13 @@ class ModelBase(ABC):
             return self.x.shape[1]
         return self.x.shape[1] + self.layers[-1]
     
+    @property
+    def datetime(self):
+        return dt.now(tz=timezone(timedelta(hours=9)))
+
+    @property
+    def elapsed_time(self) -> timedelta:
+        return self.datetime - self.start_time
 
     @property
     @abstractmethod
@@ -108,6 +112,7 @@ class ModelBase(ABC):
 
     def train_and_predict(self) -> None:
         self.current_task = 'train and predict'
+        self.start_time: dt = dt.now(tz=timezone(timedelta(hours=9)))
         assert self.x is not None, "x is None"
         assert self.y is not None, "y is None"
         assert self.labels is not None, "labels is None"
@@ -157,13 +162,15 @@ class ModelBase(ABC):
             # 予測
             y_pred = pd.Series(_model.predict(x_test), index=y_test.index)
 
-
             # テストデータで評価
             accuracy: dict = classification_report(y_test, y_pred, output_dict=True) # type: ignore
+            self.additional_metrics(x_test, y_test, y_pred, _model)
             self.scores.append(accuracy)
             self.confusion_matrix += confusion_matrix(y_test, y_pred, labels=range(len(self.labels)))
 
-    
+    def additional_metrics(self, x_test, y_test, y_pred, _model, *_):
+        pass
+
     def aggregate(self) -> None:
         self.current_task = 'aggregate'
 
@@ -197,11 +204,19 @@ class ModelBase(ABC):
             for pred_label, value in pred_labels.items():
                 self.output['result'][true_label]["pred_" + pred_label] = value
         
+        # 特徴量の数を出力に追加
+        self.output['dataset']['total_feature'] = self.feature_size
+        self.output['dataset']['default_feature'] = self.x.shape[1] # type: ignore
+        self.output['dataset']['ae_feature'] = self.layers[-1] if self.layers else 0
+
+        self.output['datetime'] = self.datetime
+        self.output['elapsed_time'] = self.elapsed_time
+
+
+        # 結果を出力
         if not self.debug:
             insert_results(self.output)
 
-        # 特徴量の数を出力に追加
-        self.output['feature_num'] = self.feature_size
     
     def send_status(self, action: str, ) -> None:
         pass

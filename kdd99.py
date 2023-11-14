@@ -1,10 +1,12 @@
+from tabnanny import check
+from lightgbm import LGBMClassifier
 from loguru import logger
 import numpy as np
 import pandas as pd
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 from base_model import ModelBase, ROOT_DIR
-from general_utils import generate_encoder, insert_results, fit_and_predict
 
 # 除外する特徴量のリスト
 ignore_names = [
@@ -115,30 +117,41 @@ class KDD99Model(ModelBase):
 
 
 if __name__ == "__main__":
+
     from sklearn.linear_model import LogisticRegression
 
     params = {
         'use_full': False,
         'dropped': True,
         'debug': True,
-        'ae_used_data': 'normal',
+        'ae_used_data': 'u2r',
         'encoder_param': {
             'layers': [5],
-            'epochs': 1,
+            'epochs': 5,
             'activation': 'relu',
             'batch_size': 32,
         },
         'model_param': {
-            'solver': 'lbfgs',
-            'max_iter': 50,
+            # 'kernel': 'rbf',
+            # 'gamma': 'scale',
+            # 'C': 100,
+            # "n_jobs": -1,
+            # 'solver': 'lbfgs',
+            # 'max_iter': 50,
+            'objective':'multiclass',
+            'metric':'multi_logloss',
+            'n_estimators':1000,
+            'verbosity': -1,
         },
         'splits': 4,
-        'model_name': 'LogisticRegression',
+        'model_name': 'LGBM', #'RandomForestClassifier', # LogisticRegression, 
         'random_seed': 2023,
     }
-    model = KDD99Model(LogisticRegression, **params)
+    model = KDD99Model(LGBMClassifier, **params)
     model.run()
-    with open(ROOT_DIR + "/results/kdd99.json", "w") as f:
+        
+    # model.run()
+    with open(ROOT_DIR + "/logs/kdd99.json", "w") as f:
         import json
 
 
@@ -151,6 +164,4 @@ if __name__ == "__main__":
                 return float(o)
             else:
                 return str(o)
-
-
         json.dump(model.output, f, indent=4, default=default)
