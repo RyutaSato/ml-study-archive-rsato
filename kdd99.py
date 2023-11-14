@@ -8,12 +8,13 @@ from general_utils import generate_encoder, insert_results, fit_and_predict
 
 # 除外する特徴量のリスト
 ignore_names = [
-    "hot", "num_compromised", "num_file_creations",      
+    "hot", "num_compromised", "num_file_creations",
     "num_outbound_cmds", "is_host_login", "srv_count",
     "srv_serror_rate", "srv_rerror_rate", "same_srv_rate", "srv_diff_host_rate", "dst_host_count", "dst_host_srv_count",
     "dst_host_diff_srv_rate"
-    ]
+]
 category_names = ["protocol_type", "service", "flag"]
+
 
 class KDD99Model(ModelBase):
     """
@@ -36,17 +37,19 @@ class KDD99Model(ModelBase):
 
 
     """
+
     def __init__(
-        self, 
-        Model,
-        **config) -> None:
+            self,
+            Model,
+            **config) -> None:
         super().__init__(**config)
         self.use_full: bool = config['use_full']
         self.dropped = config['dropped']
         self.Model = Model
         self.labels = ['normal', 'dos', 'probe', 'r2l', 'u2r']
         self.correspondence = {label: idx for idx, label in enumerate(self.labels)}
-        self.confusion_matrix = pd.DataFrame(np.zeros((len(self.labels), len(self.labels)), dtype=np.int32), dtype=pd.Int32Dtype)
+        self.confusion_matrix = pd.DataFrame(np.zeros((len(self.labels), len(self.labels)), dtype=np.int32),
+                                             dtype=pd.Int32Dtype)
 
         self.output['dataset'] = {
             'name': self.name,
@@ -66,7 +69,7 @@ class KDD99Model(ModelBase):
 
         # KDD'99 ラベルデータの読み込み
         with open(ROOT_DIR + "/datasets/kddcup.names", "r") as f:
-                # 一行目は不要なので無視
+            # 一行目は不要なので無視
             _ = f.readline()
             # `:`より手前がラベルなので，その部分を抽出してリストに追加
             names = [line.split(':')[0] for line in f]
@@ -87,7 +90,7 @@ class KDD99Model(ModelBase):
             df = pd.read_csv(ROOT_DIR + "/datasets/kddcup.data", names=names, index_col=False)
         else:
             df = pd.read_csv(ROOT_DIR + "/datasets/kddcup.data_10_percent", names=names, index_col=False)
-        
+
         # カテゴリー特徴量を削除
         data_x: pd.DataFrame = df.copy().drop(columns=category_names, axis=1)
 
@@ -95,10 +98,9 @@ class KDD99Model(ModelBase):
         if self.dropped:
             data_x = data_x.drop(columns=ignore_names, axis=1)
 
-
         # ラベルデータを切り分ける
         data_y = data_x.pop("true_label").map(lambda x: x.replace('.', ''))
-        
+
         # namesを更新
         names = data_x.columns
 
@@ -110,13 +112,15 @@ class KDD99Model(ModelBase):
 
         self.x = data_x
         self.y = data_y
-    
-    
+
+
 if __name__ == "__main__":
     from sklearn.linear_model import LogisticRegression
+
     params = {
         'use_full': False,
         'dropped': True,
+        'debug': True,
         'ae_used_data': 'normal',
         'encoder_param': {
             'layers': [5],
@@ -132,10 +136,12 @@ if __name__ == "__main__":
         'model_name': 'LogisticRegression',
         'random_seed': 2023,
     }
-    model = KDD99Model(LogisticRegression,**params)
+    model = KDD99Model(LogisticRegression, **params)
     model.run()
     with open(ROOT_DIR + "/results/kdd99.json", "w") as f:
         import json
+
+
         def default(o):
             if hasattr(o, "isoformat"):
                 return o.isoformat()
@@ -145,5 +151,6 @@ if __name__ == "__main__":
                 return float(o)
             else:
                 return str(o)
-        json.dump(model.output, f, indent=4, default=default)
 
+
+        json.dump(model.output, f, indent=4, default=default)

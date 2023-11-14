@@ -7,7 +7,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from kdd99 import KDD99Model
 from notifier import LineClient
+
 logger.add('logs/ex_kdd99.log', rotation='5 MB', retention='10 days', level='INFO')
+
 
 def main():
     logger.info(f"main: cpu_count: {cpu_count()} used: {max(1, cpu_count() - 2)}")
@@ -42,15 +44,11 @@ def main():
             params['ae_used_data'] = as_used_data
             params['encoder_param']['layers'] = layers
             params['dropped'] = dropped
-            params['model_param'] = {
-                'solver': 'lbfgs',
-                'max_iter': 200,
-            }
-            params['model_name'] = 'LogisticRegression'
+            params['model_param'] = dict(solver='lbfgs', max_iter=200)
+            params['model_name'] = "LogisticRegression"
             model = KDD99Model(LogisticRegression, **params)
             future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
-
 
             # Support Vector Machine
             params = default_params.copy()
@@ -58,11 +56,7 @@ def main():
             params['encoder_param']['layers'] = layers
             params['dropped'] = dropped
             params['model_name'] = 'SVC'
-            params['model_param'] = {
-                'kernel': 'rbf',
-                'gamma': 'scale',
-                'C': 1.0,
-            }
+            params['model_param'] = dict(kernel='rbf', gamma='scale', C=1.0)
             model = KDD99Model(SVC, **params)
             future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
@@ -73,12 +67,7 @@ def main():
             params['encoder_param']['layers'] = layers
             params['dropped'] = dropped
             params['model_name'] = 'RandomForestClassifier'
-            params['model_param'] = {
-                'n_estimators': 100,
-                'verbose': 0,
-                'warm_start': False,
-                'ccp_alpha': 0.0,
-            }
+            params['model_param'] = {'n_estimators': 100, 'verbose': 0, 'warm_start': False, 'ccp_alpha': 0.0}
             model = KDD99Model(RandomForestClassifier, **params)
             executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future
@@ -87,8 +76,9 @@ def main():
                 logger.info(f"finished: {futures[k].result()}")
             except Exception as e:
                 logger.error(e)
-                
+
     LineClient().send_text("finished")
+
 
 if __name__ == '__main__':
     main()

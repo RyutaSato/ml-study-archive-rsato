@@ -1,6 +1,4 @@
-from asyncio import futures
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from http import client
 from multiprocessing import cpu_count
 from itertools import product
 from loguru import logger
@@ -9,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from creditcardfraud import CreditCardFraudModel
 from notifier import LineClient
-logger.add('logs/ex_kdd99.log', rotation='5 MB', retention='10 days', level='INFO')
+logger.add('logs/ex_creditcardfraud.log', rotation='5 MB', retention='10 days', level='INFO')
 
 def main():
     logger.info(f"main: cpu_count: {cpu_count()} used: {max(1, cpu_count() - 2)}")
@@ -60,12 +58,7 @@ def main():
             params['encoder_param']['layers'] = layers
             params['dropped'] = dropped
             params['model_name'] = 'SVC'
-            params['model_param'] = {
-                'kernel': 'rbf',
-                'gamma': 'scale',
-                'C': 1.0,
-
-            }
+            params['model_param'] = dict(kernel='rbf', gamma='scale', C=1.0)
             model = CreditCardFraudModel(SVC, **params)
             future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{as_used_data}"] = future

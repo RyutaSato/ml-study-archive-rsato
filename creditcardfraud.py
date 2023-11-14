@@ -1,10 +1,8 @@
 from loguru import logger
 import numpy as np
 import pandas as pd
-from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from base_model import ModelBase, ROOT_DIR
-from general_utils import generate_encoder, insert_results, fit_and_predict
 
 
 class CreditCardFraudModel(ModelBase):
@@ -78,9 +76,9 @@ if __name__ == "__main__":
         'model': LogisticRegression,
         'debug': True,
         'encoder_param': {
-            'layers': [],
-            'epochs': 1,
-            'batch_size': 2,
+            'layers': [10, 5],
+            'epochs': 10,
+            'batch_size': 32,
             'activation': 'relu',
         },
         'model_param': {

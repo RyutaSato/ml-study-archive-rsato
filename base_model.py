@@ -2,8 +2,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone, timedelta
 import os
-from re import escape
-from token import OP
 from typing import Optional
 import warnings
 import numpy as np
@@ -13,7 +11,9 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
-import keras 
+import tensorflow as tf
+import keras
+
 
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')

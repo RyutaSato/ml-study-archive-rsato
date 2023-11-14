@@ -2,6 +2,8 @@ import os
 import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.model_selection import StratifiedKFold
+
+from db_query import get_results
 from tensorflow import keras
 from keras.layers import Dense
 from pymongo.mongo_client import MongoClient
@@ -11,6 +13,7 @@ from loguru import logger
 
 load_dotenv()
 uri = os.getenv('MongoDBURI')
+
 
 def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
     """
@@ -28,7 +31,7 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
     layers = config['layers']
     activation = config['activation']
 
-    _model = keras.Sequential( 
+    _model = keras.Sequential(
         [
             Dense(layers[0], activation=activation, input_shape=(x.shape[1],), name="encoder0"),
             *[
@@ -43,9 +46,9 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
         ]
     )
     _model.compile(optimizer="adam", loss="mse")
-    _model.fit(x, x, epochs=config['epochs'], 
-               batch_size=config['batch_size'], 
-               verbose='0' # 0: silent, 1: progress bar, 2: one line per epoch,  
+    _model.fit(x, x, epochs=config['epochs'],
+               batch_size=config['batch_size'],
+               verbose='0'  # 0: silent, 1: progress bar, 2: one line per epoch,
                )
     return keras.Sequential(_model.layers[: len(layers)])
 
@@ -63,6 +66,27 @@ def insert_results(outputs: dict) -> None:
     _result = collection.insert_one(outputs)
     assert _result.acknowledged, "insertion failed"
 
+
+def output_to_csv(name, keys) -> None:
+    data_list = get_results({"dataset.name": name})
+
+    def get_depper(data, key):
+        if '.' in key:
+            return get_depper(data[key.split('.')[0]], '.'.join(key.split('.')[1:]))
+        else:
+            return data[key]
+
+    # 対象のデータを抽出して新しい辞書を作成
+    extracted_data = [{key: get_depper(data, key) for key in keys} for data in
+                      data_list]
+
+    # 集計用のデータフレームを作成
+    df = pd.DataFrame(extracted_data)
+
+    # 結果をcsvファイルに出力
+    df.to_csv(os.getcwd() + f'/logs/{name}.csv', index=False)
+
+
 def fit_and_predict(_x,
                     _y,
                     _Model,
@@ -73,7 +97,7 @@ def fit_and_predict(_x,
     Args:
         _x: Input data.
         _y: Target data.
-        _model: Model to use for prediction.
+        _Model: Model to use for prediction.
         n_splits: Number of folds to use for cross-validation.
         random_seed: Random state to use for cross-validation.
         **params: Parameters for prediction.
@@ -97,7 +121,16 @@ def fit_and_predict(_x,
         # モデルを学習
         _model.fit(x_train, y_train)
         # テストデータで評価
-        accuracy: dict = classification_report(y_test, _model.predict(x_test), output_dict=True) # type: ignore
+        accuracy: dict = classification_report(y_test, _model.predict(x_test), output_dict=True)  # type: ignore
         accuracies.append(accuracy)
         logger.info(f"f1-score: {accuracy['macro avg']['f1-score']}")
     return accuracies
+
+
+if __name__ == '__main__':
+    output_to_csv('kdd99',
+                  ['_id', 'datetime', 'dataset.name', 'model_name', 'encoder_param.layers', 'result.u2r.f1-score',
+                   'result.macro avg.f1-score'])
+    output_to_csv('creditcardfraud', ['_id', 'datetime', 'dataset.name', 'model_name', 'encoder_param.layers',
+                                      'result.anomaly.f1-score',
+                                      'result.macro avg.f1-score'])
