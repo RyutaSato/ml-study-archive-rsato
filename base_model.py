@@ -12,8 +12,8 @@ from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
 import keras
-
-
+VERSION = '1.1.0'
+logger.add('logs/base_model.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
 
@@ -196,11 +196,11 @@ class ModelBase(ABC):
 
 
         # 混同行列の集計
-        confision_dict = self.confusion_matrix.T.rename(
+        confusion_dict = self.confusion_matrix.T.rename(
             columns={idx: val for idx, val in enumerate(self.labels)}, 
             index={idx: val for idx, val in enumerate(self.labels)}
         ).to_dict()
-        for true_label, pred_labels in confision_dict.items():
+        for true_label, pred_labels in confusion_dict.items():
             for pred_label, value in pred_labels.items():
                 self.output['result'][true_label]["pred_" + pred_label] = value
         
@@ -210,7 +210,8 @@ class ModelBase(ABC):
         self.output['dataset']['ae_feature'] = self.layers[-1] if self.layers else 0
 
         self.output['datetime'] = self.datetime
-        self.output['elapsed_time'] = self.elapsed_time
+        self.output['elapsed_time'] = str(self.elapsed_time)
+        self.output['version'] = VERSION
 
 
         # 結果を出力
@@ -238,6 +239,7 @@ class ModelBase(ABC):
             self.aggregate()
             logger.info(f'task finished')
         except Exception as e:
+            logger.error(f"{self.model_name} {self.layers} error: {e}")
             # self.send_error(e)
             raise e
     

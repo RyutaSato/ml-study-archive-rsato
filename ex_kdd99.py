@@ -84,7 +84,7 @@ def main():
             try:
                 logger.info(f"{k} finished: {futures[k].result()}")
             except Exception as e:
-                logger.error(e)
+                logger.error(f"{k}: {e}")
 
     LineClient().send_text("finished")
 
