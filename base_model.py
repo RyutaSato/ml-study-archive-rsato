@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime as dt, timezone, timedelta
 import os
+from socket import MsgFlag
 from typing import Optional
 import warnings
 import numpy as np
@@ -12,7 +13,7 @@ from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
 import keras
-VERSION = '1.1.0'
+VERSION = '1.1.1'
 logger.add('logs/base_model.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
@@ -239,8 +240,9 @@ class ModelBase(ABC):
             self.aggregate()
             logger.info(f'task finished')
         except Exception as e:
-            logger.error(f"{self.model_name} {self.layers} error: {e}")
-            # self.send_error(e)
+            err_msg = f"{self.model_name} {self.layers} error: {e}"
+            logger.error(err_msg)
+            self.send_error(err_msg)
             raise e
     
 
