@@ -13,7 +13,7 @@ logger.add('logs/ex_kdd99.log', rotation='5 MB', retention='10 days', level='INF
 
 
 def main():
-    logger.info(f"main: cpu_count: {cpu_count()} used: {max(1, cpu_count() - 2)}")
+    logger.info(f"main: cpu_count: {cpu_count()} used: {max(1, cpu_count() - 3)}")
     layers_patterns = (
         [],
         [20, 10, 5],
