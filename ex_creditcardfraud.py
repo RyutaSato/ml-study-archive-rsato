@@ -1,3 +1,4 @@
+"DEPRECATED: このファイルはv1.2.0で廃止されました"
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from multiprocessing import cpu_count
 from itertools import product

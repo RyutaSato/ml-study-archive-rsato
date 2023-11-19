@@ -133,12 +133,6 @@ if __name__ == "__main__":
             'batch_size': 32,
         },
         'model_param': {
-            # 'kernel': 'rbf',
-            # 'gamma': 'scale',
-            # 'C': 100,
-            # "n_jobs": -1,
-            # 'solver': 'lbfgs',
-            # 'max_iter': 50,
             'objective':'multiclass',
             'metric':'multi_logloss',
             'n_estimators':1000,

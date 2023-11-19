@@ -1,0 +1,30 @@
+default:
+  version: 1.2.0
+  debug: true
+  encoder_param:
+    epochs: 10
+    batch_size: 32
+    activation: relu
+  splits: 4
+  random_seed: 2023
+
+layers:
+  - []
+  # - [20, 10, 5]
+  # - [20, 15, 10, 5]
+  # - [20, 15, 10]
+
+models: [lr] # lr, lgb, svm, rf, mp
+datasets:
+  - name: kdd99 
+    ae_used_data: normal # normal, all, u2r
+    dropped: true # dropped: true, false 
+    use_full: false
+  # - name: kdd99
+  #   ae_used_data: u2r
+  #   dropped: true
+  #   use_full: false
+  - name: creditcardfraud
+    ae_used_data: normal
+
+    

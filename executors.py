@@ -9,14 +9,14 @@ from sklearn.svm import SVC
 
 
 
-def logistic_regression_executor(default_params, executor: Executor, Flow) -> Future:
+def lr_executor(default_params, executor: Executor, Flow) -> Future:
     params = default_params.copy()
     params['model_param'] = dict(solver='lbfgs', max_iter=200)
     params['model_name'] = "LogisticRegression"
     flow = Flow(LogisticRegression, **params)
     return executor.submit(flow.run)
 
-def lightgbm_executor(default_params, executor: Executor, Flow) -> Future:
+def lgb_executor(default_params, executor: Executor, Flow) -> Future:
     """
     与えられたパラメータを用いてLightGBMを実行します。
 
@@ -52,7 +52,7 @@ def svm_executor(default_params, executor: Executor, Flow) -> Future:
     flow = Flow(SVC, **params)
     return executor.submit(flow.run)
 
-def random_forest_executor(default_params, executor: Executor, Flow) -> Future:
+def rf_executor(default_params, executor: Executor, Flow) -> Future:
     """
     与えられたパラメータを用いてランダムフォレストを実行します。
 
@@ -79,9 +79,9 @@ def random_forest_executor(default_params, executor: Executor, Flow) -> Future:
     flow.additional_metrics = check_importances
     return executor.submit(flow.run)
 
-def multi_perceptron_executor(default_params, executor: Executor, Flow) -> Future:
+def mp_executor(default_params, executor: Executor, Flow) -> Future:
     params = default_params.copy()
-    params['model_name'] = 'NeuralNetwork'
+    params['model_name'] = 'MultiPerceptron'
     params['model_param'] = dict(activation='relu', hidden_layer_sizes=(20, 15, 10), max_iter=500)
     flow = Flow(MLPClassifier, **params)
     return executor.submit(flow.run)
