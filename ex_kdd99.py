@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 import lightgbm as lgb
 from sklearn.svm import SVC
-from kdd99 import KDD99Model
+from kdd99 import KDD99Flow
 from notifier import LineClient
 
 logger.add('logs/ex_kdd99.log', rotation='5 MB', retention='10 days', level='INFO')
@@ -50,7 +50,7 @@ def main():
             params = default_params.copy()
             params['model_param'] = dict(solver='lbfgs', max_iter=200)
             params['model_name'] = "LogisticRegression"
-            model = KDD99Model(LogisticRegression, **params)
+            model = KDD99Flow(LogisticRegression, **params)
             future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{ae_used_data}"] = future
 
@@ -60,7 +60,7 @@ def main():
                 params = default_params.copy()
                 params['model_name'] = 'SVC'
                 params['model_param'] = dict(kernel='rbf', gamma='scale', C=C) # TODO:  gamma='scale', C=1.0
-                model = KDD99Model(SVC, **params)
+                model = KDD99Flow(SVC, **params)
                 future = executor.submit(model.run)
                 futures[f"{params['model_name']}{layers}{dropped}{ae_used_data}"] = future
 
@@ -68,7 +68,7 @@ def main():
             params = default_params.copy()
             params['model_name'] = 'RandomForestClassifier'
             params['model_param'] = {'n_estimators': 1000, 'verbose': 0, 'warm_start': False, 'ccp_alpha': 0.0}
-            model = KDD99Model(RandomForestClassifier, **params)
+            model = KDD99Flow(RandomForestClassifier, **params)
             model.output["importances"] = dict()
             # どの特徴に重きを置いているか調べる
             def check_importances(x_test, y_test, y_pred, _model, *_):
@@ -78,7 +78,7 @@ def main():
                     else:
                         model.output["importances"][k] = v
             model.additional_metrics = check_importances
-            executor.submit(model.run)
+            future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{dropped}{ae_used_data}"] = future
         for k in futures:
             try:

@@ -5,7 +5,7 @@ from loguru import logger
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from creditcardfraud import CreditCardFraudModel
+from creditcardfraud import CreditCardFraudFlow
 from notifier import LineClient
 logger.add('logs/ex_creditcardfraud.log', rotation='5 MB', retention='10 days', level='INFO')
 
@@ -20,7 +20,6 @@ def main():
     ae_used_datas = ('all', 'normal', 'anomaly')
 
     default_params = {
-        'use_full': False,
         'debug': False,
         'encoder_param': {
             'epochs': 10,
@@ -45,7 +44,7 @@ def main():
                 'max_iter': 200,
             }
             params['model_name'] = 'LogisticRegression'
-            model = CreditCardFraudModel(LogisticRegression, **params)
+            model = CreditCardFraudFlow(LogisticRegression, **params)
             future = executor.submit(model.run)
             futures[f"{params['model_name']}{layers}{ae_used_data}"] = future
 
@@ -56,7 +55,7 @@ def main():
                 params = default_params.copy()
                 params['model_name'] = 'SVC'
                 params['model_param'] = dict(kernel='rbf', gamma='scale', C=C) # TODO:  gamma='scale', C=1.0
-                model = CreditCardFraudModel(SVC, **params)
+                model = CreditCardFraudFlow(SVC, **params)
                 future = executor.submit(model.run)
                 futures[f"{params['model_name']}{layers}{ae_used_data}"] = future
 
@@ -64,7 +63,7 @@ def main():
             params = default_params.copy()
             params['model_name'] = 'RandomForestClassifier'
             params['model_param'] = {'n_estimators': 1000, 'verbose': 0, 'warm_start': False, 'ccp_alpha': 0.0}
-            model = CreditCardFraudModel(RandomForestClassifier, **params)
+            model = CreditCardFraudFlow(RandomForestClassifier, **params)
             model.output["importances"] = dict()
             # どの特徴に重きを置いているか調べる
             def check_importances(x_test, y_test, y_pred, _model, *_):

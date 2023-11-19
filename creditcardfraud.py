@@ -1,11 +1,12 @@
+from unittest.mock import Base
 from loguru import logger
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from base_model import ModelBase, ROOT_DIR
+from base_flow import BaseFlow, ROOT_DIR
 
 
-class CreditCardFraudModel(ModelBase):
+class CreditCardFraudFlow(BaseFlow):
     """
     Credit Card Fraudデータセットを用いたモデル
     Args:
@@ -76,7 +77,7 @@ if __name__ == "__main__":
         'model': LogisticRegression,
         'debug': True,
         'encoder_param': {
-            'layers': [10, 5],
+            'layers': [20, 15, 10],
             'epochs': 10,
             'batch_size': 32,
             'activation': 'relu',
@@ -87,10 +88,10 @@ if __name__ == "__main__":
         'splits': 5,
         'model_name': 'LogisticRegression',
         'random_seed': 2023,
-        'ae_used_data': 'all',
+        'ae_used_data': 'anomaly',
     }
-    model = CreditCardFraudModel(LogisticRegression,**params)
-    model.run()
+    flow = CreditCardFraudFlow(LogisticRegression,**params)
+    flow.run()
     with open(ROOT_DIR + "/logs/creditcardfraud.json", "w") as f:
         import json
         def default(o):
@@ -102,5 +103,5 @@ if __name__ == "__main__":
                 return float(o)
             else:
                 return str(o)
-        json.dump(model.output, f, indent=4, default=default)
+        json.dump(flow.output, f, indent=4, default=default)
 

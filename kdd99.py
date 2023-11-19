@@ -1,4 +1,5 @@
 from tabnanny import check
+from unittest.mock import Base
 from lightgbm import LGBMClassifier
 from loguru import logger
 import numpy as np
@@ -6,7 +7,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
-from base_model import ModelBase, ROOT_DIR
+from base_flow import BaseFlow, ROOT_DIR
 
 # 除外する特徴量のリスト
 ignore_names = [
@@ -18,7 +19,7 @@ ignore_names = [
 category_names = ["protocol_type", "service", "flag"]
 
 
-class KDD99Model(ModelBase):
+class KDD99Flow(BaseFlow):
     """
     KDD'99データセットを用いたモデル
     Args:
@@ -147,8 +148,8 @@ if __name__ == "__main__":
         'model_name': 'LGBM', #'RandomForestClassifier', # LogisticRegression, 
         'random_seed': 2023,
     }
-    model = KDD99Model(LGBMClassifier, **params)
-    model.run()
+    flow = KDD99Flow(LGBMClassifier, **params)
+    flow.run()
         
     # model.run()
     with open(ROOT_DIR + "/logs/kdd99.json", "w") as f:
@@ -164,4 +165,4 @@ if __name__ == "__main__":
                 return float(o)
             else:
                 return str(o)
-        json.dump(model.output, f, indent=4, default=default)
+        json.dump(flow.output, f, indent=4, default=default)

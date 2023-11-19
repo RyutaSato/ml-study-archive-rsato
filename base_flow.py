@@ -2,7 +2,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime as dt, timezone, timedelta
 import os
-from socket import MsgFlag
 from typing import Optional
 import warnings
 import numpy as np
@@ -13,12 +12,37 @@ from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
 import keras
-VERSION = '1.1.1'
-logger.add('logs/base_model.log', rotation='5 MB', retention='10 days', level='INFO')
+VERSION = '1.1.2'
+logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
 
-class ModelBase(ABC):
+class BaseFlow(ABC):
+    """
+    BaseFlowは、機械学習の基本的なフローを抽象化したクラスです。
+
+    Attributes:
+        _current_task (str): 現在のタスクの状態を表す文字列。
+        start_time (datetime): タスクの開始時間。
+        config (dict): 設定情報を格納する辞書。
+        Model: 使用するモデル。
+        debug (bool): デバッグモードが有効かどうかを示すフラグ。
+        random_seed (int): 乱数のシード値。
+        splits (int): データの分割数。
+        ae_used_data: (str): AutoEncoderが使用するデータ。
+        model_name (str): モデルの名前。
+        encoder_param (dict): エンコーダのパラメータ。
+        layers (list[int]): エンコーダのレイヤー情報。
+        model_param (dict): モデルのパラメータ。
+        y_pred (pd.Series): 予測値。
+        x (pd.DataFrame): 入力データ。
+        x_preprocessed (pd.DataFrame): 前処理済みの入力データ。
+        x_new_features (pd.DataFrame): 新たに生成された特徴量。
+        y (pd.Series): 目的変数。
+        encoder (keras.Sequential): エンコーダ。
+        confusion_matrix (pd.DataFrame): 混同行列。
+        scores (list): スコアのリスト。
+    """
 
     def __init__(self, **config) -> None:
         self._current_task: str = 'not_started'
@@ -53,7 +77,6 @@ class ModelBase(ABC):
             'model_param': self.model_param, 
             'result': dict()
             }
-        logger.info(f"started: {self.model_name} {self.layers} {self.ae_used_data}")
 
 
         assert type(self.config) is dict, f"config is {type(self.config)}"
@@ -94,7 +117,7 @@ class ModelBase(ABC):
     @current_task.setter
     def current_task(self, value: str) -> None:
         self._current_task = value
-        logger.info(f'task started: {value}')
+        logger.info(f'{self.model_name} {self.layers} {self.ae_used_data} started: {value}')
 
     @property
     def snapshot(self) -> dict:
@@ -112,6 +135,22 @@ class ModelBase(ABC):
         self.current_task = 'preprocess'
 
     def train_and_predict(self) -> None:
+        """
+        モデルの訓練と予測を行います。
+
+        このメソッドは、データセットを訓練セットとテストセットに分割し、
+        モデルを訓練した後、テストセットで予測を行います。
+        StratifiedKFoldを使用してデータを分割し、各分割でモデルを訓練します。
+
+        このメソッドを実行する前に、以下のプロセスが必要です:
+        1. データセットの準備: `self.x`, `self.y`, `self.labels`が設定されていること。
+        2. モデルの準備: `self.Model`が設定されていること。
+        3. 対応関係の準備: `self.correspondence`が設定されていること。
+
+        Raises:
+            AssertionError: 必要なデータがNoneの場合に発生します。
+
+        """
         self.current_task = 'train and predict'
         self.start_time: dt = dt.now(tz=timezone(timedelta(hours=9)))
         assert self.x is not None, "x is None"
@@ -141,15 +180,15 @@ class ModelBase(ABC):
                 _encoder = generate_encoder(x_train_ae, **self.encoder_param)
                 # 新たな特徴量を生成
                 x_train_new_features = pd.DataFrame(
-                    _encoder.predict(x_train, verbose="0"),
+                    _encoder.predict(x_train, verbose=0), # type: ignore
                     columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
                     index=x_train.index
                     )
                 x_test_new_features = pd.DataFrame(
-                    _encoder.predict(x_test, verbose="0"),
+                    _encoder.predict(x_test, verbose=0), # type: ignore
                     columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
                     index=x_test.index
-                    )
+                    ) 
 
                 # データを結合
                 x_train = pd.concat([x_train, x_train_new_features], axis=1)
@@ -173,6 +212,19 @@ class ModelBase(ABC):
         pass
 
     def aggregate(self) -> None:
+        """
+        予測結果を集約します。
+
+        このメソッドは、各分割での予測結果を集約し、最終的な予測結果を生成します。
+        予測結果は `self.predictions` に格納されます。
+
+        このメソッドを実行する前に、以下のプロセスが必要です:
+        1. モデルの訓練と予測: `train_and_predict` メソッドが実行されていること。
+
+        Raises:
+            AssertionError: 必要なデータがNoneの場合に発生します。
+
+        """
         self.current_task = 'aggregate'
 
         assert type(self.labels) is list, f"labels is {type(self.labels)}"
