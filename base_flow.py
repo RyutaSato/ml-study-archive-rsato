@@ -12,10 +12,12 @@ from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
 import keras
+
 VERSION = '1.2.1'
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
+
 
 class BaseFlow(ABC):
     """
@@ -40,19 +42,19 @@ class BaseFlow(ABC):
         x_new_features (pd.DataFrame): 新たに生成された特徴量。
         y (pd.Series): 目的変数。
         encoder (keras.Sequential): エンコーダ。
-        confusion_matrix (pd.DataFrame): 混同行列。
+        conf_matrix (pd.DataFrame): 混同行列。
         scores (list): スコアのリスト。
     """
 
     def __init__(self, **config) -> None:
         self._current_task: str = 'not_started'
-        self.start_time: dt = dt.now(tz=timezone(timedelta(hours=9))) # 実際には、runが呼ばれた時点での時刻
+        self.start_time: dt = dt.now(tz=timezone(timedelta(hours=9)))  # 実際には、runが呼ばれた時点での時刻
         self.config: dict = config
         self.Model = None
         self.debug: bool = False if config['debug'] is None else config['debug']
         self.random_seed: int = config['random_seed']
         self.splits: int = config['splits']
-        self.ae_used_data = config['ae_used_data'] # all or specific class
+        self.ae_used_data = config['ae_used_data']  # all or specific class
         self.model_name: str = config['model_name']
         self.encoder_param: dict = config['encoder_param']
         self.layers: list[int] = self.encoder_param['layers']
@@ -64,20 +66,20 @@ class BaseFlow(ABC):
         self.x_new_features: Optional[pd.DataFrame] = None
         self.y: Optional[pd.Series] = None
         self.encoder: Optional[keras.Sequential] = None
-        self.confusion_matrix: Optional[pd.DataFrame] = None
+        self.conf_matrix: Optional[pd.DataFrame] = None
         self.scores = list()
 
-        self.labels: Optional[list[str]] = None 
+        self.labels: Optional[list[str]] = None
         self.correspondence: Optional[dict[str, int]] = None
         self.output = {
             'random_seed': self.random_seed,
             'splits': self.splits,
             'model_name': self.model_name,
             'encoder_param': self.encoder_param,
-            'model_param': self.model_param, 
-            'result': dict()
-            }
-
+            'model_param': self.model_param,
+            'result': dict(),
+            'importances': dict()
+        }
 
         assert type(self.config) is dict, f"config is {type(self.config)}"
         assert type(self.random_seed) is int, f"random_seed is {type(self.random_seed)}"
@@ -96,7 +98,7 @@ class BaseFlow(ABC):
         if self.layers is None or self.layers == []:
             return self.x.shape[1]
         return self.x.shape[1] + self.layers[-1]
-    
+
     @property
     def datetime(self):
         return dt.now(tz=timezone(timedelta(hours=9)))
@@ -130,7 +132,7 @@ class BaseFlow(ABC):
     @abstractmethod
     def load(self) -> None:
         pass
-    
+
     def preprocess(self) -> None:
         self.current_task = 'preprocess'
 
@@ -159,16 +161,13 @@ class BaseFlow(ABC):
         assert self.Model is not None, "Model is None"
         assert self.correspondence is not None, "correspondence is None"
 
-        k_fold = StratifiedKFold(n_splits=self.splits, 
-                                 shuffle=True, 
-                                 random_state=self.random_seed)
+        k_fold = StratifiedKFold(n_splits=self.splits, shuffle=True, random_state=self.random_seed)
         _generator = k_fold.split(self.x, self.y)
         for fold, (train_idx, test_idx) in enumerate(_generator):
             logger.info(f"phase: {fold + 1}/{self.splits}")
             # データを分割
             x_train, y_train = self.x.iloc[train_idx], self.y.iloc[train_idx]
             x_test, y_test = self.x.iloc[test_idx], self.y.iloc[test_idx]
-
 
             if self.layers:
                 # エンコーダー生成
@@ -180,15 +179,15 @@ class BaseFlow(ABC):
                 _encoder = generate_encoder(x_train_ae, **self.encoder_param)
                 # 新たな特徴量を生成
                 x_train_new_features = pd.DataFrame(
-                    _encoder.predict(x_train, verbose=0), # type: ignore
+                    _encoder.predict(x_train, verbose=0),  # type: ignore
                     columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
                     index=x_train.index
-                    )
+                )
                 x_test_new_features = pd.DataFrame(
-                    _encoder.predict(x_test, verbose=0), # type: ignore
+                    _encoder.predict(x_test, verbose=0),  # type: ignore
                     columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
                     index=x_test.index
-                    ) 
+                )
 
                 # データを結合
                 x_train = pd.concat([x_train, x_train_new_features], axis=1)
@@ -206,7 +205,7 @@ class BaseFlow(ABC):
             accuracy: dict = classification_report(y_test, y_pred, output_dict=True) # type: ignore
             self.additional_metrics(x_test, y_test, y_pred, _model)
             self.scores.append(accuracy)
-            self.confusion_matrix += confusion_matrix(y_test, y_pred, labels=range(len(self.labels)))
+            self.conf_matrix += confusion_matrix(y_test, y_pred, labels=range(len(self.labels)))
 
     def additional_metrics(self, x_test, y_test, y_pred, _model, *_):
         pass
@@ -228,7 +227,7 @@ class BaseFlow(ABC):
         self.current_task = 'aggregate'
 
         assert type(self.labels) is list, f"labels is {type(self.labels)}"
-        assert type(self.confusion_matrix) is pd.DataFrame, f"confusion_matrix is {type(self.confusion_matrix)}"
+        assert type(self.conf_matrix) is pd.DataFrame, f"confusion_matrix is {type(self.conf_matrix)}"
 
         s_labels: dict[str, str] = {
             **{str(k): v for k, v in enumerate(self.labels)},
@@ -242,39 +241,36 @@ class BaseFlow(ABC):
                 continue
             for k2 in self.scores[0][sl].keys():
                 if k2 == 'support':
-                    self.output['result'][s_labels[sl]][k2] = int(np.sum([self.scores[i][sl][k2] for i in range(self.splits)]))
+                    self.output['result'][s_labels[sl]][k2] = int(
+                        np.sum([self.scores[i][sl][k2] for i in range(self.splits)]))
                 else:
-                    self.output['result'][s_labels[sl]][k2] = np.mean([self.scores[i][sl][k2] for i in range(self.splits)]).round(4)
-
-
+                    self.output['result'][s_labels[sl]][k2] = np.mean(
+                        [self.scores[i][sl][k2] for i in range(self.splits)]).round(4)
 
         # 混同行列の集計
-        confusion_dict = self.confusion_matrix.T.rename(
-            columns={idx: val for idx, val in enumerate(self.labels)}, 
+        confusion_dict = self.conf_matrix.T.rename(
+            columns={idx: val for idx, val in enumerate(self.labels)},
             index={idx: val for idx, val in enumerate(self.labels)}
         ).to_dict()
         for true_label, pred_labels in confusion_dict.items():
             for pred_label, value in pred_labels.items():
                 self.output['result'][true_label]["pred_" + pred_label] = value
-        
+
         # 特徴量の数を出力に追加
         self.output['dataset']['total_feature'] = self.feature_size
-        self.output['dataset']['default_feature'] = self.x.shape[1] # type: ignore
+        self.output['dataset']['default_feature'] = self.x.shape[1]  # type: ignore
         self.output['dataset']['ae_feature'] = self.layers[-1] if self.layers else 0
 
         self.output['datetime'] = self.datetime
         self.output['elapsed_time'] = str(self.elapsed_time)
         self.output['version'] = VERSION
 
-
         # 結果を出力
         if not self.debug:
             insert_results(self.output)
 
-    
     def send_status(self, action: str, ) -> None:
         pass
-
 
     def send_error(self, error) -> None:
         line_client = LineClient()
@@ -282,7 +278,6 @@ class BaseFlow(ABC):
             "error": error.__str__(),
             "snapshot": self.snapshot,
         })
-    
 
     def run(self) -> None:
         try:
@@ -296,7 +291,7 @@ class BaseFlow(ABC):
             logger.error(err_msg)
             self.send_error(err_msg)
             raise e
-    
+
 
 if __name__ == '__main__':
     pass

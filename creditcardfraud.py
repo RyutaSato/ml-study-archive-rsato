@@ -34,7 +34,8 @@ class CreditCardFraudFlow(BaseFlow):
         self.Model = Model
         self.labels = ['normal', 'anomaly']
         self.correspondence = {label: idx for idx, label in enumerate(self.labels)}
-        self.confusion_matrix = pd.DataFrame(np.zeros((len(self.labels), len(self.labels)), dtype=np.int32), dtype=pd.Int32Dtype)
+        self.conf_matrix = pd.DataFrame(np.zeros((len(self.labels), len(self.labels)), dtype=np.int32),
+                                        dtype=pd.Int32Dtype)
 
         self.output['dataset'] = {
             'name': self.name,

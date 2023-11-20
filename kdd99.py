@@ -51,8 +51,8 @@ class KDD99Flow(BaseFlow):
         self.Model = Model
         self.labels = ['normal', 'dos', 'probe', 'r2l', 'u2r']
         self.correspondence = {label: idx for idx, label in enumerate(self.labels)}
-        self.confusion_matrix = pd.DataFrame(np.zeros((len(self.labels), len(self.labels)), dtype=np.int32),
-                                             dtype=pd.Int32Dtype)
+        self.conf_matrix = pd.DataFrame(np.zeros((len(self.labels), len(self.labels)), dtype=np.int32),
+                                        dtype=pd.Int32Dtype)
 
         self.output['dataset'] = {
             'name': self.name,
@@ -128,21 +128,25 @@ if __name__ == "__main__":
         'ae_used_data': 'u2r',
         'encoder_param': {
             'layers': [5],
-            'epochs': 5,
+            'epochs': 1,
             'activation': 'relu',
             'batch_size': 32,
         },
         'model_param': {
-            'objective':'multiclass',
-            'metric':'multi_logloss',
-            'n_estimators':1000,
-            'verbosity': -1,
+            # RandomForest
+            'n_estimators': 10,
+            'verbose': 0,
+            'warm_start': False,
+            # 'objective':'multiclass',
+            # 'metric':'multi_logloss',
+            # 'n_estimators':1000,
+            # 'verbosity': -1,
         },
         'splits': 4,
-        'model_name': 'LGBM', #'RandomForestClassifier', # LogisticRegression, 
+        'model_name': 'RandomForest',  # 'RandomForestClassifier', # LogisticRegression, LGBM
         'random_seed': 2023,
     }
-    flow = KDD99Flow(LGBMClassifier, **params)
+    flow = KDD99Flow(RandomForestClassifier, **params)
     flow.run()
         
     # model.run()
