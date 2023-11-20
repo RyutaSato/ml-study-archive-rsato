@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from pymongo.mongo_client import MongoClient
 import pandas as pd
@@ -6,32 +7,32 @@ from dotenv import load_dotenv
 from loguru import logger
 
 load_dotenv()
-uri = os.getenv('MongoDBURI')
+_uri = os.getenv('MongoDBURI')
 
 # Create a new client and connect to the server
-client = MongoClient(uri)
+_client = MongoClient(_uri)
 
 # Send a ping to confirm a successful connection
-client.admin.command('ping')
-db = client.get_database('ml')
-assert db is not None, "db is None"
-collection = db.get_collection('results')
-assert collection is not None, "collection is None"
+_client.admin.command('ping')
+_db = _client.get_database('ml')
+assert _db is not None, "db is None"
+_collection = _db.get_collection('results')
+assert _collection is not None, "collection is None"
 
 
-def get_result(conditions: dict) -> dict:
+def fetch_latest_record(conditions: dict) -> Optional[dict]:
     # 条件に一致するものの中で、もっとも新しいデータを１つ得る
-    result = collection.find_one(conditions, sort=[('_id', -1)])
+    result = _collection.find_one(conditions, sort=[('_id', -1)])
     return result
 
 
-def get_results(conditions: dict) -> dict:
-    results = collection.find(conditions)
+def fetch_all_records(conditions: dict):
+    results = _collection.find(conditions)
     return results
 
 
 if __name__ == '__main__':
-    r = get_result({
+    r = fetch_latest_record({
         "dataset": {
             "name": "kdd99",
             "use_full": False,
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     })
     logger.info(r)
 
-    r = get_result({
+    r = fetch_latest_record({
         "dataset.name": "kdd99",
         'model_name': 'LogisticRegression',
     })
