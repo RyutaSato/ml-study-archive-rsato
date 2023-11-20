@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from datetime import datetime as dt, timezone, timedelta
 import os
@@ -202,12 +201,21 @@ class BaseFlow(ABC):
             y_pred = pd.Series(_model.predict(x_test), index=y_test.index)
 
             # テストデータで評価
-            accuracy: dict = classification_report(y_test, y_pred, output_dict=True) # type: ignore
-            self.additional_metrics(x_test, y_test, y_pred, _model)
+            accuracy: dict = classification_report(y_test, y_pred, output_dict=True)  # type: ignore
+
+            if hasattr(_model, "feature_importances_"):
+                for k, v in zip(x_test.columns, _model.feature_importances_):
+                    if k in self.output["importances"]:
+                        self.output["importances"][k] += v
+                    else:
+                        self.output["importances"][k] = v
+
+            self.additional_metrics(x_test, y_test, y_pred, _model)  # DEPRECATED
             self.scores.append(accuracy)
             self.conf_matrix += confusion_matrix(y_test, y_pred, labels=range(len(self.labels)))
 
     def additional_metrics(self, x_test, y_test, y_pred, _model, *_):
+        # DEPRECATED
         pass
 
     def aggregate(self) -> None:
