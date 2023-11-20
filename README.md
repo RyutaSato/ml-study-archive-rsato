@@ -17,10 +17,21 @@
 - `ex_*.py`は全て`DEPRECATED`に変更
 - :rocket: new feature `main.py`, `main.yml`, `_main.py`
 
+### 1.2.2 視覚化用ユーティリティを追加
+
+- :rocket: new feature `visualize_utils.py`
+
 ## Future Change
-### 1.3.0 ディレクトリ構成が見直されます。
+
+### ディレクトリ構成の見直し
 - 機械学習フローが`flows`ディレクトリに統一されます。
 - 機械学習に直接関わりのないPythonファイルは`utils`ディレクトリに統一されます。
 - `ex_*.py`ファイルは、`archive`ディレクトリに移動されます。
 - 全ての実験プログラムは、`main.py`から呼び出されます。
 - 全ての実験パラメータと設定は、`main.yml`に記述します。
+
+### エラーハンドリングに関する追加予定機能
+
+- 失敗した並列プロセスのパラメータは`error_params.json`に保存されます。
+- 実験プロセスの実行前に、`main.yml`のvalidationが`_main.py`に追加されます。
+- Git push前に実行するテストコードが追加されます。
