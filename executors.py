@@ -68,15 +68,6 @@ def rf_executor(default_params, executor: Executor, Flow) -> Future:
     params['model_name'] = 'RandomForest'
     params['model_param'] = {'n_estimators': 1000, 'verbose': 0, 'warm_start': False, 'ccp_alpha': 0.0}
     flow = Flow(RandomForestClassifier, **params)
-    flow.output["importances"] = dict()
-    # どの特徴に重きを置いているか調べる
-    def check_importances(x_test, __, ___, _model, *_):
-        for k ,v in zip(x_test.columns, _model.feature_importances_):
-            if k in flow.output["importances"]:
-                flow.output["importances"][k] += v
-            else:
-                flow.output["importances"][k] = v
-    flow.additional_metrics = check_importances
     return executor.submit(flow.run)
 
 def mp_executor(default_params, executor: Executor, Flow) -> Future:
