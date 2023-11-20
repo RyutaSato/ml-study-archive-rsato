@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.model_selection import StratifiedKFold
 
-from db_query import get_results
+from db_query import fetch_all_records
 from tensorflow import keras
 from keras.layers import Dense
 from pymongo.mongo_client import MongoClient
@@ -68,7 +68,7 @@ def insert_results(outputs: dict) -> None:
 
 
 def output_to_csv(name, keys) -> None:
-    data_list = get_results({"dataset.name": name})
+    data_list = fetch_all_records({"dataset.name": name})
 
     def get_depper(data, key):
         if '.' in key:
