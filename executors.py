@@ -29,7 +29,15 @@ def lgb_executor(default_params, executor: Executor, Flow) -> Future:
         Future: 実行のFutureオブジェクト。
     """
     params = default_params.copy()
-    params['model_param'] = dict()
+    params['model_param'] = {
+        'objective': 'multiclass',
+        'num_class': 3,  # クラスの数
+        'metric': 'multi_logloss',
+        'boosting_type': 'gbdt',
+        'num_leaves': 31,
+        'learning_rate': 0.05,
+        'feature_fraction': 0.9
+    }
     params['model_name'] = "LightGBM"
     flow = Flow(LGBMClassifier, **params)
     return executor.submit(flow.run)
