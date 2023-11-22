@@ -3,6 +3,7 @@ from datetime import datetime as dt, timezone, timedelta
 import os
 from typing import Optional
 import warnings
+import tensorflow as tf
 import numpy as np
 import pandas as pd
 from loguru import logger
@@ -10,12 +11,22 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
-import keras
+from tensorflow import keras
 
 VERSION = '1.2.2'
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
+logger.info(f"GPU {tf.config.list_physical_devices('GPU')}")
+if not tf.config.list_physical_devices('GPU'):
+
+    result = input("GPU could not be detected. Do you want to continue using CPU? [y/n]")
+    if result == 'y' or result == 'Y':
+        logger.warning("Running only on CPU")
+    else:
+        logger.error("The program was terminated because no GPU was found.")
+        exit(1)
+
 
 
 class BaseFlow(ABC):
@@ -163,7 +174,7 @@ class BaseFlow(ABC):
         k_fold = StratifiedKFold(n_splits=self.splits, shuffle=True, random_state=self.random_seed)
         _generator = k_fold.split(self.x, self.y)
         for fold, (train_idx, test_idx) in enumerate(_generator):
-            logger.info(f"phase: {fold + 1}/{self.splits}")
+            self.current_task = f"train phase: {fold + 1}/{self.splits}"
             # データを分割
             x_train, y_train = self.x.iloc[train_idx], self.y.iloc[train_idx]
             x_test, y_test = self.x.iloc[test_idx], self.y.iloc[test_idx]
