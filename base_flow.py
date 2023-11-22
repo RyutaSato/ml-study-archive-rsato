@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime as dt, timezone, timedelta
 import os
+import traceback
 from typing import Optional
 import warnings
 import numpy as np
@@ -285,6 +286,7 @@ class BaseFlow(ABC):
         line_client.send_dict({
             "error": error.__str__(),
             "snapshot": self.snapshot,
+            "traceback": traceback.format_exc()
         })
 
     def run(self) -> None:
