@@ -19,6 +19,12 @@ assert _db is not None, "db is None"
 _collection = _db.get_collection('results')
 assert _collection is not None, "collection is None"
 
+versions = ["1.0.0", "1.1.0", "1.2.0", "1.2.1", "1.2.2"]
+LATEST = versions[-1]  # 現在の最新バージョン
+DATASET = "dataset.name"
+MODEL = "model_name"
+
+
 
 def fetch_latest_record(conditions: dict) -> Optional[dict]:
     # 条件に一致するものの中で、もっとも新しいデータを１つ得る
