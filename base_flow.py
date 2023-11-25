@@ -5,8 +5,8 @@ import os
 import traceback
 from typing import Optional
 import warnings
-from lightgbm import LGBMClassifier, LGBMModel
-from sklearn import metrics
+from lightgbm import LGBMClassifier
+from sklearn.discriminant_analysis import StandardScaler
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ from notifier import LineClient
 from tensorflow import keras
 import optuna
 
-VERSION = '1.2.3'
+VERSION = '1.2.4'
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
@@ -207,6 +207,10 @@ class BaseFlow(ABC):
                 # データを結合
                 x_train = pd.concat([x_train, x_train_new_features], axis=1)
                 x_test = pd.concat([x_test, x_test_new_features], axis=1)
+
+            # データの標準化
+            x_train = pd.DataFrame(StandardScaler().fit_transform(x_train), columns=x_train.columns, index=x_train.index)
+            x_test = pd.DataFrame(StandardScaler().fit_transform(x_test), columns=x_test.columns, index=x_test.index)
 
             # モデルの初期化
 

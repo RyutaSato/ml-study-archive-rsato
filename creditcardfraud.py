@@ -63,8 +63,8 @@ class CreditCardFraudFlow(BaseFlow):
         # namesを更新
         names = data_x.columns
 
-        # 正規化
-        data_x = pd.DataFrame(StandardScaler().fit_transform(data_x), columns=names)
+        # # 正規化
+        # data_x = pd.DataFrame(StandardScaler().fit_transform(data_x), columns=names)
 
         # ラベルを変換
         data_y = data_y.map(lambda x: int(x))   
