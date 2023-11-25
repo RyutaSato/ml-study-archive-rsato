@@ -5,8 +5,7 @@ import os
 import traceback
 from typing import Optional
 import warnings
-from lightgbm import LGBMClassifier, LGBMModel
-from sklearn import metrics
+from lightgbm import LGBMClassifier
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -134,7 +133,7 @@ class BaseFlow(ABC):
     @current_task.setter
     def current_task(self, value: str) -> None:
         self._current_task = value
-        logger.info(f'{self.model_name} {self.layers} {self.ae_used_data} started: {value}')
+        logger.info(f'{self.name}: {self.model_name}{self.layers} {self.ae_used_data} started: {value}')
 
     @property
     def snapshot(self) -> dict:
@@ -214,8 +213,11 @@ class BaseFlow(ABC):
             if self.model_name == 'LightGBM':
                 logger.info(f"unique: {y_train.unique()}")
                 self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
-                with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
-                    json.dump(self.model_param, f, indent=4)
+                try:
+                    with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
+                        json.dump(self.model_param, f, indent=4)
+                except Exception:
+                    logger.error(f"cannot save best params in {fold + 1}_{self.model_name}")
 
             _model = self.Model(**self.model_param)
 
@@ -231,9 +233,9 @@ class BaseFlow(ABC):
             if hasattr(_model, "feature_importances_"):
                 for k, v in zip(x_test.columns, _model.feature_importances_):
                     if k in self.output["importances"]:
-                        self.output["importances"][k] += v
+                        self.output["importances"][k] += int(v)
                     else:
-                        self.output["importances"][k] = v
+                        self.output["importances"][k] = int(v)
 
             self.additional_metrics(x_test, y_test, y_pred, _model)  # DEPRECATED
             self.scores.append(accuracy)
@@ -316,7 +318,6 @@ class BaseFlow(ABC):
 
     def lgb_optuna(self, x_train, y_train, x_test, y_test) -> dict:
         num_class = y_train.nunique()
-        logger.error(f"y_train type: {y_train.dtype}")
         y_train = y_train.astype(int)
         if num_class == 2:
             num_class = 1
@@ -352,7 +353,6 @@ class BaseFlow(ABC):
 
             # 予測
             y_pred = model.predict(x_test)
-            # logger.info(f"f1_score: {classification_report(y_test, y_pred)}")
             # 精度の計算
             f1_score: float = classification_report(y_test, y_pred, output_dict=True)['macro avg']['f1-score']
             return f1_score
@@ -363,7 +363,7 @@ class BaseFlow(ABC):
 
         # 最適なハイパーパラメータの表示
         best_params = study.best_params
-        logger.info(f"Best Params: {best_params}")
+        self.current_task = f"optuna done best params: {best_params}"
 
         return best_params
 
