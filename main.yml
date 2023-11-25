@@ -1,5 +1,5 @@
 default:
-  version: 1.2.0
+  version: 1.2.3
   debug: true
   encoder_param:
     epochs: 10
@@ -9,27 +9,97 @@ default:
   random_seed: 2023
 
 layers:
-  - []
-  # - [20, 10, 5]
-  # - [20, 15, 10, 5]
-  # - [20, 15, 10]
+  #  - []
+  - [ 20, 10, 5 ]
+  #  - [20, 15, 10, 5]
+  - [ 20, 15, 10 ]
 
-models: [lr] # lr, lgb, svm, rf, mp
+models: [ lgb ] # lr, lgb, svm, rf, mp
 datasets:
-  - name: kdd99 
-    ae_used_data: normal # normal, all, u2r
-    dropped: true # dropped: true, false 
-    use_full: false
-  # - name: kdd99
-  #   ae_used_data: u2r
-  #   dropped: true
-  #   use_full: false
-  - name: creditcardfraud
-    ae_used_data: normal
+  #  - name: kdd99
+  #    ae_used_data: all # normal, all, u2r
+  #    dropped: true # dropped: true, false
+  #    use_full: false
+  #
+  #  - name: kdd99
+  #    ae_used_data: all
+  #    dropped: false
+  #    use_full: false
+
+  #  - name: kdd99
+  #    ae_used_data: normal
+  #    dropped: true
+  #    use_full: false
+  #
+  #  - name: kdd99
+  #    ae_used_data: normal
+  #    dropped: false
+  #    use_full: false
+  #
+  #  - name: kdd99
+  #    ae_used_data: u2r
+  #    dropped: false
+  #    use_full: false
+  #
+  #  - name: kdd99
+  #    ae_used_data: u2r
+  #    dropped: true
+  #    use_full: false
+
+  #  - name: creditcardfraud
+  #    ae_used_data: normal
+  #
+  #  - name: creditcardfraud
+  #    ae_used_data: anomaly
+
+  #  - name: creditcardfraud
+  #    ae_used_data: all
   
-  # imbalance: ['ecoli', 'optical_digits', 'satimage', 'pen_digits', 'abalone', 'sick_euthyroid', 'spectrometer', 'car_eval_34', 'isolet', 'us_crime', 'yeast_ml8', 'scene', 'libras_move', 'thyroid_sick', 'coil_2000', 'arrhythmia', 'solar_flare_m0', 'oil', 'car_eval_4', 'wine_quality', 'letter_img', 'yeast_me2', 'webpage', 'ozone_level', 'mammography', 'protein_homo', 'abalone_19']
+  # imbalance: ['ecoli', 'optical_digits', 'satimage', 'pen_digits', 'abalone', 'sick_euthyroid', 'spectrometer',
+  # 'car_eval_34', 'isolet', 'us_crime', 'yeast_ml8', 'scene', 'libras_move', 'thyroid_sick', 'coil_2000',
+  # 'arrhythmia', 'solar_flare_m0', 'oil', 'car_eval_4', 'wine_quality', 'letter_img', 'yeast_me2', 'webpage',
+  # 'ozone_level', 'mammography', 'protein_homo', 'abalone_19']
   - name: imbalance
     ae_used_data: all
-    dataset_name: 
+    dataset_name: ecoli
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: optical_digits
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: satimage
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: pen_digits
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: abalone
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: sick_euthyroid
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: spectrometer
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: car_eval_34
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: isolet
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: us_crime
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: yeast_ml8
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: scene
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: libras_move
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: thyroid_sick
 
     
