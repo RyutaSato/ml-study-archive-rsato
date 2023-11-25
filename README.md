@@ -36,63 +36,11 @@
 - 実験プロセスの実行前に、`main.yml`のvalidationが`_main.py`に追加されます。
 - Git push前に実行するテストコードが追加されます。
 
+### MultiProcessingに関する変更
+- 各タスクが完了したかどうかの判断は、`Future.add_done_callback`内で行う。
+
 ### TODO
 - 勾配ブースティングを使う
 - 精度のでるデータセットを探す
 
 
-### 確認されている不具合
-- マルチプロセス使用時に、子プロセス終了後にGPUメモリが解放されない
-```shell
-Traceback (most recent call last):
-  File "C:\Users\rsato\anaconda3\envs\ml\lib\concurrent\futures\process.py", line 246, in _process_worker
-    r = call_item.fn(*call_item.args, **call_item.kwargs)
-  File "E:\ml-study-archive-rsato\base_flow.py", line 318, in run
-    raise e
-  File "E:\ml-study-archive-rsato\base_flow.py", line 310, in run
-    self.train_and_predict()
-  File "E:\ml-study-archive-rsato\base_flow.py", line 192, in train_and_predict
-    _encoder.predict(x_train, verbose=0),  # type: ignore
-  File "C:\Users\rsato\anaconda3\envs\ml\lib\site-packages\keras\utils\traceback_utils.py", line 70, in error_handler
-    raise e.with_traceback(filtered_tb) from None
-  File "C:\Users\rsato\anaconda3\envs\ml\lib\site-packages\tensorflow\python\eager\execute.py", line 54, in quick_execute
-    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,
-tensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:
-
-SameWorkerRecvDone unable to allocate output tensor. Key: /job:localhost/replica:0/task:0/device:CPU:0;899591e1dcfebd12;/job:localhost/replica:0/task:0/device:GPU:0;edge_11_IteratorGetNext;0:0
-	 [[{{node IteratorGetNext/_2}}]]
-Hint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.
- [Op:__inference_predict_function_819156]
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "E:\ml-study-archive-rsato\main.py", line 40, in <module>
-    main()
-  File "E:\ml-study-archive-rsato\main.py", line 36, in main
-    logger.info(f"{k} is done: {futures[k].result()}")
-  File "C:\Users\rsato\anaconda3\envs\ml\lib\concurrent\futures\_base.py", line 446, in result
-    return self.__get_result()
-  File "C:\Users\rsato\anaconda3\envs\ml\lib\concurrent\futures\_base.py", line 391, in __get_result
-    raise self._exception
-tensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:
-
-SameWorkerRecvDone unable to allocate output tensor. Key: /job:localhost/replica:0/task:0/device:CPU:0;899591e1dcfebd12;/job:localhost/replica:0/task:0/device:GPU:0;edge_11_IteratorGetNext;0:0
-	 [[{{node IteratorGetNext/_2}}]]
-Hint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.
- [Op:__inference_predict_function_819156]
-```
-> [!NOTE] 解決策1
->> GPU計算用プロセスを１つのみ用意し、Queueで計算メソッドを取得する。それ以外のプロセスは、CPUのみで演算する。
-
-> 解決策2
->> 各`executor`を実行後に、`del`を呼び出す。
-
-> 解決策3
->> プロセス数を固定し、Queueに計算メソッドを投げ、取得したプロセスが実行するように変更する。
->> その際に、各プロセスは、破壊的メソッドで内部を定義すること！
-
-- 不定期に配列サイズの不一致エラーが発生する。(原因不明)
-```sh
-Shape of passed values is (a1, b1), indices imply (a2, b2)
-```
