@@ -193,7 +193,6 @@ class BaseFlow(ABC):
                 else:
                     x_train_ae = x_train[y_train == self.correspondence[self.ae_used_data]]
                 _encoder = generate_encoder(x_train_ae, **self.encoder_param)
-                _encoder.summary()
                 # 新たな特徴量を生成
                 x_train_new_features = pd.DataFrame(
                     _encoder.predict(x_train, verbose=0),  # type: ignore
@@ -219,7 +218,6 @@ class BaseFlow(ABC):
 
             # LightGBMの場合（optunaを使用）
             if self.model_name == 'LightGBM':
-                logger.info(f"unique: {y_train.unique()}")
                 self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
                 try:
                     with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
