@@ -203,7 +203,7 @@ class BaseFlow(ABC):
                     columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
                     index=x_test.index
                 )
-
+                del _encoder
                 # データを結合
                 x_train = pd.concat([x_train, x_train_new_features], axis=1)
                 x_test = pd.concat([x_test, x_test_new_features], axis=1)
@@ -342,7 +342,7 @@ class BaseFlow(ABC):
                 'lambda_l2': trial.suggest_loguniform('lambda_l2', 1e-5, 10.0),
                 'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
                 'random_state': self.random_seed,
-                'verbose': -1,
+                'verbose': -2,
             }
 
             # LightGBMモデルの学習
@@ -354,7 +354,7 @@ class BaseFlow(ABC):
             y_pred = model.predict(x_test)
             # logger.info(f"f1_score: {classification_report(y_test, y_pred)}")
             # 精度の計算
-            f1_score: float = classification_report(y_test, y_pred, output_dict=True)['macro avg']['f1-score']
+            f1_score: float = classification_report(y_test, y_pred, output_dict=True)['macro avg']['f1-score'] # type: ignore
             return f1_score
 
         # Optunaでハイパーパラメータの最適化を行う
