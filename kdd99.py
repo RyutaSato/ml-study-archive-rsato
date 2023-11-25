@@ -5,6 +5,7 @@ from loguru import logger
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from base_flow import BaseFlow, ROOT_DIR
@@ -107,8 +108,8 @@ class KDD99Flow(BaseFlow):
         # namesを更新
         names = data_x.columns
 
-        # 正規化
-        data_x = pd.DataFrame(StandardScaler().fit_transform(data_x), columns=names)
+        # # 正規化
+        # data_x = pd.DataFrame(StandardScaler().fit_transform(data_x), columns=names)
 
         # ラベルを変換
         data_y = data_y.map(lambda x: classes[x])
@@ -119,15 +120,13 @@ class KDD99Flow(BaseFlow):
 
 if __name__ == "__main__":
 
-    from sklearn.linear_model import LogisticRegression
-
     params = {
         'use_full': False,
         'dropped': True,
         'debug': True,
         'ae_used_data': 'u2r',
         'encoder_param': {
-            'layers': [5],
+            'layers': [20, 15, 10],
             'epochs': 1,
             'activation': 'relu',
             'batch_size': 32,
@@ -143,7 +142,7 @@ if __name__ == "__main__":
             # 'verbosity': -1,
         },
         'splits': 4,
-        'model_name': 'RandomForest',  # 'RandomForestClassifier', # LogisticRegression, LGBM
+        'model_name': 'RandomForest',  # 'RandomForestClassifier', # LogisticRegression, LightGBM
         'random_seed': 2023,
     }
     flow = KDD99Flow(RandomForestClassifier, **params)

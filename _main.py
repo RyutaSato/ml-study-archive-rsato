@@ -1,6 +1,7 @@
 
 import yaml
 from creditcardfraud import CreditCardFraudFlow
+from imb_data import ImbalancedDatasetFlow
 from kdd99 import KDD99Flow
 
 import executors as _exe
@@ -23,5 +24,6 @@ runners = {
 flows = {
     'creditcardfraud': CreditCardFraudFlow,
     'kdd99': KDD99Flow,
+    'imbalance': ImbalancedDatasetFlow,
 }
 
