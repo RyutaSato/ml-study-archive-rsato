@@ -1,9 +1,8 @@
 /unsupervised-learning/
-/models/kdd99_features/
+/models/
 /datasets/
 .vscode/settings.json
 .env
 /results/
-logs/base_model.log
-logs/ex_kdd99.log
 /logs/
+/.idea/
