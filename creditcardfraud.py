@@ -1,4 +1,5 @@
 from unittest.mock import Base
+from lightgbm import LGBMClassifier
 from loguru import logger
 import numpy as np
 import pandas as pd
@@ -75,11 +76,11 @@ class CreditCardFraudFlow(BaseFlow):
 if __name__ == "__main__":
     from sklearn.linear_model import LogisticRegression
     params = {
-        'model': LogisticRegression,
+        # 'model': LogisticRegression,
         'debug': True,
         'encoder_param': {
-            'layers': [20, 15, 10],
-            'epochs': 10,
+            'layers': [10],
+            'epochs': 2,
             'batch_size': 32,
             'activation': 'relu',
         },
@@ -87,11 +88,11 @@ if __name__ == "__main__":
             'max_iter': 10,
         },
         'splits': 5,
-        'model_name': 'LogisticRegression',
+        'model_name': 'LightGBM',
         'random_seed': 2023,
-        'ae_used_data': 'anomaly',
+        'ae_used_data': 'all',
     }
-    flow = CreditCardFraudFlow(LogisticRegression,**params)
+    flow = CreditCardFraudFlow(LGBMClassifier,**params)
     flow.run()
     with open(ROOT_DIR + "/logs/creditcardfraud.json", "w") as f:
         import json

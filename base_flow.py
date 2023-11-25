@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 from datetime import datetime as dt, timezone, timedelta
+import json
 import os
 import traceback
 from typing import Optional
 import warnings
+from lightgbm import LGBMClassifier, LGBMModel
+from sklearn import metrics
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -13,8 +16,9 @@ from sklearn.model_selection import StratifiedKFold
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
 from tensorflow import keras
+import optuna
 
-VERSION = '1.2.2'
+VERSION = '1.2.3'
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
@@ -205,7 +209,16 @@ class BaseFlow(ABC):
                 x_test = pd.concat([x_test, x_test_new_features], axis=1)
 
             # モデルの初期化
+
+            # LightGBMの場合（optunaを使用）
+            if self.model_name == 'LightGBM':
+                logger.info(f"unique: {y_train.unique()}")
+                self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
+                with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
+                    json.dump(self.model_param, f, indent=4)
+
             _model = self.Model(**self.model_param)
+
             # モデルを学習
             _model.fit(x_train, y_train)
 
@@ -293,12 +306,66 @@ class BaseFlow(ABC):
         pass
 
     def send_error(self, error) -> None:
-        line_client = LineClient()
-        line_client.send_dict({
-            "error": error.__str__(),
-            "snapshot": self.snapshot,
-            "traceback": traceback.format_exc()
-        })
+        if not self.debug:
+            line_client = LineClient()
+            line_client.send_dict({
+                "error": error.__str__(),
+                "snapshot": self.snapshot,
+                "traceback": traceback.format_exc()
+            })
+
+    def lgb_optuna(self, x_train, y_train, x_test, y_test) -> dict:
+        num_class = y_train.nunique()
+        logger.error(f"y_train type: {y_train.dtype}")
+        y_train = y_train.astype(int)
+        if num_class == 2:
+            num_class = 1
+            objective_ = 'binary'
+            metrics = 'binary_logloss'
+        else:
+            objective_ = 'multiclass'
+            metrics = 'multi_logloss'
+        def objective(trial):
+            self.current_task = f'optuna phase {trial.number} / 50'
+            params = {
+                'objective': objective_,
+                'num_class': num_class,
+                'metric': metrics,
+                'boosting_type': 'gbdt',
+                'num_leaves': trial.suggest_int('num_leaves', 10, 100),
+                'learning_rate': trial.suggest_loguniform('learning_rate', 1e-5, 0.1),
+                'feature_fraction': trial.suggest_uniform('feature_fraction', 0.1, 1.0),
+                'bagging_fraction': trial.suggest_uniform('bagging_fraction', 0.1, 1.0),
+                'bagging_freq': trial.suggest_int('bagging_freq', 1, 10),
+                'max_depth': trial.suggest_int('max_depth', 3, 20),
+                'lambda_l1': trial.suggest_loguniform('lambda_l1', 1e-5, 10.0),
+                'lambda_l2': trial.suggest_loguniform('lambda_l2', 1e-5, 10.0),
+                'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
+                'random_state': self.random_seed,
+                'verbose': -1,
+            }
+
+            # LightGBMモデルの学習
+            model = LGBMClassifier(**params)
+            model.fit(x_train, y_train)
+
+
+            # 予測
+            y_pred = model.predict(x_test)
+            # logger.info(f"f1_score: {classification_report(y_test, y_pred)}")
+            # 精度の計算
+            f1_score: float = classification_report(y_test, y_pred, output_dict=True)['macro avg']['f1-score']
+            return f1_score
+
+        # Optunaでハイパーパラメータの最適化を行う
+        study = optuna.create_study(direction='maximize')
+        study.optimize(objective, n_trials=50)
+
+        # 最適なハイパーパラメータの表示
+        best_params = study.best_params
+        logger.info(f"Best Params: {best_params}")
+
+        return best_params
 
     def run(self) -> None:
         try:
