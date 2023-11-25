@@ -28,19 +28,19 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
     assert type(config['epochs']) is int
     assert type(config['batch_size']) is int
 
-    layers = config['layers']
+    _layers = config['layers']
     activation = config['activation']
 
     _model = keras.Sequential(
         [
-            Dense(layers[0], activation=activation, input_shape=(x.shape[1],), name="encoder0"),
+            Dense(_layers[0], activation=activation, input_shape=(x.shape[1],), name="encoder0"),
             *[
                 Dense(hidden_layer_size, activation=activation, name=f"encoder{idx + 1}")
-                for idx, hidden_layer_size in enumerate(layers[1:])
+                for idx, hidden_layer_size in enumerate(_layers[1:])
             ],
             *[
                 Dense(hidden_layer_size, activation=activation)
-                for hidden_layer_size in layers[-2::-1]
+                for hidden_layer_size in _layers[-2::-1]
             ],
             Dense(x.shape[1], activation=activation),
         ]
@@ -50,7 +50,7 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
                batch_size=config['batch_size'],
                verbose=0  # 0: silent, 1: progress bar, 2: one line per epoch, # type: ignore
                )
-    return keras.Sequential(_model.layers[: len(layers)])
+    return keras.Sequential(_model.layers[: len(_layers)])
 
 
 def insert_results(outputs: dict) -> None:
@@ -63,6 +63,7 @@ def insert_results(outputs: dict) -> None:
     assert db is not None, "db is None"
     collection = db.get_collection('results')
     assert collection is not None, "collection is None"
+
     _result = collection.insert_one(outputs)
     assert _result.acknowledged, "insertion failed"
 
@@ -85,7 +86,6 @@ def output_to_csv(name, keys) -> None:
 
     # 結果をcsvファイルに出力
     df.to_csv(os.getcwd() + f'/logs/{name}.csv', index=False)
-
 
 
 def fit_and_predict(_x,
@@ -130,9 +130,9 @@ def fit_and_predict(_x,
 
 if __name__ == '__main__':
     output_to_csv('kdd99',
-                  ['_id', 'datetime', 'dataset.name', 
-                   'model_name', 'dataset.dropped', 'dataset.ae_used_data' , 'encoder_param.layers', 'result.u2r.f1-score',
+                  ['_id', 'datetime', 'dataset.name',
+                   'model_name', 'dataset.dropped', 'dataset.ae_used_data', 'encoder_param.layers',
+                   'result.u2r.f1-score',
                    'result.macro avg.f1-score'])
-    # output_to_csv('creditcardfraud', ['_id', 'datetime', 'dataset.name', 'dataset.ae_used_data' , 'model_name', 'encoder_param.layers',
-    #                                   'result.anomaly.f1-score',
-    #                                   'result.macro avg.f1-score'])
+    # output_to_csv('creditcardfraud', ['_id', 'datetime', 'dataset.name', 'dataset.ae_used_data' , 'model_name',
+    # 'encoder_param.layers', 'result.anomaly.f1-score', 'result.macro avg.f1-score'])

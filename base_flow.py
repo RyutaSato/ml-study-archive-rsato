@@ -17,8 +17,10 @@ from general_utils import generate_encoder, insert_results
 from notifier import LineClient
 from tensorflow import keras
 import optuna
+from copy import deepcopy
 
-VERSION = '1.2.4'
+VERSION = '1.2.5'
+
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
@@ -31,7 +33,6 @@ if not tf.config.list_physical_devices('GPU'):
     else:
         logger.error("The program was terminated because no GPU was found.")
         exit(1)
-
 
 
 class BaseFlow(ABC):
@@ -49,7 +50,7 @@ class BaseFlow(ABC):
         ae_used_data: (str): AutoEncoderが使用するデータ。
         model_name (str): モデルの名前。
         encoder_param (dict): エンコーダのパラメータ。
-        layers (list[int]): エンコーダのレイヤー情報。
+        _layers (list[int]): エンコーダのレイヤー情報。
         model_param (dict): モデルのパラメータ。
         y_pred (pd.Series): 予測値。
         x (pd.DataFrame): 入力データ。
@@ -64,16 +65,16 @@ class BaseFlow(ABC):
     def __init__(self, **config) -> None:
         self._current_task: str = 'not_started'
         self.start_time: dt = dt.now(tz=timezone(timedelta(hours=9)))  # 実際には、runが呼ばれた時点での時刻
-        self.config: dict = config
+        self.config: dict = deepcopy(config)
         self.Model = None
-        self.debug: bool = False if config['debug'] is None else config['debug']
-        self.random_seed: int = config['random_seed']
-        self.splits: int = config['splits']
-        self.ae_used_data = config['ae_used_data']  # all or specific class
-        self.model_name: str = config['model_name']
-        self.encoder_param: dict = config['encoder_param']
-        self.layers: list[int] = self.encoder_param['layers']
-        self.model_param: dict = config['model_param']
+        self.debug: bool = False if config['debug'] is None else self.config['debug']
+        self.random_seed: int = self.config['random_seed']
+        self.splits: int = self.config['splits']
+        self.ae_used_data = self.config['ae_used_data']  # all or specific class
+        self.model_name: str = self.config['model_name']
+        self.encoder_param: dict = self.config['encoder_param']
+        self._layers: list[int] = self.encoder_param['layers']
+        self.model_param: dict = self.config['model_param']
         self.model_param['random_state'] = self.random_seed
         self.y_pred: Optional[pd.Series] = None
         self.x: Optional[pd.DataFrame] = None
@@ -101,7 +102,7 @@ class BaseFlow(ABC):
         assert type(self.splits) is int, f"splits is {type(self.splits)}"
         assert type(self.model_name) is str, f"model_name is {type(self.model_name)}"
         assert type(self.encoder_param) is dict, f"encoder_param is {type(self.encoder_param)}"
-        assert type(self.layers) is list, f"config['layers'] is {type(self.layers)}"
+        assert type(self._layers) is list, f"config['layers'] is {type(self._layers)}"
         assert type(self.encoder_param['epochs']) is int
         assert type(self.encoder_param['batch_size']) is int
         assert type(self.encoder_param['activation']) is str
@@ -110,9 +111,9 @@ class BaseFlow(ABC):
     def feature_size(self) -> int:
         if self.x is None:
             return 0
-        if self.layers is None or self.layers == []:
+        if self._layers is None or self._layers == []:
             return self.x.shape[1]
-        return self.x.shape[1] + self.layers[-1]
+        return self.x.shape[1] + self._layers[-1]
 
     @property
     def datetime(self):
@@ -134,7 +135,7 @@ class BaseFlow(ABC):
     @current_task.setter
     def current_task(self, value: str) -> None:
         self._current_task = value
-        logger.info(f'{self.name}: {self.model_name}{self.layers} {self.ae_used_data} started: {value}')
+        logger.info(f'{self.name}: {self.model_name}{self._layers} {self.ae_used_data} started: {value}')
 
     @property
     def snapshot(self) -> dict:
@@ -184,7 +185,7 @@ class BaseFlow(ABC):
             x_train, y_train = self.x.iloc[train_idx], self.y.iloc[train_idx]
             x_test, y_test = self.x.iloc[test_idx], self.y.iloc[test_idx]
 
-            if self.layers:
+            if self._layers:
                 # エンコーダー生成
                 # エンコーダーの学習に使用するデータを選択
                 if self.ae_used_data == 'all':
@@ -192,15 +193,16 @@ class BaseFlow(ABC):
                 else:
                     x_train_ae = x_train[y_train == self.correspondence[self.ae_used_data]]
                 _encoder = generate_encoder(x_train_ae, **self.encoder_param)
+                _encoder.summary()
                 # 新たな特徴量を生成
                 x_train_new_features = pd.DataFrame(
                     _encoder.predict(x_train, verbose=0),  # type: ignore
-                    columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
+                    columns=[f"ae_{idx}" for idx in range(self._layers[-1])],
                     index=x_train.index
                 )
                 x_test_new_features = pd.DataFrame(
                     _encoder.predict(x_test, verbose=0),  # type: ignore
-                    columns=[f"ae_{idx}" for idx in range(self.layers[-1])],
+                    columns=[f"ae_{idx}" for idx in range(self._layers[-1])],
                     index=x_test.index
                 )
                 del _encoder
@@ -209,7 +211,8 @@ class BaseFlow(ABC):
                 x_test = pd.concat([x_test, x_test_new_features], axis=1)
 
             # データの標準化
-            x_train = pd.DataFrame(StandardScaler().fit_transform(x_train), columns=x_train.columns, index=x_train.index)
+            x_train = pd.DataFrame(StandardScaler().fit_transform(x_train), columns=x_train.columns,
+                                   index=x_train.index)
             x_test = pd.DataFrame(StandardScaler().fit_transform(x_test), columns=x_test.columns, index=x_test.index)
 
             # モデルの初期化
@@ -299,7 +302,7 @@ class BaseFlow(ABC):
         # 特徴量の数を出力に追加
         self.output['dataset']['total_feature'] = self.feature_size
         self.output['dataset']['default_feature'] = self.x.shape[1]  # type: ignore
-        self.output['dataset']['ae_feature'] = self.layers[-1] if self.layers else 0
+        self.output['dataset']['ae_feature'] = self._layers[-1] if self._layers else 0
 
         self.output['datetime'] = self.datetime
         self.output['elapsed_time'] = str(self.elapsed_time)
@@ -331,6 +334,7 @@ class BaseFlow(ABC):
         else:
             objective_ = 'multiclass'
             metrics = 'multi_logloss'
+
         def objective(trial):
             self.current_task = f'optuna phase {trial.number} / 50'
             params = {
@@ -348,18 +352,18 @@ class BaseFlow(ABC):
                 'lambda_l2': trial.suggest_loguniform('lambda_l2', 1e-5, 10.0),
                 'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
                 'random_state': self.random_seed,
-                'verbose': -2,
+                'verbose': -1,
             }
 
             # LightGBMモデルの学習
             model = LGBMClassifier(**params)
             model.fit(x_train, y_train)
 
-
             # 予測
             y_pred = model.predict(x_test)
             # 精度の計算
-            f1_score: float = classification_report(y_test, y_pred, output_dict=True)['macro avg']['f1-score'] # type: ignore
+            f1_score: float = classification_report(y_test, y_pred, output_dict=True)['macro avg'][
+                'f1-score']  # type: ignore
             return f1_score
 
         # Optunaでハイパーパラメータの最適化を行う
@@ -380,7 +384,7 @@ class BaseFlow(ABC):
             self.aggregate()
             logger.info(f'task finished')
         except Exception as e:
-            err_msg = f"{self.model_name} {self.layers} error: {e}"
+            err_msg = f"{self.model_name} {self._layers} error: {e}"
             logger.error(err_msg)
             self.send_error(err_msg)
             raise e
