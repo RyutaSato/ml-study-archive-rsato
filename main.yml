@@ -13,7 +13,7 @@ layers:
   #  - [20, 15, 10, 5]
   - [ 20, 15, 10 ]
 
-models: [ lgb, rf, mp, lr, svm ] # lr, lgb, svm, rf, mp
+models: [ lgb, lgb_optuna, rf, mp, lr, svm ] # lr, lgb, svm, rf, mp, lgb_optuna
 datasets:
   #  - name: kdd99
   #    ae_used_data: all # normal, all, u2r

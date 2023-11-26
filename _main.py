@@ -1,4 +1,3 @@
-
 import yaml
 from creditcardfraud import CreditCardFraudFlow
 from imb_data import ImbalancedDatasetFlow
@@ -6,8 +5,8 @@ from kdd99 import KDD99Flow
 
 import executors as _exe
 
-def load_config():
 
+def load_config():
     with open('main.yml', 'r') as f:
         cfg = yaml.safe_load(f)
     return cfg
@@ -19,6 +18,7 @@ runners = {
     'svm': _exe.svm_executor,
     'rf': _exe.rf_executor,
     'mp': _exe.mp_executor,
+    'lgb_optuna': _exe.lgb_optuna_executor,
 }
 
 flows = {
@@ -26,4 +26,3 @@ flows = {
     'kdd99': KDD99Flow,
     'imbalance': ImbalancedDatasetFlow,
 }
-

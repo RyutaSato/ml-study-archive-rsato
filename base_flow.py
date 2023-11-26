@@ -5,7 +5,6 @@ import os
 import traceback
 from typing import Optional
 import warnings
-from sklearn.discriminant_analysis import StandardScaler
 from lightgbm import LGBMClassifier
 import tensorflow as tf
 import numpy as np
@@ -13,13 +12,15 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
 from tensorflow import keras
 import optuna
 from copy import deepcopy
 
-VERSION = '1.2.5'
+VERSION = '1.3.0'
 
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
@@ -217,7 +218,7 @@ class BaseFlow(ABC):
             # モデルの初期化
 
             # LightGBMの場合（optunaを使用）
-            if self.model_name == 'LightGBM':
+            if self.model_name == 'LightGBM+optuna':
                 self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
                 self.config['model_param'] = self.model_param
                 try:
@@ -375,7 +376,7 @@ class BaseFlow(ABC):
 
         return best_params
 
-    def run(self) -> None:
+    def run(self):
         try:
             self.load()
             self.preprocess()
@@ -386,7 +387,8 @@ class BaseFlow(ABC):
             err_msg = f"{self.model_name} {self._layers} error: {e}"
             logger.error(err_msg)
             self.send_error(err_msg)
-            raise e
+        finally:
+            return self
 
 
 if __name__ == '__main__':
