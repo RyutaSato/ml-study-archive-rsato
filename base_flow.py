@@ -219,6 +219,7 @@ class BaseFlow(ABC):
             # LightGBMの場合（optunaを使用）
             if self.model_name == 'LightGBM':
                 self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
+                self.config['model_param'] = self.model_param
                 try:
                     with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
                         json.dump(self.model_param, f, indent=4)
