@@ -38,9 +38,9 @@ def lgb_executor(default_params, executor: Executor, Flow) -> Future:
     """
     params = default_params.copy()
     params['model_param'] = {
-        'objective': 'multiclass',
+        # 'objective': 'multiclass',
         # 'num_class': 3,  # クラスの数
-        'metric': 'multi_logloss',
+        # 'metric': 'multi_logloss',
         'boosting_type': 'gbdt',
         'num_leaves': 31,
         'learning_rate': 0.05,
@@ -123,20 +123,11 @@ def rf_executor(default_params, executor: Executor, Flow) -> Future:
     params['model_name'] = 'RandomForest'
     params['model_param'] = dict(n_estimators=100,
                                  criterion='gini',
-                                 max_depth=None,
                                  min_samples_split=2,
                                  min_samples_leaf=1,
                                  min_weight_fraction_leaf=0.0,
-                                 max_features='auto',
-                                 max_leaf_nodes=None,
-                                 min_impurity_decrease=0.0,
-                                 min_impurity_split=None,
                                  bootstrap=True,
                                  oob_score=False,
-                                 n_jobs=None,
-                                 verbose=0,
-                                 warm_start=False,
-                                 class_weight=None,
                                  ccp_alpha=0.0, )
     flow = Flow(RandomForestClassifier, **params)
     future = executor.submit(flow.run)
