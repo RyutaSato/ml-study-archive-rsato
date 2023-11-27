@@ -4,6 +4,8 @@ import json
 import os
 import traceback
 from typing import Optional
+from dotenv import load_dotenv
+load_dotenv()
 import warnings
 from lightgbm import LGBMClassifier
 import tensorflow as tf
@@ -20,7 +22,7 @@ from tensorflow import keras
 import optuna
 from copy import deepcopy
 
-VERSION = '1.3.0'
+VERSION = '1.3.1'
 
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
@@ -368,7 +370,7 @@ class BaseFlow(ABC):
 
         # Optunaでハイパーパラメータの最適化を行う
         study = optuna.create_study(direction='maximize')
-        study.optimize(objective, n_trials=50)
+        study.optimize(objective, n_trials=100)
 
         # 最適なハイパーパラメータの表示
         best_params = study.best_params
