@@ -8,22 +8,22 @@ default:
   random_seed: 2023
 
 layers:
-  #  - []
+  - [ ]
   - [ 20, 10, 5 ]
-  #  - [20, 15, 10, 5]
+  - [ 20, 15, 10, 5 ]
   - [ 20, 15, 10 ]
 
-models: [ lgb, lgb_optuna, rf, mp, lr, svm ] # lr, lgb, svm, rf, mp, lgb_optuna
+models: [ lgb, lr, svm, rf ] # lr, lgb, svm, rf, mp, lgb_optuna
 datasets:
-  #  - name: kdd99
-  #    ae_used_data: all # normal, all, u2r
-  #    dropped: true # dropped: true, false
-  #    use_full: false
+  - name: kdd99
+    ae_used_data: all # normal, all, u2r
+    dropped: true # dropped: true, false
+    use_full: false
   #
-  #  - name: kdd99
-  #    ae_used_data: all
-  #    dropped: false
-  #    use_full: false
+  - name: kdd99
+    ae_used_data: all
+    dropped: false
+    use_full: false
 
   #  - name: kdd99
   #    ae_used_data: normal
@@ -97,48 +97,48 @@ datasets:
   - name: imbalance
     ae_used_data: all
     dataset_name: abalone_19
-
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: ecoli
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: optical_digits
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: satimage
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: pen_digits
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: abalone
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: sick_euthyroid
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: spectrometer
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: car_eval_34
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: isolet
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: us_crime
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: yeast_ml8
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: scene
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: libras_move
-    #  - name: imbalance
-    #    ae_used_data: all
-    #    dataset_name: thyroid_sick
+  # --------------------------------
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: ecoli
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: optical_digits
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: satimage
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: pen_digits
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: abalone
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: sick_euthyroid
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: spectrometer
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: car_eval_34
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: isolet
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: us_crime
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: yeast_ml8
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: scene
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: libras_move
+  - name: imbalance
+    ae_used_data: all
+    dataset_name: thyroid_sick
 
     
