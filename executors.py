@@ -15,12 +15,10 @@ def lr_executor(default_params, executor: Executor, Flow) -> Future:
                                  tol=1e-4,
                                  C=1.0,
                                  fit_intercept=True,
-                                 intercept_scaling=1,
-                                 class_weight=None, )
+                                 intercept_scaling=1, )
     params['model_name'] = "LogisticRegression"
     flow = Flow(LogisticRegression, **params)
     future = executor.submit(flow.run)
-    future.add_done_callback(clear)
     return future
 
 
@@ -49,7 +47,6 @@ def lgb_executor(default_params, executor: Executor, Flow) -> Future:
     params['model_name'] = "LightGBM"
     flow = Flow(LGBMClassifier, **params)
     future = executor.submit(flow.run)
-    future.add_done_callback(clear)
     return future
 
 
@@ -71,7 +68,6 @@ def lgb_optuna_executor(default_params, executor: Executor, Flow) -> Future:
     params['model_name'] = "LightGBM+optuna"
     flow = Flow(LGBMClassifier, **params)
     future = executor.submit(flow.run)
-    future.add_done_callback(clear)
     return future
 
 
@@ -103,7 +99,6 @@ def svm_executor(default_params, executor: Executor, Flow) -> Future:
     params['model_name'] = "SVC"
     flow = Flow(SVC, **params)
     future = executor.submit(flow.run)
-    future.add_done_callback(clear)
     return future
 
 
@@ -131,7 +126,6 @@ def rf_executor(default_params, executor: Executor, Flow) -> Future:
                                  ccp_alpha=0.0, )
     flow = Flow(RandomForestClassifier, **params)
     future = executor.submit(flow.run)
-    future.add_done_callback(clear)
     return future
 
 
@@ -163,9 +157,6 @@ def mp_executor(default_params, executor: Executor, Flow) -> Future:
                                  )
     flow = Flow(MLPClassifier, **params)
     future = executor.submit(flow.run)
-    future.add_done_callback(clear)
     return future
 
 
-def clear(self):
-    del self
