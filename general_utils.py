@@ -50,7 +50,9 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
                batch_size=config['batch_size'],
                verbose=0  # 0: silent, 1: progress bar, 2: one line per epoch, # type: ignore
                )
-    return keras.Sequential(_model.layers[: len(_layers)])
+    _model = keras.Sequential(_model.layers[: len(_layers)])
+    _model.compile(optimizer="adam", loss="mse")
+    return _model
 
 
 def insert_results(outputs: dict) -> None:
