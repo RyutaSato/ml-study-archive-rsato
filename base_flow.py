@@ -5,6 +5,7 @@ import os
 import traceback
 from typing import Optional
 from dotenv import load_dotenv
+
 load_dotenv()
 import warnings
 from lightgbm import LGBMClassifier
@@ -14,7 +15,7 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
@@ -22,14 +23,13 @@ from tensorflow import keras
 import optuna
 from copy import deepcopy
 
-VERSION = '1.3.1'
+VERSION = '1.4.0'
 
 logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
 logger.info(f"GPU {tf.config.list_physical_devices('GPU')}")
 if not tf.config.list_physical_devices('GPU'):
-
     result = input("GPU could not be detected. Do you want to continue using CPU? [y/n]")
     if result == 'y' or result == 'Y':
         logger.warning("Running only on CPU")
@@ -99,7 +99,6 @@ class BaseFlow(ABC):
             'result': dict(),
             'importances': dict()
         }
-
         assert type(self.config) is dict, f"config is {type(self.config)}"
         assert type(self.random_seed) is int, f"random_seed is {type(self.random_seed)}"
         assert type(self.splits) is int, f"splits is {type(self.splits)}"
@@ -154,6 +153,8 @@ class BaseFlow(ABC):
 
     def preprocess(self) -> None:
         self.current_task = 'preprocess'
+        assert self.x is not None, "x is None"
+        self.x = pd.DataFrame(MinMaxScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
 
     def train_and_predict(self) -> None:
         """
@@ -195,7 +196,21 @@ class BaseFlow(ABC):
                     x_train_ae = x_train
                 else:
                     x_train_ae = x_train[y_train == self.correspondence[self.ae_used_data]]
-                _encoder = generate_encoder(x_train_ae, **self.encoder_param)
+
+                # モデルのファイル名
+                option_str = "_d" if hasattr(self, "dropped") and self.dropped else ""
+                file_name = f"{self.name}{option_str}_{self._layers}_{self.ae_used_data}_{fold + 1}_{VERSION}.h5"
+
+                # 保存済みモデルがある場合
+                if os.path.exists(ROOT_DIR + "/models/" + file_name):
+                    # 保存しているモデルの読み込み
+                    _encoder = keras.models.load_model(ROOT_DIR + "/models/" + file_name)
+                # 保存済みモデルがない場合
+                else:
+                    self.current_task = f"train phase: {fold + 1}/{self.splits} encoder generating"
+                    _encoder = generate_encoder(x_train_ae, **self.encoder_param)
+                    # モデルの保存
+                    _encoder.save(ROOT_DIR + "/models/" + file_name)
                 # 新たな特徴量を生成
                 x_train_new_features = pd.DataFrame(
                     _encoder.predict(x_train, verbose=0),  # type: ignore
@@ -212,10 +227,10 @@ class BaseFlow(ABC):
                 x_train = pd.concat([x_train, x_train_new_features], axis=1)
                 x_test = pd.concat([x_test, x_test_new_features], axis=1)
 
-            # データの標準化
-            x_train = pd.DataFrame(StandardScaler().fit_transform(x_train), columns=x_train.columns,
-                                   index=x_train.index)
-            x_test = pd.DataFrame(StandardScaler().fit_transform(x_test), columns=x_test.columns, index=x_test.index)
+            # データの標準化 DEPRECATED
+            # x_train = pd.DataFrame(StandardScaler().fit_transform(x_train), columns=x_train.columns,
+            #                        index=x_train.index)
+            # x_test = pd.DataFrame(StandardScaler().fit_transform(x_test), columns=x_test.columns, index=x_test.index)
 
             # モデルの初期化
 
@@ -391,6 +406,12 @@ class BaseFlow(ABC):
             self.send_error(err_msg)
         finally:
             return self
+
+    def __del__(self):
+        logger.info(f"deleting {self.name} {self.model_name} {self._layers} {self.ae_used_data}")
+        keras.backend.clear_session()
+        tf.compat.v1.reset_default_graph()
+        del self
 
 
 if __name__ == '__main__':
