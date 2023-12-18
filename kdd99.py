@@ -125,6 +125,8 @@ if __name__ == "__main__":
         'dropped': True,
         'debug': True,
         'ae_used_data': 'u2r',
+        'standard_scale': True,
+        'ae_standard_scale': True,
         'encoder_param': {
             'layers': [20, 15, 10],
             'epochs': 1,

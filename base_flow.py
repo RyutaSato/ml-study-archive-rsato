@@ -23,9 +23,9 @@ from tensorflow import keras
 import optuna
 from copy import deepcopy
 
-VERSION = '1.4.0'
+VERSION = '1.5.0'
 
-logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
+# logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
 logger.info(f"GPU {tf.config.list_physical_devices('GPU')}")
@@ -87,6 +87,8 @@ class BaseFlow(ABC):
         self.encoder: Optional[keras.Sequential] = None
         self.conf_matrix: Optional[pd.DataFrame] = None
         self.scores = list()
+        self.standard_scale = config.get('standard_scale', False)
+        self.ae_standard_scale = config.get('ae_standard_scale', False)
 
         self.labels: Optional[list[str]] = None
         self.correspondence: Optional[dict[str, int]] = None
@@ -97,7 +99,9 @@ class BaseFlow(ABC):
             'encoder_param': self.encoder_param,
             'model_param': self.model_param,
             'result': dict(),
-            'importances': dict()
+            'importances': dict(),
+            'standard_scale': self.standard_scale,
+            'ae_standard_scale': self.ae_standard_scale,
         }
         assert type(self.config) is dict, f"config is {type(self.config)}"
         assert type(self.random_seed) is int, f"random_seed is {type(self.random_seed)}"
@@ -154,7 +158,9 @@ class BaseFlow(ABC):
     def preprocess(self) -> None:
         self.current_task = 'preprocess'
         assert self.x is not None, "x is None"
-        self.x = pd.DataFrame(MinMaxScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
+        #
+        # self.x = pd.DataFrame(MinMaxScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
+        # self.x = pd.DataFrame(StandardScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
 
     def train_and_predict(self) -> None:
         """
@@ -185,9 +191,17 @@ class BaseFlow(ABC):
         _generator = k_fold.split(self.x, self.y)
         for fold, (train_idx, test_idx) in enumerate(_generator):
             self.current_task = f"train phase: {fold + 1}/{self.splits}"
+
             # データを分割
             x_train, y_train = self.x.iloc[train_idx], self.y.iloc[train_idx]
             x_test, y_test = self.x.iloc[test_idx], self.y.iloc[test_idx]
+
+            # データの標準化
+            if self.standard_scale:
+                scaler = StandardScaler()
+                x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns,
+                                       index=x_train.index)
+                x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)
 
             if self._layers:
                 # エンコーダー生成
@@ -199,6 +213,7 @@ class BaseFlow(ABC):
 
                 # モデルのファイル名
                 option_str = "_d" if hasattr(self, "dropped") and self.dropped else ""
+                option_str += "_ss" if self.ae_standard_scale else ""
                 file_name = f"{self.name}{option_str}_{self._layers}_{self.ae_used_data}_{fold + 1}_{VERSION}.h5"
 
                 # 保存済みモデルがある場合
@@ -223,15 +238,20 @@ class BaseFlow(ABC):
                     index=x_test.index
                 )
                 del _encoder
+
+                # エンコーダーの出力を標準化
+                if self.ae_standard_scale:
+                    scaler = StandardScaler()
+                    x_train_new_features = pd.DataFrame(scaler.fit_transform(x_train_new_features),
+                                                        columns=x_train_new_features.columns,
+                                                        index=x_train_new_features.index)
+                    x_test_new_features = pd.DataFrame(scaler.transform(x_test_new_features),
+                                                       columns=x_test_new_features.columns,
+                                                       index=x_test_new_features.index)
+
                 # データを結合
                 x_train = pd.concat([x_train, x_train_new_features], axis=1)
                 x_test = pd.concat([x_test, x_test_new_features], axis=1)
-
-            # データの標準化 DEPRECATED
-            # x_train = pd.DataFrame(StandardScaler().fit_transform(x_train), columns=x_train.columns,
-            #                        index=x_train.index)
-            # x_test = pd.DataFrame(StandardScaler().fit_transform(x_test), columns=x_test.columns, index=x_test.index)
-
             # モデルの初期化
 
             # LightGBMの場合（optunaを使用）

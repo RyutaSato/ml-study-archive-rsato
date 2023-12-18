@@ -6,14 +6,16 @@ default:
     activation: relu
   splits: 4
   random_seed: 2023
+  standard_scale: true
+  ae_standard_scale: false
 
 layers:
-  - [ ]
+  #  - [ ]
   - [ 20, 10, 5 ]
-  - [ 20, 15, 10, 5 ]
+  #  - [ 20, 15, 10, 5 ]
   - [ 20, 15, 10 ]
 
-models: [ lgb, lr, svm, rf ] # lr, lgb, svm, rf, mp, lgb_optuna
+models: [ lr, lgb, svm, rf, mp, lgb_optuna ] # lr, lgb, svm, rf, mp, lgb_optuna
 datasets:
   - name: kdd99
     ae_used_data: all # normal, all, u2r
