@@ -23,7 +23,7 @@ from tensorflow import keras
 import optuna
 from copy import deepcopy
 
-VERSION = '1.5.0'
+VERSION = '1.5.1'
 
 # logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
@@ -162,7 +162,120 @@ class BaseFlow(ABC):
         # self.x = pd.DataFrame(MinMaxScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
         # self.x = pd.DataFrame(StandardScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
 
-    def train_and_predict(self) -> None:
+    def _k_fold_preprocess(self, x_train, y_train, x_test, y_test) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        データの前処理を行います。
+
+        このメソッドは、データの前処理を行います。
+        データの前処理は、以下の手順で行われます。
+        1. データの標準化
+        2. エンコーダーの生成
+        3. 新たな特徴量の生成
+
+        Args:
+            x_train (pd.DataFrame): 訓練データの入力データ。
+            y_train (pd.Series): 訓練データの目的変数。
+            x_test (pd.DataFrame): テストデータの入力データ。
+            y_test (pd.Series): テストデータの目的変数。
+
+        Returns:
+            tuple[pd.DataFrame, pd.DataFrame]: 前処理済みの入力データ。
+
+        """
+        # データの標準化
+        if self.standard_scale:
+            scaler = StandardScaler()
+            x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns,
+                                   index=x_train.index)
+            x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)
+        return x_train, x_test
+
+    def _k_fold_generate_new_features(self, x_train, y_train, x_test, y_test) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        新たな特徴量を生成します。
+
+        このメソッドは、新たな特徴量を生成します。
+        新たな特徴量の生成は、以下の手順で行われます。
+        1. エンコーダーの生成
+        2. 新たな特徴量の生成
+
+        Args:
+            x_train (pd.DataFrame): 訓練データの入力データ。
+            y_train (pd.Series): 訓練データの目的変数。
+            x_test (pd.DataFrame): テストデータの入力データ。
+            y_test (pd.Series): テストデータの目的変数。
+
+        Returns:
+            tuple[pd.DataFrame, pd.DataFrame]: 新たな特徴量。
+
+        """
+        # エンコーダー生成
+        # エンコーダーの学習に使用するデータを選択
+        if self.ae_used_data == 'all':
+            x_train_ae = x_train
+        else:
+            x_train_ae = x_train[y_train == self.correspondence[self.ae_used_data]]
+
+        # モデルのファイル名
+        option_str = "_d" if hasattr(self, "dropped") and self.dropped else ""
+        option_str += "_ss" if self.ae_standard_scale else ""
+        file_name = f"{self.name}{option_str}_{self._layers}_{self.ae_used_data}_{VERSION}.h5"
+
+        # 保存済みモデルがある場合
+        if os.path.exists(ROOT_DIR + "/models/" + file_name):
+            # 保存しているモデルの読み込み
+            _encoder = keras.models.load_model(ROOT_DIR + "/models/" + file_name)
+        # 保存済みモデルがない場合
+        else:
+            self.current_task = f"train phase: encoder generating"
+            _encoder = generate_encoder(x_train_ae, **self.encoder_param)
+            # モデルの保存
+            _encoder.save(ROOT_DIR + "/models/" + file_name)
+        # 新たな特徴量を生成
+        x_train_new_features = pd.DataFrame(
+            _encoder.predict(x_train, verbose=0),  # type: ignore
+            columns=[f"ae_{idx}" for idx in range(self._layers[-1])],
+            index=x_train.index
+        )
+        x_test_new_features = pd.DataFrame(
+            _encoder.predict(x_test, verbose=0),  # type: ignore
+            columns=[f"ae_{idx}" for idx in range(self._layers[-1])],
+            index=x_test.index
+        )
+        return x_train_new_features, x_test_new_features
+
+    def _k_fold_hyperparameter_tuning(self, x_train, y_train, x_test, y_test, fold) -> None:
+        """
+        ハイパーパラメータのチューニングを行います。
+        現在は、LightGBMのみ対応しています。
+
+        このメソッドは、ハイパーパラメータのチューニングを行います。
+        ハイパーパラメータのチューニングは、以下の手順で行われます。
+        1. ハイパーパラメータのチューニング
+
+        Args:
+            x_train (pd.DataFrame): 訓練データの入力データ。
+            y_train (pd.Series): 訓練データの目的変数。
+            x_test (pd.DataFrame): テストデータの入力データ。
+            y_test (pd.Series): テストデータの目的変数。
+            fold (int): 現在の分割数。
+
+        Returns:
+            None
+
+        """
+
+        # LightGBMの場合（optunaを使用）
+        if self.model_name == 'LightGBM+optuna':
+            self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
+            self.config['model_param'] = self.model_param
+            try:
+                with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
+                    json.dump(self.model_param, f, indent=4)
+            except Exception:
+                logger.error(f"cannot save best params in {fold + 1}_{self.model_name}")
+
+    def k_fold_cross_validation(self) -> None:
         """
         モデルの訓練と予測を行います。
 
@@ -196,74 +309,21 @@ class BaseFlow(ABC):
             x_train, y_train = self.x.iloc[train_idx], self.y.iloc[train_idx]
             x_test, y_test = self.x.iloc[test_idx], self.y.iloc[test_idx]
 
-            # データの標準化
-            if self.standard_scale:
-                scaler = StandardScaler()
-                x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns,
-                                       index=x_train.index)
-                x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)
+            # データの前処理
+            x_train, x_test = self._k_fold_preprocess(x_train, y_train, x_test, y_test)
 
-            if self._layers:
-                # エンコーダー生成
-                # エンコーダーの学習に使用するデータを選択
-                if self.ae_used_data == 'all':
-                    x_train_ae = x_train
-                else:
-                    x_train_ae = x_train[y_train == self.correspondence[self.ae_used_data]]
+            # 新たな特徴量の生成
+            x_train_new_features, x_test_new_features = self._k_fold_generate_new_features(x_train, y_train, x_test,
+                                                                                           y_test)
 
-                # モデルのファイル名
-                option_str = "_d" if hasattr(self, "dropped") and self.dropped else ""
-                option_str += "_ss" if self.ae_standard_scale else ""
-                file_name = f"{self.name}{option_str}_{self._layers}_{self.ae_used_data}_{fold + 1}_{VERSION}.h5"
+            # データを結合
+            x_train = pd.concat([x_train, x_train_new_features], axis=1)
+            x_test = pd.concat([x_test, x_test_new_features], axis=1)
 
-                # 保存済みモデルがある場合
-                if os.path.exists(ROOT_DIR + "/models/" + file_name):
-                    # 保存しているモデルの読み込み
-                    _encoder = keras.models.load_model(ROOT_DIR + "/models/" + file_name)
-                # 保存済みモデルがない場合
-                else:
-                    self.current_task = f"train phase: {fold + 1}/{self.splits} encoder generating"
-                    _encoder = generate_encoder(x_train_ae, **self.encoder_param)
-                    # モデルの保存
-                    _encoder.save(ROOT_DIR + "/models/" + file_name)
-                # 新たな特徴量を生成
-                x_train_new_features = pd.DataFrame(
-                    _encoder.predict(x_train, verbose=0),  # type: ignore
-                    columns=[f"ae_{idx}" for idx in range(self._layers[-1])],
-                    index=x_train.index
-                )
-                x_test_new_features = pd.DataFrame(
-                    _encoder.predict(x_test, verbose=0),  # type: ignore
-                    columns=[f"ae_{idx}" for idx in range(self._layers[-1])],
-                    index=x_test.index
-                )
-                del _encoder
+            # ハイパーパラメータのチューニング
+            self._k_fold_hyperparameter_tuning(x_train, y_train, x_test, y_test, fold)
 
-                # エンコーダーの出力を標準化
-                if self.ae_standard_scale:
-                    scaler = StandardScaler()
-                    x_train_new_features = pd.DataFrame(scaler.fit_transform(x_train_new_features),
-                                                        columns=x_train_new_features.columns,
-                                                        index=x_train_new_features.index)
-                    x_test_new_features = pd.DataFrame(scaler.transform(x_test_new_features),
-                                                       columns=x_test_new_features.columns,
-                                                       index=x_test_new_features.index)
-
-                # データを結合
-                x_train = pd.concat([x_train, x_train_new_features], axis=1)
-                x_test = pd.concat([x_test, x_test_new_features], axis=1)
             # モデルの初期化
-
-            # LightGBMの場合（optunaを使用）
-            if self.model_name == 'LightGBM+optuna':
-                self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
-                self.config['model_param'] = self.model_param
-                try:
-                    with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
-                        json.dump(self.model_param, f, indent=4)
-                except Exception:
-                    logger.error(f"cannot save best params in {fold + 1}_{self.model_name}")
-
             _model = self.Model(**self.model_param)
 
             # モデルを学習
@@ -417,7 +477,7 @@ class BaseFlow(ABC):
         try:
             self.load()
             self.preprocess()
-            self.train_and_predict()
+            self.k_fold_cross_validation()
             self.aggregate()
             logger.info(f'task finished')
         except Exception as e:
