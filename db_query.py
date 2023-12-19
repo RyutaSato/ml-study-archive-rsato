@@ -19,7 +19,7 @@ assert _db is not None, "db is None"
 _collection = _db.get_collection('results')
 assert _collection is not None, "collection is None"
 
-versions = ["1.0.0", "1.1.0", "1.2.0", "1.2.1", "1.2.2", "1.2.3", "1.2.4", "1.2.5", "1.3.0", "1.3.1", "1.4.0"]
+versions = ["1.0.0", "1.1.0", "1.2.0", "1.2.1", "1.2.2", "1.2.3", "1.2.4", "1.2.5", "1.3.0", "1.3.1", "1.4.0", "1.5.0"]
 LATEST = versions[-1]  # 現在の最新バージョン
 DATASET = "dataset.name"
 MODEL = "model_name"
