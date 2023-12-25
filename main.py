@@ -16,19 +16,19 @@ def main():
         for model, dataset, layers \
                 in product(cfg['models'], cfg['datasets'], cfg['layers']):
             print(dataset, model, layers)
-            # params = cfg['default'].copy()
-            # params['encoder_param']['layers'] = layers
-            # Flow = flows[dataset['name']]
-            # for k, v in dataset.items():
-            #     if k == 'name':
-            #         pass
-            #     else:
-            #         params[k] = v
-            #
-            # runner = runners[model]
-            #
-            # future = runner(params, executor, Flow)
-            # future.add_done_callback(clean_up)
+            params = cfg['default'].copy()
+            params['encoder_param']['layers'] = layers
+            Flow = flows[dataset['name']]
+            for k, v in dataset.items():
+                if k == 'name':
+                    pass
+                else:
+                    params[k] = v
+            
+            runner = runners[model]
+            
+            future = runner(params, executor, Flow)
+            future.add_done_callback(clean_up)
 
 
 def clean_up(return_value):

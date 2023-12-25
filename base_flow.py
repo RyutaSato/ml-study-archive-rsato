@@ -292,7 +292,7 @@ class BaseFlow(ABC):
             AssertionError: 必要なデータがNoneの場合に発生します。
 
         """
-        self.current_task = 'train and predict'
+        self.current_task = 'k fold cross validaton'
         self.start_time: dt = dt.now(tz=timezone(timedelta(hours=9)))
         assert self.x is not None, "x is None"
         assert self.y is not None, "y is None"
