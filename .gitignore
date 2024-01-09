@@ -9,3 +9,5 @@
 main.ipynb
 thesis/main.*
 .log
+figures/sample-figure.pdf
+visualize_iblearn.ipynb
