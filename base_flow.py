@@ -409,7 +409,7 @@ class BaseFlow(ABC):
 
     def _get_default_params(self, trial) -> dict:
         if self.model_name == 'LogisticRegression+optuna':
-            return dict( 
+            return dict(
                 C = trial.suggest_loguniform('C', 0.001, 100),
                 solver = trial.suggest_categorical('solver', ['lbfgs', 'sag']),
                 multi_class = trial.suggest_categorical('multi_class', ['ovr', 'multinomial']),
@@ -490,7 +490,7 @@ class BaseFlow(ABC):
 
         # Optunaでハイパーパラメータの最適化を行う
         study = optuna.create_study(direction='maximize')
-        study.optimize(objective, n_trials=3)
+        study.optimize(objective, n_trials=100)
 
         # 最適なハイパーパラメータの表示
         best_params = study.best_params
