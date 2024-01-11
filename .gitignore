@@ -11,3 +11,5 @@ thesis/main.*
 .log
 figures/sample-figure.pdf
 visualize_iblearn.ipynb
+main.yml
+main.tex
