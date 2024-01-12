@@ -6,7 +6,6 @@ Supported BaseFlow: 1.4.0
 """
 from concurrent.futures import ProcessPoolExecutor, as_completed, Future
 from itertools import product
-from tkinter import Y
 
 from _main import flows, runners, load_config
 
