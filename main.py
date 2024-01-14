@@ -1,38 +1,51 @@
 """全ての実験プログラムのエントリポイント
 このプログラムは、原則変更禁止。
-非破壊的変更を加える際は、パッチバージョンを上げること。
+非破壊的変更を加える際は、メジャーバージョンを上げること。
 
-Supported BaseFlow: 1.4.0
+Supported BaseFlow: 2.0.0
 """
-from concurrent.futures import ProcessPoolExecutor, as_completed, Future
-from itertools import product
+import json
+from multiprocessing import Process, Queue, Lock
+from os import cpu_count
 
-from _main import flows, runners, load_config
+from schemas import Params
 
+import uvicorn
+from fastapi import FastAPI
+from _main import worker
 
-def main():
-    cfg = load_config()
-    with ProcessPoolExecutor(max_workers=5) as executor:
-        for model, dataset, layers \
-                in product(cfg['models'], cfg['datasets'], cfg['layers']):
-            params = cfg['default'].copy()
-            params['encoder_param']['layers'] = layers
-            Flow = flows[dataset['name']]
-            for k, v in dataset.items():
-                if k == 'name':
-                    pass
-                else:
-                    params[k] = v
-
-            runner = runners[model]
-
-            future = runner(params, executor, Flow)
-            future.add_done_callback(clean_up)
+app = FastAPI()
+queue = Queue()
+lock = Lock()
+processes = []
 
 
-def clean_up(return_value):
-    del return_value
+@app.on_event("startup")
+def startup_event():
+    for _ in range(cpu_count() - 1):
+        p = Process(target=worker, args=(queue, lock))
+        p.start()
+        processes.append(p)
+
+
+@app.post("/in_queue")
+def run(params: Params):
+    queue.put(params)
+    return {"message": "ok"}
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    not_finished = []
+    while not queue.empty():
+        not_finished.append(queue.get().json())
+    with open("results/not_finished.json", "a") as f:
+        json.dump(not_finished, f, indent=4)
+    for _ in processes:
+        queue.put(None)
+    for p in processes:
+        p.join()
 
 
 if __name__ == '__main__':
-    main()
+    uvicorn.run(app, host="localhost", port=8080)

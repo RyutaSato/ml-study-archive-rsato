@@ -55,7 +55,14 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
     return _model
 
 
-def insert_results(outputs: dict) -> None:
+#
+# def insert_str(data: str):
+#     client = MongoClient(uri, server_api=ServerApi('1'))
+#     collection = client.get_database('ml').get_collection('results_v.2.0.0')
+#     collection.insert_one()
+
+
+def insert_results(outputs) -> None:
     # Create a new client and connect to the server
     client = MongoClient(uri, server_api=ServerApi('1'))
 
@@ -63,7 +70,7 @@ def insert_results(outputs: dict) -> None:
     client.admin.command('ping')
     db = client.get_database('ml')
     assert db is not None, "db is None"
-    collection = db.get_collection('results')
+    collection = db.get_collection('results_v.2.0.0')
     assert collection is not None, "collection is None"
 
     _result = collection.insert_one(outputs)
