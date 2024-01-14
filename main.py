@@ -39,8 +39,19 @@ def shutdown_event():
     not_finished = []
     while not queue.empty():
         not_finished.append(queue.get().json())
-    with open("results/not_finished.json", "a") as f:
-        json.dump(not_finished, f, indent=4)
+    # Read existing data from the file
+    try:
+        with open("results/not_finished.json", "r") as f:
+            existing_data = json.load(f)
+    except FileNotFoundError:
+        existing_data = []
+    # Add new data to the existing list
+    existing_data.extend(not_finished)
+
+    # Write the updated list back to the file
+    with open("results/not_finished.json", "w") as f:
+        json.dump(existing_data, f, indent=4)
+
     for _ in processes:
         queue.put(None)
     for p in processes:
