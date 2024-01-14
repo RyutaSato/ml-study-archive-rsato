@@ -55,13 +55,6 @@ def generate_encoder(x: pd.DataFrame, **config) -> keras.Sequential:
     return _model
 
 
-#
-# def insert_str(data: str):
-#     client = MongoClient(uri, server_api=ServerApi('1'))
-#     collection = client.get_database('ml').get_collection('results_v.2.0.0')
-#     collection.insert_one()
-
-
 def insert_results(outputs) -> None:
     # Create a new client and connect to the server
     client = MongoClient(uri, server_api=ServerApi('1'))
@@ -103,16 +96,6 @@ def fit_and_predict(_x,
                     n_splits,
                     random_seed,
                     **params) -> list[dict]:
-    """
-    Args:
-        _x: Input data.
-        _y: Target data.
-        _Model: Model to use for prediction.
-        n_splits: Number of folds to use for cross-validation.
-        random_seed: Random state to use for cross-validation.
-        **params: Parameters for prediction.
-
-    """
     assert type(n_splits) is int
     assert type(random_seed) is int
 

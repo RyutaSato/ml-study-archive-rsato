@@ -39,20 +39,22 @@ def worker(_que: Queue, _lock: Lock):
         except Exception as e:
             with open("results/not_finished.json", "a") as f:
                 json.dump(params.json(), f, indent=4)
+        del flow, _Flow, _Model, params
 
 
-runners = {
-    'lr': _exe.lr_executor,
-    'lgb': _exe.lgb_executor,
-    'svm': _exe.svm_executor,
-    'rf': _exe.rf_executor,
-    'mp': _exe.mp_executor,
-    'lr_optuna': _exe.lr_optuna_executor,
-    'lgb_optuna': _exe.lgb_optuna_executor,
-    'svm_optuna': _exe.svm_optuna_executor,
-    'rf_optuna': _exe.rf_optuna_executor,
-    'mp_optuna': _exe.mp_optuna_executor,
-}
+# DEPRECATED
+# runners = {
+#     'lr': _exe.lr_executor,
+#     'lgb': _exe.lgb_executor,
+#     'svm': _exe.svm_executor,
+#     'rf': _exe.rf_executor,
+#     'mp': _exe.mp_executor,
+#     'lr_optuna': _exe.lr_optuna_executor,
+#     'lgb_optuna': _exe.lgb_optuna_executor,
+#     'svm_optuna': _exe.svm_optuna_executor,
+#     'rf_optuna': _exe.rf_optuna_executor,
+#     'mp_optuna': _exe.mp_optuna_executor,
+# }
 
 flows = {
     'creditcardfraud': CreditCardFraudFlow,

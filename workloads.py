@@ -6,7 +6,7 @@ import requests
 import yaml
 import base64
 
-from schemas import Params, Environment, Dataset, Accuracy, Result, MLModel, AEModel, WorkLoad
+from schemas import Params, Environment, Dataset, Result, MLModel, AEModel, WorkLoad
 
 URL = 'http://localhost:8080'
 
@@ -30,6 +30,12 @@ def main():
             params = Params(**json.loads(params_str))
             r = requests.post(URL + '/in_queue', data=params.json())
             print(r.json())
+
+    # ファイルを空にする
+    with open('results/not_finished.json', 'w') as f:
+        json.dump([], f, indent=4)
+
+    # すべての実験を実行する
 
     workloads: WorkLoad = load_workloads()
     itr = product(
