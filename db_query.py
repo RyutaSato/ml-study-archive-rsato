@@ -16,13 +16,15 @@ _client = MongoClient(_uri)
 _client.admin.command('ping')
 _db = _client.get_database('ml')
 assert _db is not None, "db is None"
-_collection = _db.get_collection('results')
+_collection = _db.get_collection('results_v.2.0.0') # version<2.0.0 -> `results`
 assert _collection is not None, "collection is None"
 
-versions = ["1.0.0", "1.1.0", "1.2.0", "1.2.1", "1.2.2", "1.2.3", "1.2.4", "1.2.5", "1.3.0", "1.3.1", "1.4.0", "1.5.0", "1.5.1"]
+versions = ["1.0.0", "1.1.0", "1.2.0", "1.2.1", "1.2.2", "1.2.3", "1.2.4", "1.2.5", "1.3.0", "1.3.1", "1.4.0", "1.5.0", "1.5.1", "2.0.0"]
+
+datasets = ['kdd99', 'kdd99_dropped', 'creditcardfraud', 'ecoli', 'optical_digits', 'satimage', 'pen_digits', 'abalone', 'sick_euthyroid', 'spectrometer', 'car_eval_34', 'isolet', 'us_crime', 'yeast_ml8', 'scene', 'libras_move', 'thyroid_sick', 'coil_2000', 'arrhythmia', 'solar_flare_m0', 'oil', 'car_eval_4', 'wine_quality', 'letter_img', 'yeast_me2', 'webpage', 'ozone_level', 'mammography', 'protein_homo', 'abalone_19']
 LATEST = versions[-1]  # 現在の最新バージョン
 DATASET = "dataset.name"
-MODEL = "model_name"
+MODEL = "model.name" # version<2.0.0 -> `model_name`
 
 
 
