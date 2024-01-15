@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 
 from schemas import Params, MLModel, Accuracy
 
-load_dotenv()
 import warnings
 import tensorflow as tf
 import numpy as np
@@ -20,6 +19,7 @@ from sklearn.metrics import classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.preprocessing import StandardScaler
 
+load_dotenv()
 # from lightgbm import log_evaluation TODO
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -402,19 +402,19 @@ class BaseFlow(ABC):
             })
 
     def _get_default_params(self, trial) -> dict:
-        if self.model.name == 'LogisticRegression':
+        if self.model.name == 'lr':
             return dict(
                 C=trial.suggest_loguniform('C', 0.001, 100),
                 solver=trial.suggest_categorical('solver', ['lbfgs', 'sag']),
                 multi_class=trial.suggest_categorical('multi_class', ['ovr', 'multinomial']),
             )
-        elif self.model.name == 'SVM':
+        elif self.model.name == 'svm':
             return dict(
                 C=trial.suggest_loguniform('C', 0.001, 100),
                 kernel=trial.suggest_categorical('kernel', ['linear', 'rbf', 'poly', 'sigmoid']),
                 gamma=trial.suggest_categorical('gamma', ['scale', 'auto']),
             )
-        elif self.model.name == 'RandomForest':
+        elif self.model.name == 'rf':
             return dict(
                 n_estimators=trial.suggest_int('n_estimators', 10, 1000),
                 max_depth=trial.suggest_int('max_depth', 1, 100),
@@ -422,7 +422,7 @@ class BaseFlow(ABC):
                 min_samples_leaf=trial.suggest_int('min_samples_leaf', 1, 100),
                 max_features=trial.suggest_categorical('max_features', ['sqrt', 'log2']),
             )
-        elif self.model.name == 'MultiPerceptron':
+        elif self.model.name == 'mp':
             return dict(
                 hidden_layer_sizes=trial.suggest_categorical('hidden_layer_sizes', [(15, 10, 5), (10, 5), (5,)]),
                 activation=trial.suggest_categorical('activation', ['identity', 'logistic', 'tanh', 'relu']),
@@ -430,7 +430,7 @@ class BaseFlow(ABC):
                 alpha=trial.suggest_loguniform('alpha', 0.0001, 1),
                 learning_rate=trial.suggest_categorical('learning_rate', ['constant', 'invscaling', 'adaptive']),
             )
-        elif self.model.name == 'LightGBM':
+        elif self.model.name == 'lgb':
             assert type(self.y) is pd.Series, f"y is {type(self.y)}"
             num_class = self.y.nunique()
             if num_class == 2:
