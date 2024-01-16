@@ -346,27 +346,6 @@ class BaseFlow(ABC):
         self.result.minority = _aggregate_accuracy(str(self.correspondence['minority']))
         self.result.macro = _aggregate_accuracy('macro avg')
 
-        # for sl in s_labels:
-        #     self.output['result'][s_labels[sl]] = dict()
-        #     if not hasattr(self.scores[0][sl], 'keys'):
-        #         continue
-        #     for k2 in ['majority', 'minority', 'macro avg', 'support']:
-        #         if k2 == 'support':
-        #             self.output['result'][s_labels[sl]][k2] = int(
-        #                 np.sum([self.scores[i][sl][k2] for i in range(self.splits)]))
-        #         else:
-        #             self.output['result'][s_labels[sl]][k2] = np.mean(
-        #                 [self.scores[i][sl][k2] for i in range(self.splits)]).round(4)
-
-        # # 混同行列の集計
-        # confusion_dict = self.conf_matrix.T.rename(
-        #     columns={idx: val for idx, val in enumerate(self.labels)},
-        #     index={idx: val for idx, val in enumerate(self.labels)}
-        # ).to_dict()
-        # for true_label, pred_labels in confusion_dict.items():
-        #     for pred_label, value in pred_labels.items():
-        #         self.output['result'][true_label]["pred_" + pred_label] = value
-
         # 特徴量の数を出力に追加
         self.dataset.total_feature_num = self.total_feature_num
         self.dataset.default_feature_num = self.x.shape[1]
