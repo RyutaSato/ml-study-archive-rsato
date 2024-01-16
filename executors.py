@@ -14,20 +14,11 @@ def _optuna_executor(Model, model_name: str, default_params: dict, executor: Exe
     future = executor.submit(flow.run)
     return future
 
-
-lr_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(LogisticRegression,
-                                                                             "LogisticRegression+optuna",
-                                                                             default_params, executor, Flow)
-svm_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(SVC, "SVC+optuna", default_params,
-                                                                              executor, Flow)
-rf_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(RandomForestClassifier,
-                                                                             "RandomForest+optuna", default_params,
-                                                                             executor, Flow)
-mp_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(MLPClassifier, "MultiPerceptron+optuna",
-                                                                             default_params, executor, Flow)
-lgb_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(LGBMClassifier, "LightGBM+optuna",
-                                                                              default_params, executor, Flow)
-
+lr_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(LogisticRegression, "LogisticRegression+optuna", default_params, executor, Flow)
+svm_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(SVC, "SVM+optuna", default_params, executor, Flow)
+rf_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(RandomForestClassifier, "RandomForest+optuna", default_params, executor, Flow)
+mp_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(MLPClassifier, "MultiPerceptron+optuna", default_params, executor, Flow)
+lgb_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(LGBMClassifier, "LightGBM+optuna", default_params, executor, Flow)
 
 def lr_executor(default_params, executor: Executor, Flow) -> Future:
     params = default_params.copy()
