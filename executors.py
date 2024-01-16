@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 
+
 def _optuna_executor(Model, model_name: str, default_params: dict, executor: Executor, Flow) -> Future:
     params = default_params.copy()
     params['model_param'] = {}
@@ -19,17 +20,13 @@ rf_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(Ran
 mp_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(MLPClassifier, "MultiPerceptron+optuna", default_params, executor, Flow)
 lgb_optuna_executor = lambda default_params, executor, Flow: _optuna_executor(LGBMClassifier, "LightGBM+optuna", default_params, executor, Flow)
 
-
 def lr_executor(default_params, executor: Executor, Flow) -> Future:
     params = default_params.copy()
     params['model_param'] = dict(solver='lbfgs',
                                  max_iter=100,
                                  penalty='l2',
-                                 dual=False,
                                  tol=1e-4,
-                                 C=1.0,
-                                 fit_intercept=True,
-                                 intercept_scaling=1, )
+                                 C=1.0, )
     params['model_name'] = "LogisticRegression"
     flow = Flow(LogisticRegression, **params)
     future = executor.submit(flow.run)
@@ -77,7 +74,6 @@ def lgb_optuna_executor(default_params, executor: Executor, Flow) -> Future:
         Future: 実行のFutureオブジェクト。
     """
     return _optuna_executor(LGBMClassifier, "LightGBM+optuna", default_params, executor, Flow)
-
 
 
 def svm_executor(default_params, executor: Executor, Flow) -> Future:
@@ -167,5 +163,3 @@ def mp_executor(default_params, executor: Executor, Flow) -> Future:
     flow = Flow(MLPClassifier, **params)
     future = executor.submit(flow.run)
     return future
-
-

@@ -1,14 +1,12 @@
-from tabnanny import check
-from unittest.mock import Base
-from lightgbm import LGBMClassifier
+from multiprocessing import Queue
+from multiprocessing.synchronize import Lock
+
 from loguru import logger
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
 from base_flow import BaseFlow, ROOT_DIR
+from schemas import Params
 
 # 除外する特徴量のリスト
 ignore_names = [
@@ -25,46 +23,22 @@ class KDD99Flow(BaseFlow):
     KDD'99データセットを用いたモデル
     Args:
         model: モデルのクラス
-        use_full: データセットの全データを使うかどうか
-        dropped: 除外する特徴量のリスト
-    Keys:
-        - use_full: データセットの全データを使うかどうか
-        - dropped: 除外する特徴量のリスト
-        - autoencoder: オートエンコーダーのパラメータ
-        - model: モデルのパラメータ
-        - splits: データセットの分割数
-        - dataset: データセットの情報
-        - model_name: モデルの名前
-        - random_seed: ランダムシード
-        - ae_used_data: オートエンコーダーに使うデータの種類
-
-
 
     """
 
-    def __init__(
-            self,
-            Model,
-            **config) -> None:
-        super().__init__(**config)
-        self.use_full: bool = config['use_full']
-        self.dropped = config['dropped']
-        self.Model = Model
-        self.labels = ['normal', 'dos', 'probe', 'r2l', 'u2r']
+    def __init__(self, model, gpu_lock: Lock, _params: Params) -> None:
+        super().__init__(model, gpu_lock, _params)
+        if _params.dataset.name == 'kdd99_dropped':
+            self.dropped = True
+        else:
+            self.dropped = False
+        self.Model = model
+        # self.labels = ['normal', 'dos', 'probe', 'r2l', 'u2r']
+        # alias
+        self.labels = ['majority', 'dos', 'probe', 'r2l', 'minority']
         self.correspondence = {label: idx for idx, label in enumerate(self.labels)}
         self.conf_matrix = pd.DataFrame(np.zeros((len(self.labels), len(self.labels)), dtype=np.int32),
                                         dtype=pd.Int32Dtype)
-
-        self.output['dataset'] = {
-            'name': self.name,
-            'use_full': self.use_full,
-            'dropped': self.dropped,
-            'ae_used_data': self.ae_used_data,
-        }
-
-    @property
-    def name(self) -> str:
-        return 'kdd99'
 
     def load(self) -> None:
         self.current_task = 'load'
@@ -80,20 +54,26 @@ class KDD99Flow(BaseFlow):
         # 　正解ラベルを追加
         names.append("true_label")
 
-        # KDD'99 クラスラベルデータの読み込み
-        with open(ROOT_DIR + "/datasets/training_attack_types", "r") as f:
-            lines = f.read().split("\n")
-            classes = {'normal': self.correspondence['normal']}
-            for line in lines:
-                if len(line) == 0:
-                    continue
-                k, v = tuple(line.split(" "))
-                classes[k] = self.correspondence[v]
+        # 各カテゴリに属する攻撃タイプのリスト
+        dos_attacks = ['back', 'land', 'neptune', 'pod', 'smurf', 'teardrop']
+        probe_attacks = ['ipsweep', 'nmap', 'portsweep', 'satan']
+        r2l_attacks = ['ftp_write', 'guess_passwd', 'imap', 'multihop', 'phf', 'spy', 'warezclient', 'warezmaster']
+        u2r_attacks = ['buffer_overflow', 'loadmodule', 'perl', 'rootkit']
+        # 辞書の初期化
+        kdd99_mapping = {'normal': 0}
+
+        # 各カテゴリの攻撃タイプに対応するラベルを辞書に追加
+        for attack in dos_attacks:
+            kdd99_mapping[attack] = 1
+        for attack in probe_attacks:
+            kdd99_mapping[attack] = 2
+        for attack in r2l_attacks:
+            kdd99_mapping[attack] = 3
+        for attack in u2r_attacks:
+            kdd99_mapping[attack] = 4
+
         # KDD'99 データの読み込み
-        if self.use_full:
-            df = pd.read_csv(ROOT_DIR + "/datasets/kddcup.data", names=names, index_col=False)
-        else:
-            df = pd.read_csv(ROOT_DIR + "/datasets/kddcup.data_10_percent", names=names, index_col=False)
+        df = pd.read_csv(ROOT_DIR + "/datasets/kddcup.data_10_percent", names=names, index_col=False)
 
         # カテゴリー特徴量を削除
         data_x: pd.DataFrame = df.copy().drop(columns=category_names, axis=1)
@@ -105,14 +85,8 @@ class KDD99Flow(BaseFlow):
         # ラベルデータを切り分ける
         data_y = data_x.pop("true_label").map(lambda x: x.replace('.', ''))
 
-        # namesを更新
-        names = data_x.columns
-
-        # # 正規化
-        # data_x = pd.DataFrame(StandardScaler().fit_transform(data_x), columns=names)
-
         # ラベルを変換
-        data_y = data_y.map(lambda x: classes[x])
+        data_y = data_y.map(lambda x: kdd99_mapping[x])
 
         self.x = data_x
         self.y = data_y
@@ -120,34 +94,29 @@ class KDD99Flow(BaseFlow):
 
 if __name__ == "__main__":
 
-    params = {
-        'use_full': False,
-        'dropped': True,
-        'debug': True,
-        'ae_used_data': 'u2r',
-        'standard_scale': True,
-        'ae_standard_scale': True,
-        'encoder_param': {
-            'layers': [20, 15, 10],
-            'epochs': 1,
-            'activation': 'relu',
-            'batch_size': 32,
+    params = Params(
+        hash="",
+        dataset={
+            "name": "kdd99_dropped",
+            "standardization": True,
         },
-        'model_param': {
-            # RandomForest
-            'n_estimators': 10,
-            'verbose': 0,
-            'warm_start': False,
-            # 'objective':'multiclass',
-            # 'metric':'multi_logloss',
-            # 'n_estimators':1000,
-            # 'verbosity': -1,
+        model={
+            "name": "RandomForest",
+            "params": {},
+            "optuna": False,
         },
-        'splits': 4,
-        'model_name': 'RandomForest',  # 'RandomForestClassifier', # LogisticRegression, LightGBM
-        'random_seed': 2023,
-    }
-    flow = KDD99Flow(RandomForestClassifier, **params)
+        ae={
+            "layers": [20, 10, 5],
+            "used_class": "all",
+        },
+        env={
+            "version": "2.0.0",
+            "datetime": "2021-05-08T15:00:00",
+            "elapsed_time": "00:00:00",
+        },
+        result={},
+    )
+    flow = KDD99Flow(RandomForestClassifier, params)
     flow.run()
         
     # model.run()

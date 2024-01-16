@@ -1,0 +1,4 @@
+max_worker: 10
+use_gpu: true
+version: 2.0.0
+debug: true
