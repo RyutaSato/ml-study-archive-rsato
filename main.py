@@ -12,10 +12,9 @@ from _main import flows, runners, load_config
 
 def main():
     cfg = load_config()
-    with ProcessPoolExecutor(max_workers=2) as executor:
+    with ProcessPoolExecutor(max_workers=5) as executor:
         for model, dataset, layers \
                 in product(cfg['models'], cfg['datasets'], cfg['layers']):
-            print(dataset, model, layers)
             params = cfg['default'].copy()
             params['encoder_param']['layers'] = layers
             Flow = flows[dataset['name']]
@@ -24,9 +23,9 @@ def main():
                     pass
                 else:
                     params[k] = v
-            
+
             runner = runners[model]
-            
+
             future = runner(params, executor, Flow)
             future.add_done_callback(clean_up)
 

@@ -1,31 +1,40 @@
 default:
-  debug: true
+  debug: false
   encoder_param:
     epochs: 10
     batch_size: 32
     activation: relu
   splits: 4
   random_seed: 2023
-  standard_scale: true
-  ae_standard_scale: true
+  standard_scale: false
+  ae_standard_scale: false
 
 layers:
   - [ ]
-  # - [ 20, 10, 5 ]
-  #  - [ 20, 15, 10, 5 ]
-  # - [ 20, 15, 10 ]
+  - [ 20, 10, 5 ]
+  - [ 20, 15, 10, 5 ]
+  - [ 20, 15, 10 ]
 
-models: [ lgb_optuna ] # lr, lgb, svm, rf, mp, lgb_optuna
+models: [ lr_optuna, lgb_optuna, svm_optuna, rf_optuna, mp_optuna, lgb_optuna ] # lr, lgb, svm, rf, mp, lgb_optuna
 datasets:
   - name: kdd99
     ae_used_data: all # normal, all, u2r
     dropped: true # dropped: true, false
     use_full: false
   # #
-  # - name: kdd99
-  #   ae_used_data: all
-  #   dropped: false
-  #   use_full: false
+  - name: kdd99
+    ae_used_data: all
+    dropped: false
+    use_full: false
+  #  - name: kdd99
+  #    ae_used_data: normal # normal, majority, u2r
+  #    dropped: true # dropped: true, false
+  #    use_full: false
+  #  #
+  #  - name: kdd99
+  #    ae_used_data: normal
+  #    dropped: false
+  #    use_full: false
 
   #  - name: kdd99
   #    ae_used_data: normal
@@ -51,96 +60,95 @@ datasets:
   #    ae_used_data: normal
   #
   #  - name: creditcardfraud
-  #    ae_used_data: anomaly
+  #    ae_used_data: majority
 
-  # - name: creditcardfraud
-  #   ae_used_data: all
+  #  - name: creditcardfraud
+  #    ae_used_data: all
   
   # imbalance: ['ecoli', 'optical_digits', 'satimage', 'pen_digits', 'abalone', 'sick_euthyroid', 'spectrometer',
   # 'car_eval_34', 'isolet', 'us_crime', 'yeast_ml8', 'scene', 'libras_move', 'thyroid_sick', 'coil_2000',
   # 'arrhythmia', 'solar_flare_m0', 'oil', 'car_eval_4', 'wine_quality', 'letter_img', 'yeast_me2', 'webpage',
   # 'ozone_level', 'mammography', 'protein_homo', 'abalone_19']
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: coil_2000
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: arrhythmia
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: solar_flare_m0
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: oil
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: car_eval_4
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: wine_quality
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: letter_img
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: yeast_me2
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: webpage
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: ozone_level
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: mammography
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: protein_homo
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: abalone_19
-  # # --------------------------------
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: ecoli
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: optical_digits
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: satimage
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: pen_digits
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: abalone
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: sick_euthyroid
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: spectrometer
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: car_eval_34
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: isolet
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: us_crime
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: yeast_ml8
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: scene
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: libras_move
-  # - name: imbalance
-  #   ae_used_data: all
-  #   dataset_name: thyroid_sick
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: coil_2000
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: arrhythmia
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: solar_flare_m0
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: oil
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: car_eval_4
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: wine_quality
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: letter_img
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: yeast_me2
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: webpage
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: ozone_level
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: mammography
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: protein_homo
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: abalone_19
+  # --------------------------------
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: ecoli
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: optical_digits
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: satimage
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: pen_digits
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: abalone
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: sick_euthyroid
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: spectrometer
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: car_eval_34
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: isolet
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: us_crime
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: yeast_ml8
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: scene
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: libras_move
+  - name: imbalance
+    ae_used_data: majority
+    dataset_name: thyroid_sick
 
-    
