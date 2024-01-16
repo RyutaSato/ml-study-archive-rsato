@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from datetime import datetime as dt, timezone, timedelta
-import json
 import os
 import traceback
 from typing import Optional
@@ -8,14 +7,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 import warnings
-from lightgbm import LGBMClassifier
 import tensorflow as tf
 import numpy as np
 import pandas as pd
 from loguru import logger
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import StratifiedKFold
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.metrics import classification_report, confusion_matrix, f1_score
+from sklearn.model_selection import StratifiedKFold, train_test_split
+from sklearn.preprocessing import StandardScaler
+from lightgbm import log_evaluation, early_stopping
 
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
@@ -23,7 +22,7 @@ from tensorflow import keras
 import optuna
 from copy import deepcopy
 
-VERSION = '1.5.1'
+VERSION = '1.6.0'
 
 # logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
@@ -185,9 +184,8 @@ class BaseFlow(ABC):
         # データの標準化
         if self.standard_scale:
             scaler = StandardScaler()
-            x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns,
-                                   index=x_train.index)
-            x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)
+            x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns, index=x_train.index)
+            x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index) # type: ignore
         return x_train, x_test
 
     def _k_fold_generate_new_features(self, x_train, y_train, x_test, y_test) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -214,10 +212,11 @@ class BaseFlow(ABC):
         if self.ae_used_data == 'all':
             x_train_ae = x_train
         else:
+            assert type(self.correspondence) is dict
             x_train_ae = x_train[y_train == self.correspondence[self.ae_used_data]]
 
         # モデルのファイル名
-        option_str = "_d" if hasattr(self, "dropped") and self.dropped else ""
+        option_str = "_d" if hasattr(self, "dropped") and self.dropped else "" # type: ignore
         option_str += "_ss" if self.ae_standard_scale else ""
         file_name = f"{self.name}{option_str}_{self._layers}_{self.ae_used_data}_{VERSION}.h5"
 
@@ -244,10 +243,9 @@ class BaseFlow(ABC):
         )
         return x_train_new_features, x_test_new_features
 
-    def _k_fold_hyperparameter_tuning(self, x_train, y_train, x_test, y_test, fold) -> None:
+    def _k_fold_hyperparameter_tuning(self, x_train, y_train) -> None:
         """
         ハイパーパラメータのチューニングを行います。
-        現在は、LightGBMのみ対応しています。
 
         このメソッドは、ハイパーパラメータのチューニングを行います。
         ハイパーパラメータのチューニングは、以下の手順で行われます。
@@ -256,24 +254,16 @@ class BaseFlow(ABC):
         Args:
             x_train (pd.DataFrame): 訓練データの入力データ。
             y_train (pd.Series): 訓練データの目的変数。
-            x_test (pd.DataFrame): テストデータの入力データ。
-            y_test (pd.Series): テストデータの目的変数。
-            fold (int): 現在の分割数。
 
         Returns:
             None
 
         """
 
-        # LightGBMの場合（optunaを使用）
-        if self.model_name == 'LightGBM+optuna':
-            self.model_param = self.lgb_optuna(x_train, y_train, x_test, y_test)
+        _names = self.model_name.split('+')
+        if len(_names) == 2 and _names[1] == 'optuna':
+            self.model_param = self.optuna(x_train, y_train)
             self.config['model_param'] = self.model_param
-            try:
-                with open(ROOT_DIR + f"/logs/best_params_{fold + 1}_{self.model_name}.txt", "w") as f:
-                    json.dump(self.model_param, f, indent=4)
-            except Exception:
-                logger.error(f"cannot save best params in {fold + 1}_{self.model_name}")
 
     def k_fold_cross_validation(self) -> None:
         """
@@ -312,18 +302,19 @@ class BaseFlow(ABC):
             # データの前処理
             x_train, x_test = self._k_fold_preprocess(x_train, y_train, x_test, y_test)
 
-            # 新たな特徴量の生成
-            x_train_new_features, x_test_new_features = self._k_fold_generate_new_features(x_train, y_train, x_test,
-                                                                                           y_test)
+            if self._layers:
+                # 新たな特徴量の生成
+                x_train_new_features, x_test_new_features = self._k_fold_generate_new_features(x_train, y_train, x_test, y_test)
 
-            # データを結合
-            x_train = pd.concat([x_train, x_train_new_features], axis=1)
-            x_test = pd.concat([x_test, x_test_new_features], axis=1)
+                # データを結合
+                x_train = pd.concat([x_train, x_train_new_features], axis=1)
+                x_test = pd.concat([x_test, x_test_new_features], axis=1)
 
             # ハイパーパラメータのチューニング
-            self._k_fold_hyperparameter_tuning(x_train, y_train, x_test, y_test, fold)
+            self._k_fold_hyperparameter_tuning(x_train, y_train)
 
             # モデルの初期化
+            assert type(self.Model) is not None, "Model is None"
             _model = self.Model(**self.model_param)
 
             # モデルを学習
@@ -342,13 +333,8 @@ class BaseFlow(ABC):
                     else:
                         self.output["importances"][k] = int(v)
 
-            self.additional_metrics(x_test, y_test, y_pred, _model)  # DEPRECATED
             self.scores.append(accuracy)
             self.conf_matrix += confusion_matrix(y_test, y_pred, labels=range(len(self.labels)))
-
-    def additional_metrics(self, x_test, y_test, y_pred, _model, *_):
-        # DEPRECATED
-        pass
 
     def aggregate(self) -> None:
         """
@@ -421,47 +407,85 @@ class BaseFlow(ABC):
                 "traceback": traceback.format_exc()
             })
 
-    def lgb_optuna(self, x_train, y_train, x_test, y_test) -> dict:
-        num_class = y_train.nunique()
-        y_train = y_train.astype(int)
-        if num_class == 2:
-            num_class = 1
-            objective_ = 'binary'
-            metrics = 'binary_logloss'
+    def _get_default_params(self, trial) -> dict:
+        if self.model_name == 'LogisticRegression+optuna':
+            return dict(
+                C = trial.suggest_loguniform('C', 0.001, 100),
+                solver = trial.suggest_categorical('solver', ['lbfgs', 'sag']),
+                multi_class = trial.suggest_categorical('multi_class', ['ovr', 'multinomial']),
+            )
+        elif self.model_name == 'SVM+optuna':
+            return dict(
+                C = trial.suggest_loguniform('C', 0.001, 100),
+                kernel = trial.suggest_categorical('kernel', ['linear', 'rbf', 'poly', 'sigmoid']),
+                gamma = trial.suggest_categorical('gamma', ['scale', 'auto']),
+            )
+        elif self.model_name == 'RandomForest+optuna':
+            return dict(
+                n_estimators = trial.suggest_int('n_estimators', 10, 1000),
+                max_depth = trial.suggest_int('max_depth', 1, 100),
+                min_samples_split = trial.suggest_int('min_samples_split', 2, 100),
+                min_samples_leaf = trial.suggest_int('min_samples_leaf', 1, 100),
+                max_features = trial.suggest_categorical('max_features', ['sqrt', 'log2']),
+            )
+        elif self.model_name == 'MultiPerceptron+optuna':
+            return dict(
+                hidden_layer_sizes = trial.suggest_categorical('hidden_layer_sizes', [(15, 10, 5), (10, 5), (5,)]),
+                activation = trial.suggest_categorical('activation', ['identity', 'logistic', 'tanh', 'relu']),
+                solver = trial.suggest_categorical('solver', ['lbfgs', 'sgd', 'adam']),
+                alpha = trial.suggest_loguniform('alpha', 0.0001, 1),
+                learning_rate = trial.suggest_categorical('learning_rate', ['constant', 'invscaling', 'adaptive']),
+            )
+        elif self.model_name == 'LightGBM+optuna':
+            assert type(self.y) is pd.Series, f"y is {type(self.y)}"
+            num_class = self.y.nunique()
+            if num_class == 2:
+                num_class = 1
+                objective_ = 'binary'
+                metrics = 'binary_logloss'
+            else:
+                objective_ = 'multiclass'
+                metrics = 'multi_logloss'
+
+            return dict(
+                objective=objective_,
+                num_class=num_class,
+                metric=metrics,
+                boosting_type='gbdt',
+                num_leaves=trial.suggest_int('num_leaves', 2, 100),
+                learning_rate=trial.suggest_loguniform('learning_rate', 1e-5, 0.1),
+                feature_fraction=trial.suggest_uniform('feature_fraction', 0.4, 1.0),
+                bagging_fraction=trial.suggest_uniform('bagging_fraction', 0.4, 1.0),
+                bagging_freq=trial.suggest_int('bagging_freq', 1, 7),
+                max_depth=trial.suggest_int('max_depth', 3, 20),
+                lambda_l1=trial.suggest_loguniform('lambda_l1', 1e-8, 10.0),
+                lambda_l2=trial.suggest_loguniform('lambda_l2', 1e-8, 10.0),
+                # min_child_samples=trial.suggest_int('min_child_samples', 5, 100),
+                random_state=self.random_seed,
+                verbose=-1,
+            )
         else:
-            objective_ = 'multiclass'
-            metrics = 'multi_logloss'
+            raise ValueError(f"model_name is {self.model_name}. It is not supported.")
+
+    def optuna(self, x_train, y_train) -> dict:
+
+        # 検証とテストに分割
+        x_t, x_v, y_t, y_v = train_test_split(x_train, y_train, test_size=0.25, random_state=self.random_seed, stratify=y_train)
 
         def objective(trial):
-            self.current_task = f'optuna phase {trial.number} / 50'
-            params = {
-                'objective': objective_,
-                'num_class': num_class,
-                'metric': metrics,
-                'boosting_type': 'gbdt',
-                'num_leaves': trial.suggest_int('num_leaves', 10, 100),
-                'learning_rate': trial.suggest_loguniform('learning_rate', 1e-5, 0.1),
-                'feature_fraction': trial.suggest_uniform('feature_fraction', 0.1, 1.0),
-                'bagging_fraction': trial.suggest_uniform('bagging_fraction', 0.1, 1.0),
-                'bagging_freq': trial.suggest_int('bagging_freq', 1, 10),
-                'max_depth': trial.suggest_int('max_depth', 3, 20),
-                'lambda_l1': trial.suggest_loguniform('lambda_l1', 1e-5, 10.0),
-                'lambda_l2': trial.suggest_loguniform('lambda_l2', 1e-5, 10.0),
-                'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
-                'random_state': self.random_seed,
-                'verbose': -1,
-            }
+            self.current_task = f'optuna phase {trial.number + 1} / 100'
+            # ハイパーパラメータの設定
+            params = self._get_default_params(trial)
 
-            # LightGBMモデルの学習
-            model = LGBMClassifier(**params)
-            model.fit(x_train, y_train)
+            # モデルの学習
+            assert self.Model is not None, "Model is None"
+            model = self.Model(**params)
+            model.fit(x_t, y_t)
 
             # 予測
-            y_pred = model.predict(x_test)
+            y_p = model.predict(x_v)
             # 精度の計算
-            f1_score: float = classification_report(y_test, y_pred, output_dict=True)['macro avg'][
-                'f1-score']  # type: ignore
-            return f1_score
+            return float(f1_score(y_v, y_p, average='macro'))
 
         # Optunaでハイパーパラメータの最適化を行う
         study = optuna.create_study(direction='maximize')
