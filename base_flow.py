@@ -14,7 +14,7 @@ from loguru import logger
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.preprocessing import StandardScaler
-# from lightgbm import log_evaluation TODO
+from lightgbm import log_evaluation, early_stopping
 
 from general_utils import generate_encoder, insert_results
 from notifier import LineClient
@@ -452,7 +452,7 @@ class BaseFlow(ABC):
                 num_class=num_class,
                 metric=metrics,
                 boosting_type='gbdt',
-                num_leaves=trial.suggest_int('num_leaves', 2, 200),
+                num_leaves=trial.suggest_int('num_leaves', 2, 100),
                 learning_rate=trial.suggest_loguniform('learning_rate', 1e-5, 0.1),
                 feature_fraction=trial.suggest_uniform('feature_fraction', 0.4, 1.0),
                 bagging_fraction=trial.suggest_uniform('bagging_fraction', 0.4, 1.0),
@@ -463,7 +463,6 @@ class BaseFlow(ABC):
                 # min_child_samples=trial.suggest_int('min_child_samples', 5, 100),
                 random_state=self.random_seed,
                 verbose=-1,
-                verbosity=-1,
             )
         else:
             raise ValueError(f"model_name is {self.model_name}. It is not supported.")
