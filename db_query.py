@@ -12,6 +12,7 @@ versions = ["1.0.0", "1.1.0", "1.2.0", "1.2.1", "1.2.2", "1.2.3", "1.2.4", "1.2.
 LATEST = versions[-1]  # 現在の最新バージョン
 DATASET = "dataset.name"
 MODEL = "model_name"
+_uri = os.getenv('MongoDBURI')
 
 
 def get_collection(version: str):
@@ -19,28 +20,52 @@ def get_collection(version: str):
         collection_s = 'results'
     else:
         collection_s = 'results_v.' + version
-    _uri = os.getenv('MongoDBURI')
     _client = MongoClient(_uri)
     _client.admin.command('ping')
     _db = _client.get_database('ml')
     assert _db is not None, "db is None"
-    _collection = _db.get_collection('results')
+    _collection = _db.get_collection(collection_s)
     assert _collection is not None, "collection is None"
     return _collection
 
 
+_collection = get_collection("2.0.0")
+
+
 def fetch_latest_record(conditions: dict) -> Optional[dict]:
     # 条件に一致するものの中で、もっとも新しいデータを１つ得る
-    result = get_collection('2.0.0').find_one(conditions, sort=[('_id', -1)])
+    result = _collection.find_one(conditions, sort=[('_id', -1)])
     return result
 
 
 def fetch_all_records(conditions: dict):
-    results = get_collection('2.0.0').find(conditions)
+    results = _collection.list_search_indexes()
     return results
 
 
+def done_experiment(hash: str) -> bool:
+    try:
+        value = _collection.find_one({"hash": hash}) is not None
+    except Exception:
+        _collection = get_collection("2.0.0")
+        value = _collection.find_one({"hash": hash}) is not None
+        globals()['_collection'] = _collection
+    return value
+
+
+def done_experiments() -> set:
+    try:
+        values = _collection.find({"hash": hash}) is not None
+    except Exception:
+        _collection = get_collection("2.0.0")
+        values = _collection.find_one({"hash": hash}) is not None
+        globals()['_collection'] = _collection
+    return set([v['hash'] for v in values])
+
+
 if __name__ == '__main__':
+    print(done_experiment("bm9uZVswXWxya2RkOTltYWpvcml0eUZhbHNl"))
+    print(done_experiment("bm9uZVswXWxya2RkOTlhbGxGYWxzZQ="))
     r = fetch_latest_record({
         "dataset": {
             "name": "kdd99",

@@ -6,6 +6,7 @@ import requests
 import yaml
 import base64
 
+from db_query import done_experiments
 from schemas import Params, Environment, Dataset, Result, MLModel, AEModel, WorkLoad
 
 URL = 'http://localhost:8080'
@@ -47,6 +48,7 @@ def main():
         workloads.general.optuna,
     )
     itr = list(itr)
+    already_done = done_experiments()
 
     for individual in workloads.individual:
         print(individual)
@@ -68,7 +70,9 @@ def main():
             standardization = True
         elif preprocess == 'normalization':
             normalization = True
-
+        hs = gen_hash(preprocess, layers, model, dataset, used_class, optuna)
+        if hs in already_done:
+            continue
         params = Params(
             hash=gen_hash(preprocess, layers, model, dataset, used_class, optuna),
             dataset=Dataset(name=dataset, standardization=standardization, normalization=normalization),
