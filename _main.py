@@ -8,6 +8,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 
 from creditcardfraud import CreditCardFraudFlow
+from db_query import done_experiment
 from imb_data import ImbalancedDatasetFlow
 from kdd99 import KDD99Flow
 from multiprocessing import Queue, Lock
@@ -34,6 +35,9 @@ def worker(_que: Queue, _lock: Lock):
         if _Flow is None or _Model is None:
             logger.error(f"Flow or Model is None. Flow: {_Flow}, Model: {_Model}")
         flow = _Flow(_Model, _lock, params)
+        if done_experiment(params.hash):
+            logger.info(f"already done: {params.hash}")
+            continue
         try:
             flow.run()
         except Exception as e:

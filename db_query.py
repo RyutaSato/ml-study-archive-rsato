@@ -60,12 +60,12 @@ def fetch_all_records(conditions: dict):
 
 def done_experiment(h: str) -> bool:
     try:
-        value = _collection.find_one({"hash": h}) is not None
+        value = _collection.find_one({"hash": h}, {"_id": 0, "hash": 1})
     except Exception:
         _collection = get_collection("2.0.0")
-        value = _collection.find_one({"hash": h}) is not None
+        value = _collection.find_one({"hash": h}, {"_id": 0, "hash": 1})
         globals()['_collection'] = _collection
-    return value
+    return value is not None
 
 
 def done_experiments() -> set:
