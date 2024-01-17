@@ -1,0 +1,241 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Get Machine Learning Results",
+    "description": "Get experiment result from MongoDB",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://ap-southeast-1.aws.data.mongodb-api.com/app/data-pqjtg/endpoint/data/v1/action"
+    }
+  ],
+  "paths": {
+    "/findOne": {
+      "post": {
+        "description": "データベースからQueryにマッチしたデータを１つ返します",
+        "operationId": "findOne",
+        "parameters": [],
+        "requestBody": {
+          "description": "Query to find a document",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "collection": {
+                    "type": "string",
+                    "description": "The collection to query",
+                    "enum": ["results_v.2.0.0"]
+                  },
+                  "database": {
+                    "type": "string",
+                    "description": "The database to query",
+                    "enum": ["ml"]
+                  },
+                  "dataSource": {
+                    "type": "string",
+                    "description": "The data source to use",
+                    "enum": ["ml"]
+                  },
+                  "filter": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "The filter conditions for the query"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/find": {
+      "post": {
+        "description": "複数のドキュメントをデータベースから取得します",
+        "operationId": "findMultiple",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "collection": {
+                    "type": "string",
+                    "description": "The collection to query.",
+                    "enum": ["results_v.2.0.0"]
+                  },
+                  "database": {
+                    "type": "string",
+                    "description": "The database to query.",
+                    "enum": ["ml"]
+                  },
+                  "dataSource": {
+                    "type": "string",
+                    "description": "The data source to use.",
+                    "enum": ["ml"]
+                  },
+                  "filter": {
+                    "type": "object",
+                    "description": "The filter conditions for the query"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "description": "The number of documents to return."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponseSchema"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ResponseSchema": {
+        "description": "The response schema for the query",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier for the document"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash value of the data"
+          },
+          "dataset": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "default_feature_num": { "type": "integer" },
+              "ae_feature_num": { "type": "integer" },
+              "total_feature_num": { "type": "integer" },
+              "sample_num": { "type": "integer" },
+              "standardization": { "type": "boolean" },
+              "normalization": { "type": "boolean" }
+            },
+            "description": "Details of the dataset used"
+          },
+          "model": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "optuna": { "type": "boolean" },
+              "params": { "type": "object" },
+              "best_params_list": {
+                "type": "array",
+                "items": { "type": "object" }
+              }
+            },
+            "description": "Details of the model used"
+          },
+          "ae": {
+            "type": "object",
+            "properties": {
+              "layers": {
+                "type": "array",
+                "items": { "type": "integer" }
+              },
+              "used_class": { "type": "string" },
+              "epochs": { "type": "integer" },
+              "activation": { "type": "string" },
+              "batch_size": { "type": "integer" },
+              "standardization": { "type": "boolean" },
+              "normalization": { "type": "boolean" }
+            },
+            "description": "Details of the autoencoder used"
+          },
+          "env": {
+            "type": "object",
+            "properties": {
+              "version": { "type": "string" },
+              "datetime": { "type": "string", "format": "date-time" },
+              "elapsed_time": { "type": "number" }
+            },
+            "description": "Environment details"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "majority": {
+                "type": "object",
+                "properties": {
+                  "precision": { "type": "number" },
+                  "recall": { "type": "number" },
+                  "f1": { "type": "number" },
+                  "support": { "type": "integer" }
+                }
+              },
+              "minority": {
+                "type": "object",
+                "properties": {
+                  "precision": { "type": "number" },
+                  "recall": { "type": "number" },
+                  "f1": { "type": "number" },
+                  "support": { "type": "integer" }
+                }
+              },
+              "macro": {
+                "type": "object",
+                "properties": {
+                  "precision": { "type": "number" },
+                  "recall": { "type": "number" },
+                  "f1": { "type": "number" },
+                  "support": { "type": "integer" }
+                }
+              },
+              "importances": {
+                "type": "object",
+                "additionalProperties": { "type": "number" }
+              }
+            },
+            "description": "Results of the experiment"
+          }
+        },
+        "required": ["_id", "hash", "dataset", "model", "ae", "env", "result"]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-KEY"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}
