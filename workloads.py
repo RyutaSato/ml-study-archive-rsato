@@ -70,11 +70,11 @@ def main():
             standardization = True
         elif preprocess == 'normalization':
             normalization = True
-        hs = gen_hash(preprocess, layers, model, dataset, used_class, optuna)
-        if hs in already_done:
+        h = gen_hash(preprocess, layers, model, dataset, used_class, optuna)
+        if h in already_done:
             continue
         params = Params(
-            hash=gen_hash(preprocess, layers, model, dataset, used_class, optuna),
+            hash=h,
             dataset=Dataset(name=dataset, standardization=standardization, normalization=normalization),
             model=MLModel(name=model, optuna=optuna),
             ae=AEModel(layers=layers, used_class=used_class, standardization=ae_standardization,
