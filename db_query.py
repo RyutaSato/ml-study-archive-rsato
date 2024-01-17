@@ -6,7 +6,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from loguru import logger
 
-# load_dotenv()
+load_dotenv()
 # <<<<<<< features/refact_que
 # =======
 # _uri = os.getenv('MongoDBURI')
@@ -54,8 +54,8 @@ def fetch_latest_record(conditions: dict) -> Optional[dict]:
 
 
 def fetch_all_records(conditions: dict):
-    results = _collection.list_search_indexes()
-    return results
+    results = _collection.find(conditions)
+    return list(results)
 
 
 def done_experiment(hash: str) -> bool:
