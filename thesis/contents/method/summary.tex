@@ -1,16 +1,16 @@
-/subsection*{提案手法}
+\section{概要}
 本研究では，AutoEncoderを用いた特徴量拡張に基づく新たなモデル構築手法を提案する．
 提案手法では，AutoEncoderを用いてデータセットを学習する．学習済みのAutoEncoderのEncoderの出力から入力データを低次元に圧縮した潜在表現を獲得できる．
 この潜在表現を新たな特徴量として，元のデータを拡張する．
 この拡張されたデータを用いて，各種の機械学習モデル例えばロジスティック回帰、勾配ブースティング決定木など）の学習を行う．
-提案手法の概要を図\ref{fig:proposed_method}に示す．\\
+% 提案手法の概要を図\ref{fig:proposed_method}に示す．\\
 \\
 不均衡データでは，機械学習モデルがデータの少ないクラスの特徴を十分に捉えられないことが分類精度の低下を招く．オートエンコーダによる特徴量拡張は，データの本質的な特性を別の表現で与えることで機械学習モデルの判断材料を増加させ，サンプル数が少なくても，データの少ないクラスの特徴を捉えやすくなることが期待できる．\\
 
 
-\begin{figure}[htbp]
-  \begin{center}
-    \includegraphics[width=0.8\linewidth]{figures/proposed_method.png}
-    \caption{提案手法の概要}
-    \label{fig:proposed_method}
-  \end{center}
+% \begin{figure}[htbp]
+%   \begin{center}
+%     \includegraphics[width=0.8\linewidth]{figures/proposed_method.png}
+%     \caption{提案手法の概要}
+%     \label{fig:proposed_method}
+%   \end{center}

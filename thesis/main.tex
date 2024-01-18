@@ -15,7 +15,7 @@
 \begin{document}
 \input{contents/front-cover.tex}  % タイトル情報
 \pagenumbering{roman}             % ページ番号をローマ数字で記載
-\input{contents/0abstract.tex}    % 概要（日本語，英語）
+\input{contents/abstract.tex}    % 概要（日本語，英語）
 \tableofcontents                  % 目次
 \newpage
 \listoffigures                    % 図目次
@@ -24,8 +24,15 @@
 \newpage
 
 \pagenumbering{arabic}            % ページ番号をアラビア数字
-\input{contents/1introduction.tex}
-\input{contents/2figure-table.tex}
+\input{contents/introduction/index.tex}
+\input{contents/purpose/index.tex}
+\input{contents/method/index.tex}
+
+\input{contents/experiment/index.tex}
+\input{contents/consideration/index.tex}
+
+\input{contents/outroduction/index.tex}
+
 
 \input{contents/acknowledgments.tex} % 謝辞
 
