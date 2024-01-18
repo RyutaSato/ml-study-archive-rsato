@@ -27,7 +27,7 @@ def load_config():
 def worker(_que: Queue, _lock: Lock):
     while True:
         params: Params = _que.get()
-        logger.info(f"current queue waiting: {_que.qsize()}")
+        # logger.info(f"current queue waiting: {_que.qsize()}")
         if params is None:
             break
         _Flow = flows.get(params.dataset.name)

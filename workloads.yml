@@ -1,8 +1,8 @@
 general:
-  preprocess: [ ae_standardization ]
+  preprocess: [ standardization ]
   layers:
-    - [ 0 ]
-    - [ 20, 10, 5 ]
+    # - [ 0 ]
+    # - [ 20, 10, 5 ]
     - [ 20, 15, 10, 5 ]
     - [ 20, 15, 10 ]
   models: [ lr, svm, rf, mp, lgb ]
@@ -10,7 +10,7 @@ general:
               spectrometer, car_eval_34, isolet, us_crime, yeast_ml8, scene, libras_move, thyroid_sick, coil_2000,
               arrhythmia, solar_flare_m0, oil, car_eval_4, wine_quality, letter_img, yeast_me2, webpage,
               ozone_level, mammography, protein_homo, abalone_19 ]
-  ae_used_class: [ all, majority ]
+  ae_used_class: [ majority ]
   optuna: [ true ]
 
 #individual:
