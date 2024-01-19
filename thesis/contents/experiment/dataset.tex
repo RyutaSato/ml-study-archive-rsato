@@ -1,1 +1,36 @@
 \section{データセット}
+本実験で使用するデータセットの概要について述べる．
+
+\subsection{KDD CUP 1999 Data 10\%}
+\begin{description}
+    \item[概要] 1998年にアメリカの国防総省で開催されたKDD Cup 1999で使用されたデータセットの10\%サンプルデータ．このデータセットには，正常アクセスと大きく４つに分類できる攻撃アクセスに関するインターネットトラフィックのデータが含まれている．
+    \item[サンプル数] 494,021
+    \item[クラスごとのサンプル数] \mbox{}
+        \begin{itemize}
+            \item normal:  97,278(19.7\%)
+            \item dos:      391,458(79.2\%)
+            \item probe:    4,628(0.9\%)
+            \item r2l:      1,605(0.3\%)
+            \item u2r:      52(0.01\%)
+        \end{itemize}
+    \item[特徴量の数] 38 (カテゴリデータを除く)
+    \item[各特徴量の種類] \mbox{}
+            duration, src\_bytes, dst\_bytes, land, wrong\_fragment, urgent, hot, num\_failed\_logins, logged\_in, num\_compromised, root\_shell, su\_attempted, num\_root, num\_file\_creations, num\_shells, num\_access\_files, num\_outbound\_cmds, is\_host\_login, is\_guest\_login, count, srv\_count, serror\_rate, srv\_serror\_rate, rerror\_rate, srv\_rerror\_rate, same\_srv\_rate, diff\_srv\_rate, srv\_diff\_host\_rate, dst\_host\_count, dst\_host\_srv\_count, dst\_host\_same\_srv\_rate, dst\_host\_diff\_srv\_rate, dst\_host\_same\_src\_port\_rate, \\dst\_host\_srv\_diff\_host\_rate, dst\_host\_serror\_rate, dst\_host\_srv\_serror\_rate, \\dst\_host\_rerror\_rate, dst\_host\_srv\_rerror\_rate
+    \item[留意事項] このデータセットに含まれる３つのカテゴリデータは，実験には使用しない．
+                   また，少数派クラスの評価にはu2rクラスのみを使用し，多数派クラスの評価にはnormalクラスのみを使用する．全体のmacro F1値は，これらのクラスを含めた５クラスの評価結果である．
+\end{description}
+
+\subsection{Credit Card Fraud Detection Dataset}
+\begin{description}
+    \item[概要] 金融取引データに基づくクレジットカード詐欺検出のためのデータセット．このデータセットは，正常な取引と不正な取引の２つのクラスに分類されたクレジットカード取引の情報を含んでいる．
+    \item[サンプル数] 284,807
+    \item[クラスごとのサンプル数と割合] \mbox{}
+        \begin{itemize}
+            \item 正常取引: 284,315（99.83\%）
+            \item 詐欺取引: 492（0.17\%）
+        \end{itemize}
+    \item[特徴量の数] 特徴量の総数（例: 30）
+    \item[各特徴量の種類] \mbox{}
+            V1, V2, ..., V28（PCAによる匿名化された特徴量）、取引金額（'Amount'）、取引後の時間（'Time'）
+    \item[留意事項] このデータセットには，主に数値特徴量が含まれており，PCAによって特徴量が匿名化されている．
+\end{description}
