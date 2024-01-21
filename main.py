@@ -22,7 +22,7 @@ processes = []
 
 @app.on_event("startup")
 def startup_event():
-    for _ in range(cpu_count() - 1):
+    for _ in range(4):
         p = Process(target=worker, args=(queue, lock))
         p.start()
         processes.append(p)

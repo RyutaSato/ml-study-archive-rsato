@@ -1,36 +1,115 @@
 \section{データセット}
-本実験で使用するデータセットの概要について述べる．
+本実験で使用する各データセットの詳細について述べる．
+なお，クラス数はデータセットによって異なるため，2値分類問題は，データ数の多いクラスを`majority`クラスとして，他方を`minority`クラスとして集計する．
+多クラスのデータセットにおいて，どのクラスを`minority`クラスとして評価するか，マクロ指標の定義については，別途定める．
 
 \subsection{KDD CUP 1999 Data 10\%}
 \begin{description}
-    \item[概要] 1998年にアメリカの国防総省で開催されたKDD Cup 1999で使用されたデータセットの10\%サンプルデータ．このデータセットには，正常アクセスと大きく４つに分類できる攻撃アクセスに関するインターネットトラフィックのデータが含まれている．
+    \item[概要] 1998年にアメリカの国防総省で開催されたKDD Cup 1999で使用されたデータセットの10\%データ．
     \item[サンプル数] 494,021
     \item[クラスごとのサンプル数] \mbox{}
         \begin{itemize}
-            \item normal:  97,278(19.7\%)
+            \item normal (majority):  97,278(19.7\%)
             \item dos:      391,458(79.2\%)
             \item probe:    4,628(0.9\%)
             \item r2l:      1,605(0.3\%)
-            \item u2r:      52(0.01\%)
+            \item u2r (minority):      52(0.01\%)
         \end{itemize}
     \item[特徴量の数] 38 (カテゴリデータを除く)
-    \item[各特徴量の種類] \mbox{}
+    \item[各特徴量の種類] 正常アクセスと大きく４つに分類できる攻撃アクセスに関するインターネットトラフィックのデータが含まれている．
             duration, src\_bytes, dst\_bytes, land, wrong\_fragment, urgent, hot, num\_failed\_logins, logged\_in, num\_compromised, root\_shell, su\_attempted, num\_root, num\_file\_creations, num\_shells, num\_access\_files, num\_outbound\_cmds, is\_host\_login, is\_guest\_login, count, srv\_count, serror\_rate, srv\_serror\_rate, rerror\_rate, srv\_rerror\_rate, same\_srv\_rate, diff\_srv\_rate, srv\_diff\_host\_rate, dst\_host\_count, dst\_host\_srv\_count, dst\_host\_same\_srv\_rate, dst\_host\_diff\_srv\_rate, dst\_host\_same\_src\_port\_rate, \\dst\_host\_srv\_diff\_host\_rate, dst\_host\_serror\_rate, dst\_host\_srv\_serror\_rate, \\dst\_host\_rerror\_rate, dst\_host\_srv\_rerror\_rate
-    \item[留意事項] このデータセットに含まれる３つのカテゴリデータは，実験には使用しない．
-                   また，少数派クラスの評価にはu2rクラスのみを使用し，多数派クラスの評価にはnormalクラスのみを使用する．全体のmacro F1値は，これらのクラスを含めた５クラスの評価結果である．
+    \item[留意事項] このデータセットに含まれる３つのカテゴリデータは使用しない．
+                   また，少数派クラスの評価にはu2rクラスのみを使用し，多数派クラスの評価にはnormalクラスのみを使用する．全体のmacro F1値は，これらのクラスを含めた５クラス全体で評価する．
 \end{description}
 
 \subsection{Credit Card Fraud Detection Dataset}
 \begin{description}
     \item[概要] 金融取引データに基づくクレジットカード詐欺検出のためのデータセット．このデータセットは，正常な取引と不正な取引の２つのクラスに分類されたクレジットカード取引の情報を含んでいる．
+    \item[提供元] 
     \item[サンプル数] 284,807
     \item[クラスごとのサンプル数と割合] \mbox{}
         \begin{itemize}
-            \item 正常取引: 284,315（99.83\%）
-            \item 詐欺取引: 492（0.17\%）
+            \item 正常取引 (majority): 284,315（99.83\%）
+            \item 詐欺取引 (minority): 492（0.17\%）
         \end{itemize}
     \item[特徴量の数] 特徴量の総数（例: 30）
     \item[各特徴量の種類] \mbox{}
             V1, V2, ..., V28（PCAによる匿名化された特徴量）、取引金額（'Amount'）、取引後の時間（'Time'）
     \item[留意事項] このデータセットには，主に数値特徴量が含まれており，PCAによって特徴量が匿名化されている．
 \end{description}
+
+\subsection{ecoli}
+\begin{description}
+    \item[概要] 大腸菌のタンパク質が細胞内のどの部分に局在するかを示すデータセット． \cite{ecoli}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 336
+    \item[クラスごとのサンプル数と割合] \mbox{}
+        \begin{itemize}
+            \item cp (majority): 143 (42.560\%)
+            \item im (majority): 77 (22.917\%)
+            \item imS (majority): 2 (0.595\%)
+            \item imL (majority): 2 (0.595\%)
+            \item imU (minority): 35 (10.417\%)
+            \item om (majority): 20 (5.952\%)
+            \item omL (majority): 5 (1.488\%)
+            \item pp (majority): 52 (15.476\%)
+        \end{itemize}
+    \item[特徴量の数] 7
+    \item[各特徴量の種類] 特徴量は，分析により判明した科学的特性を示したもの．\\
+            mcg, gvh, lip, chg, aac, alm1, alm2
+    \item[留意事項] 提供元により，`imU`クラスとそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{optical\_digits}
+    \begin{description}
+    \item[概要] 手書きの数字の光学的認識を各ピクセルの値に基づいて示したデータセット．\cite{optical_digits}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 5,620
+    \item[クラスごとのサンプル数と割合] \mbox{}
+        \begin{itemize}
+            \item 8以外の数字 (majority): 5,010 (89.0\%)
+            \item 8 (minority): 610 (11.0\%)
+        \end{itemize}
+    \item[特徴量の数] 64
+    \item[各特徴量の種類] \mbox{}
+        各特徴量は8$\times$8ピクセルのグリッドに基づく手書き数字の光学的特性を0から16の整数値で表したもの．
+    \item[留意事項] 提供元により，`8`クラスとそれ以外のクラスに2値化されている．
+    \end{description}
+
+    \subsection{satimage}
+    \begin{description}
+        \item[概要] 衛星画像データを基にした土地利用分類のためのデータセット．\cite{satimage}
+        \item[提供元] UCI Machine Learning Repository
+        \item[サンプル数] 6,435
+        \item[クラスごとのサンプル数と割合] \mbox{}
+            \begin{itemize}
+                \item 赤い土壌 (majority): 1,533 (23.8\%)
+                \item 綿作物 (majority): 703 (10.9\%)
+                \item 灰色の土壌 (majority): 1,358 (21.1\%)
+                \item 湿った灰色の土壌 (minority): 626 (9.7\%)
+                \item 切り株のある土壌 (majority): 707 (11.0\%)
+                \item 非常に湿った灰色の土壌 (majority): 1508 (23.5\%)
+            \end{itemize}
+        \item[特徴量の数] 36
+        \item[各特徴量の種類] \mbox{}
+            各特徴量は，３$\times$3のピクセルそれぞれの４つのスペクトル (赤色，緑色，２種類の赤外線)の強さを0~255の値に変換したもの．
+        \item[留意事項]  提供元により，`湿った灰色の土壌`クラスとそれ以外のクラスに2値化されている．
+    \end{description}
+
+\subsection{pen\_digits}
+\begin{description}
+    \item[概要] 44人の人物によって書かれた0から9までの数字のデータセット．\cite{pen_digits}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 10,992
+    \item[クラスごとのサンプル数と割合] \mbox{}
+        \begin{itemize}
+            \item 5 (minority): 1,057 (9.6\%)
+            \item それ以外の数字 (majority): 9,935 (90.4\%) % TODO: データの数未確認
+        \end{itemize}
+    \item[特徴量の数] 16
+    \item[各特徴量の種類] \mbox{}
+        2次元座標上の描画における各点の座標を100msごとにサンプリングしたもの．
+    \item[留意事項]  提供元により，`5`クラスとそれ以外のクラスに2値化されている．
+\end{description}
+
+

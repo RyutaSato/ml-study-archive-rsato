@@ -34,4 +34,7 @@ class ImbalancedDatasetFlow(BaseFlow):
 
 
 if __name__ == "__main__":
+    from datetime import datetime
+    from schemas import *
     dataset_name = 'ecoli'
+    params = Params(hash="", env=Environment(version='2.0.0', datetime=datetime.now()), dataset=Dataset(name=dataset_name), model=MLModel(name='rf'), ae=AEModel(), result=Result())
