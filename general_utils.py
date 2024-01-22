@@ -1,6 +1,5 @@
 import base64
 import os
-from pyexpat import model
 import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.model_selection import StratifiedKFold
