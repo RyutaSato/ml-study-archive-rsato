@@ -23,7 +23,7 @@ load_dotenv()
 from lightgbm import log_evaluation, early_stopping
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-from general_utils import generate_encoder, insert_results
+from general_utils import fetch_h5_model, generate_encoder, insert_h5_model, insert_results
 from notifier import LineClient
 from tensorflow import keras
 import optuna
@@ -199,19 +199,22 @@ class BaseFlow(ABC):
             x_train_ae = x_train[y_train == self.correspondence[self.ae.used_class]]
 
         # モデルのファイル名
-        file_name = self.dataset.name
-        file_name += str(self.dataset.standardization)
-        file_name += str(self.dataset.normalization)
-        file_name += str(self.ae.used_class)
-        file_name += str(self.ae.layers)
-        file_name += str(fold)
-        file_name += str(self.env.version)
-        file_name = base64.b64encode(file_name.encode()).decode() + ".h5"
-
+        k = self.dataset.name
+        k += str(self.dataset.standardization)
+        k += str(self.dataset.normalization)
+        k += str(self.ae.used_class)
+        k += str(self.ae.layers)
+        k += str(fold)
+        k += str(self.env.version)
+        k: str = base64.b64encode(k.encode()).decode()
+        file_name = ROOT_DIR + "/models/" + k + ".h5"
         # 保存済みモデルがある場合
-        if os.path.exists(ROOT_DIR + "/models/" + file_name):
+        if not os.path.exists(file_name):
+            fetch_h5_model(k)
+        if os.path.exists(file_name):
+            keras.models.load_model()
             # 保存しているモデルの読み込み
-            _encoder = keras.models.load_model(ROOT_DIR + "/models/" + file_name)
+            _encoder = keras.models.load_model(file_name)
         # 保存済みモデルがない場合
         else:
             # エンコーダーの生成
@@ -219,7 +222,8 @@ class BaseFlow(ABC):
                 self.current_task = f"train phase: encoder generating"
                 _encoder = generate_encoder(x_train_ae, **self.ae.dict())
             # モデルの保存
-            _encoder.save(ROOT_DIR + "/models/" + file_name)
+            _encoder.save(file_name)
+            insert_h5_model(k)
         # 新たな特徴量を生成
         x_train_ae = pd.DataFrame(
             _encoder.predict(x_train, verbose=0),  # type: ignore
