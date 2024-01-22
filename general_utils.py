@@ -1,4 +1,6 @@
+import base64
 import os
+from pyexpat import model
 import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.model_selection import StratifiedKFold
@@ -71,6 +73,56 @@ def insert_results(outputs) -> None:
 
             _result = collection.insert_one(outputs)
             assert _result.acknowledged, "insertion failed"
+            break
+        except Exception as e:
+            logger.error(e)
+            try_cnt += 1
+            continue
+
+def fetch_h5_model(_id: str) -> None:
+    try_cnt = 0
+    while try_cnt < 3:
+        try:
+            # Create a new client and connect to the server
+            client = MongoClient(uri, server_api=ServerApi('1'))
+
+            # Send a ping to confirm a successful connection
+            # client.admin.command('ping')
+            db = client.get_database('ml')
+            assert db is not None, "db is None"
+            collection = db.get_collection('h5')
+            assert collection is not None, "collection is None"
+
+            _result = collection.find_one({"_id": _id})
+            break
+        except Exception as e:
+            logger.error(e)
+            try_cnt += 1
+            continue
+    if _result is None:
+        return
+    else:
+        model = base64.b64decode(_result['model'])
+        with open("models/" + _id + ".h5", "wb") as f:
+            f.write(model)
+
+def insert_h5_model(_id: str) -> None:
+    with open("models/" + _id + ".h5", "rb") as f:
+        model = f.read()
+    try_cnt = 0
+    while try_cnt < 3:
+        try:
+            # Create a new client and connect to the server
+            client = MongoClient(uri, server_api=ServerApi('1'))
+
+            # Send a ping to confirm a successful connection
+            client.admin.command('ping')
+            db = client.get_database('ml')
+            assert db is not None, "db is None"
+            collection = db.get_collection('h5')
+            assert collection is not None, "collection is None"
+
+            collection.insert_one({"_id": _id, "model": base64.b64encode(model).decode()})
             break
         except Exception as e:
             logger.error(e)
