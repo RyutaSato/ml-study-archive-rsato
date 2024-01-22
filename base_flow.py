@@ -17,7 +17,7 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 load_dotenv()
 # from lightgbm import log_evaluation TODO
 from lightgbm import log_evaluation, early_stopping
@@ -30,7 +30,6 @@ import optuna
 
 VERSION = '2.0.0'
 
-# logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
 logger.info(f"GPU {tf.config.list_physical_devices('GPU')}")
@@ -152,11 +151,24 @@ class BaseFlow(ABC):
             tuple[pd.DataFrame, pd.DataFrame]: 前処理済みの入力データ。
 
         """
-        # データの標準化
+        # 標準化
         if self.dataset.standardization:
             scaler = StandardScaler()
             x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns, index=x_train.index)
             x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)  # type: ignore
+
+        # 正規化
+        if self.dataset.normalization:
+            scaler = MinMaxScaler()
+            x_train = pd.DataFrame(
+                scaler.fit_transform(x_train), 
+                columns=x_train.columns, 
+                index=x_train.index)
+            x_test = pd.DataFrame(
+                scaler.transform(x_test), 
+                columns=x_test.columns, 
+                index=x_test.index) 
+
         return x_train, x_test
 
     def _k_fold_generate_ae(self, x_train, y_train, x_test, y_test, fold: int) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -226,6 +238,13 @@ class BaseFlow(ABC):
                 scaler.fit_transform(x_train_ae), columns=x_train_ae.columns, index=x_train_ae.index)
             x_test_ae = pd.DataFrame(
                 scaler.transform(x_test_ae), columns=x_test_ae.columns, index=x_test_ae.index)
+        
+        if self.ae.normalization:
+            scaler = MinMaxScaler()
+            x_train_ae = pd.DataFrame(
+                scaler.fit_transform(x_train_ae), columns=x_train_ae.columns, index=x_train_ae.index)
+            x_test_ae = pd.DataFrame(
+                scaler.transform(x_test_ae), columns=x_test_ae.columns, index=x_test_ae.index) 
 
         return x_train_ae, x_test_ae
 
