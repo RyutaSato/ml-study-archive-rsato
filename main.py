@@ -19,11 +19,18 @@ queue = Queue()
 lock = Lock()
 processes = []
 not_finished = []
+process_num = cpu_count() - 1
+if process_num <= 1:
+    process_num = 1
+    from threading import Thread as Process
+    from threading import Lock, Queue
+    lock = Lock()
+    queue = Queue()
 
 
 @app.on_event("startup")
 def startup_event():
-    for _ in range(cpu_count() - 1):
+    for _ in range(process_num):
         p = Process(target=worker, args=(queue, lock))
         p.start()
         processes.append(p)
