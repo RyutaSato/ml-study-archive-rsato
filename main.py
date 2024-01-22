@@ -23,7 +23,8 @@ process_num = cpu_count() - 1
 if process_num <= 1:
     process_num = 1
     from threading import Thread as Process
-    from threading import Lock, Queue
+    from threading import Lock
+    from queue import Queue
 
     lock = Lock()
     queue = Queue()
