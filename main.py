@@ -5,8 +5,7 @@
 Supported BaseFlow: 2.0.0
 """
 import json
-from multiprocessing import Process, Queue, Lock
-from os import cpu_count
+from multiprocessing import Process, Queue, Lock, cpu_count
 
 from schemas import Params
 
@@ -85,4 +84,12 @@ def shutdown_event():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="localhost", port=8080)
+    import sys
+    import socket
+
+    moduleList = sys.modules
+    if 'google.colab' in moduleList:
+        local_ip = socket.gethostbyname(socket.getfqdn(socket.gethostname()))
+    else:
+        local_ip = "localhost"
+    uvicorn.run(app, host=local_ip, port=8080)
