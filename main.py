@@ -34,7 +34,7 @@ def run(params: Params):
     queue.put(params)
     return {"message": "ok"}
 
-@app.get("kill", status_code=200)
+@app.get("/kill", status_code=200)
 def kill():
     while not queue.empty():
         not_finished.append(queue.get().json())
