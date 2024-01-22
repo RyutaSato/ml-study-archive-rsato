@@ -24,6 +24,7 @@ if process_num <= 1:
     process_num = 1
     from threading import Thread as Process
     from threading import Lock, Queue
+
     lock = Lock()
     queue = Queue()
 
@@ -41,6 +42,7 @@ def run(params: Params):
     queue.put(params)
     return {"message": "ok"}
 
+
 @app.get("/kill", status_code=200)
 def kill():
     while not queue.empty():
@@ -48,6 +50,14 @@ def kill():
     for _ in processes:
         queue.put(None)
     return {"message": "ok"}
+
+
+@app.get("/new", status_code=200)
+def new():
+    p = Process(target=worker, args=(queue, lock))
+    p.start()
+    processes.append(p)
+    return {"message": "ok", "total": len(processes)}
 
 
 @app.on_event("shutdown")
