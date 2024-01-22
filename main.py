@@ -18,7 +18,7 @@ queue = Queue()
 lock = Lock()
 processes = []
 not_finished = []
-process_num = cpu_count() - 1
+process_num = 8  # cpu_count() - 1
 if process_num <= 1:
     process_num = 1
     from threading import Thread as Process
@@ -84,12 +84,4 @@ def shutdown_event():
 
 
 if __name__ == '__main__':
-    import sys
-    import socket
-
-    moduleList = sys.modules
-    if 'google.colab' in moduleList:
-        local_ip = socket.gethostbyname(socket.getfqdn(socket.gethostname()))
-    else:
-        local_ip = "localhost"
-    uvicorn.run(app, host=local_ip, port=8080)
+    uvicorn.run(app, host="localhost", port=8080)
