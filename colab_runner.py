@@ -8,5 +8,6 @@ def run():
 
 
 server = Thread(target=run, name="webserver")
+server.start()
 wl = Thread(target=workloads.main)
 server.join()
