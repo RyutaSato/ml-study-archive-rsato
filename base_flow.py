@@ -212,7 +212,6 @@ class BaseFlow(ABC):
         if not os.path.exists(file_name):
             fetch_h5_model(k)
         if os.path.exists(file_name):
-            keras.models.load_model()
             # 保存しているモデルの読み込み
             _encoder = keras.models.load_model(file_name)
         # 保存済みモデルがない場合
