@@ -486,7 +486,7 @@ class BaseFlow(ABC):
         # Optunaでハイパーパラメータの最適化を行う
         # noinspection PyArgumentList
         study = optuna.create_study(direction='maximize')
-        study.optimize(objective, n_trials=100)
+        study.optimize(objective, n_trials=100, n_jobs=2)
 
         # 最適なハイパーパラメータの表示
         best_params = study.best_params
