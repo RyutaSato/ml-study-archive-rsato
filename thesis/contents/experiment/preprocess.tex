@@ -9,9 +9,12 @@
 \subsection{標準化}
 
 標準化とは，データの平均を0，標準偏差を1にする変換である．
+図を\ref{fig:standardization}に示す．
 変換式は式\ref{eq:standardization}の通りである．
 分布の形状を保ったまま，データのスケールの大小を揃えることができる．
 また，偏差を用いるため，外れ値の影響を受けにくいという特徴がある．
+本実験で標準化する際は，学習データの平均と分散を用いて，テストデータも標準化する．
+これは機械学習モデルを学習した段階では，まだ知らないはずのテストデータの平均と分散を使用できないからである．
 
 \begin{equation}
   \label{eq:standardization}
@@ -19,9 +22,17 @@
 \end{equation}
 なお，$\mu$は平均，$\sigma$は標準偏差である．
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{figures/standardization.png}
+  \caption{標準化の流れ}
+  \label{fig:standardization}
+\end{figure}
+
 \subsection{正規化}
 
 正規化とは，データの最大値を1，最小値を0にする変換である．
+図を\ref{fig:normalization}に示す．
 変換式は式\ref{eq:normalization}の通りである．
 CNNによる画像認識など，データの取りうる値の範囲が一定である場合によく用いられる．
 
@@ -31,4 +42,9 @@ CNNによる画像認識など，データの取りうる値の範囲が一定�
 \end{equation}
 なお，$x_{\min}$は最小値，$x_{\max}$は最大値である．
 
-
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{figures/normalization.png}
+  \caption{正規化の流れ}
+  \label{fig:normalization}
+\end{figure}

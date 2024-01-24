@@ -1,251 +1,259 @@
 <mxfile host="65bd71144e">
     <diagram id="M-y9R5kcF9XLJwWjKDu2" name="ページ1">
-        <mxGraphModel dx="2109" dy="750" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="932" dy="484" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="22">
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2" target="22" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="データセットの読み込み" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="390" y="70" width="150" height="30" as="geometry"/>
+                <mxCell id="2" value="データセットの読み込み" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fontFamily=Helvetica;fontSize=12;fontColor=default;align=center;strokeColor=default;fillColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="267.09000000000003" y="70" width="180" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="29" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="8" target="2">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="8" value="パラメータ設定(config)の読み込み" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="355" y="20" width="220" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="31" value="True" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="21" target="30">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="33" value="False" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.024;entryY=0.49;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="21" target="24">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="21" value="config[&quot;normalize&quot;]" style="shape=rhombus;html=1;dashed=0;whitespace=wrap;perimeter=rhombusPerimeter;" vertex="1" parent="1">
-                    <mxGeometry x="490" y="360" width="200" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="26" value="Yes" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="22" target="23">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="40" value="No" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="22" target="39">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="22" value="カテゴリデータが存在する" style="shape=rhombus;html=1;dashed=0;whitespace=wrap;perimeter=rhombusPerimeter;" vertex="1" parent="1">
-                    <mxGeometry x="345" y="120" width="240" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="101" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="23" target="39">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="23" value="カテゴリデータの削除" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="645" y="130" width="150" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="35" value="True" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="24" target="34">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="24" value="config[&quot;standardize&quot;]" style="shape=rhombus;html=1;dashed=0;whitespace=wrap;perimeter=rhombusPerimeter;" vertex="1" parent="1">
-                    <mxGeometry x="745" y="360" width="186" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="30" value="正規化" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="557.5" y="440" width="65" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="34" value="標準化" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="805.5" y="440" width="65" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="86" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="39" target="43">
+                <mxCell id="29" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" target="2" edge="1">
                     <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="357.03" y="50" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="26" value="Yes" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="22" target="23" edge="1">
+                    <mxGeometry x="-0.4498" relative="1" as="geometry">
+                        <mxPoint x="602.09" y="150" as="targetPoint"/>
                         <Array as="points">
-                            <mxPoint x="310" y="200"/>
-                            <mxPoint x="310" y="20"/>
-                            <mxPoint y="20"/>
+                            <mxPoint x="568.09" y="150"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="40" value="No" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="22" target="39" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="カテゴリデータが存在する？" style="shape=rhombus;html=1;dashed=0;whitespace=wrap;perimeter=rhombusPerimeter;" parent="1" vertex="1">
+                    <mxGeometry x="237.09" y="130" width="240" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="135" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="23">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="372.09000000000026" y="190" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="617.09" y="190"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="39" value="層状4分割 (Stratified K fold)" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
-                    <mxGeometry x="355" y="200" width="220" height="40" as="geometry"/>
+                <mxCell id="23" value="カテゴリデータの削除" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="493.5300000000001" y="170" width="150" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="87" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="43" target="44">
+                <mxCell id="119" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="39" target="103">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="43" value="Dataset" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=9.999999999999773;" vertex="1" parent="1">
-                    <mxGeometry x="-60" y="30" width="120" height="30" as="geometry"/>
+                <mxCell id="39" value="層状4分割 (Stratified K fold)" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="1" vertex="1">
+                    <mxGeometry x="247.09" y="210" width="220" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="88" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="44" target="47">
+                <mxCell id="275" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="103" target="272">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="89" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="44" target="50">
+                <mxCell id="103" value="4分割交差検証" style="shape=loopLimit;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="239.59" y="270" width="235" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="228" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="104" target="226">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="90" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="44" target="49">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="104" value="A~D全ての組み合わせでの実験を終了" style="shape=loopLimit;whiteSpace=wrap;html=1;size=10;rotation=0;horizontal=1;verticalAlign=middle;direction=west;flipV=0;" vertex="1" parent="1">
+                    <mxGeometry x="230.79999999999998" y="1050" width="250" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="91" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="44" target="48">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="44" value="クラスの比率が等しく&lt;br&gt;なるように分割" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="-70" y="90" width="140" height="40" as="geometry"/>
-                </mxCell>
-                <mxCell id="92" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="47" target="51">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="47" value="Dataset 1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="1">
-                    <mxGeometry x="-160" y="160" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="96" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="48" target="51">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="48" value="Dataset 4" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="1">
-                    <mxGeometry x="80" y="160" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="94" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="49" target="51">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="49" value="Dataset 3" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="1">
-                    <mxGeometry y="160" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="93" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="50" target="51">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="50" value="Dataset 2" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="1">
-                    <mxGeometry x="-80" y="160" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="82" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="51" target="59">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="83" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="51" target="64">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="84" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.559;entryY=0.009;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="51" target="70">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="85" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="51" target="76">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="51" value="Train DataとTest Dataが&lt;br&gt;3:1となるように組み合わせる" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="-100" y="220" width="210" height="40" as="geometry"/>
-                </mxCell>
-                <mxCell id="59" value="Train Dataset A" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="-220" y="290" width="100" height="120" as="geometry">
-                        <mxRectangle x="-140" y="310" width="130" height="30" as="alternateBounds"/>
+                <mxCell id="240" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="239">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="354.5849999999999" y="350" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="54" value="Dataset 1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="59">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
+                <mxCell id="265" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="126" target="264">
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="57" value="Dataset 2" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="59">
-                    <mxGeometry x="10" y="60" width="80" height="20" as="geometry"/>
+                <mxCell id="290" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="265">
+                    <mxGeometry x="-0.5284" relative="1" as="geometry">
+                        <mxPoint y="3" as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="56" value="Dataset 3" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10.000000000000227;" vertex="1" parent="59">
-                    <mxGeometry x="10" y="90" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="100" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="60" target="39">
+                <mxCell id="283" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="126">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="340" y="240" as="targetPoint"/>
+                        <mxPoint x="354.59000000000003" y="650" as="targetPoint"/>
                         <Array as="points">
-                            <mxPoint x="-170" y="480"/>
-                            <mxPoint x="310" y="480"/>
-                            <mxPoint x="310" y="240"/>
+                            <mxPoint x="549.59" y="530"/>
+                            <mxPoint x="549.59" y="630"/>
+                            <mxPoint x="354.59000000000003" y="630"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="60" value="Test Dataset A" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="-220" y="410" width="100" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="55" value="Dataset 4" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="60">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="64" value="Train Dataset B" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="-100" y="290" width="100" height="120" as="geometry">
-                        <mxRectangle x="-140" y="310" width="130" height="30" as="alternateBounds"/>
+                <mxCell id="289" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="283">
+                    <mxGeometry x="-0.7831" y="-1" relative="1" as="geometry">
+                        <mxPoint x="-4" y="-1" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="65" value="Dataset 1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="64">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
+                <mxCell id="126" value="特徴量拡張？" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="249.59999999999994" y="510" width="210" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="66" value="Dataset 2" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="64">
-                    <mxGeometry x="10" y="60" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="69" value="Dataset 4" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="64">
-                    <mxGeometry x="10" y="90" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="99" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="68" target="39">
+                <mxCell id="168" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="174" source="239">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="340" y="250.0000000000001" as="targetPoint"/>
+                        <mxPoint x="354.5849999999999" y="370" as="sourcePoint"/>
                         <Array as="points">
-                            <mxPoint x="-50" y="480"/>
-                            <mxPoint x="310" y="480"/>
-                            <mxPoint x="310" y="240"/>
+                            <mxPoint x="354.59000000000003" y="430"/>
+                            <mxPoint x="354.59000000000003" y="390"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="68" value="Test Dataset B" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="-100" y="410" width="100" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="67" value="Dataset 3" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10.000000000000227;" vertex="1" parent="68">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="70" value="Train Dataset C" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="20" y="290" width="100" height="120" as="geometry">
-                        <mxRectangle x="-140" y="310" width="130" height="30" as="alternateBounds"/>
+                <mxCell id="169" value="case: 正規化" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="168">
+                    <mxGeometry x="0.0548" y="-2" relative="1" as="geometry">
+                        <mxPoint x="6" y="-12" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="71" value="Dataset 1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="70">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="73" value="Dataset 3" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10.000000000000227;" vertex="1" parent="70">
-                    <mxGeometry x="10" y="60" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="75" value="Dataset 4" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="70">
-                    <mxGeometry x="10" y="90" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="98" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="74" target="39">
+                <mxCell id="170" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" target="176" source="239">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="340" y="250.0000000000001" as="targetPoint"/>
+                        <mxPoint x="354.5849999999999" y="370" as="sourcePoint"/>
                         <Array as="points">
-                            <mxPoint x="70" y="480"/>
-                            <mxPoint x="310" y="480"/>
-                            <mxPoint x="310" y="240"/>
+                            <mxPoint x="354.59000000000003" y="430"/>
+                            <mxPoint x="354.59000000000003" y="450"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="74" value="Test Dataset C" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="20" y="410" width="100" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="72" value="Dataset 2" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="74">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="76" value="Train Dataset D" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="140" y="290" width="100" height="120" as="geometry">
-                        <mxRectangle x="-140" y="310" width="130" height="30" as="alternateBounds"/>
+                <mxCell id="171" value="case: 標準化" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="170">
+                    <mxGeometry x="0.2006" y="-1" relative="1" as="geometry">
+                        <mxPoint x="11" y="-11" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="78" value="Dataset 2" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="76">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
+                <mxCell id="172" value="case: 前処理なし" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="239">
+                    <mxGeometry x="0.4993" y="-45" relative="1" as="geometry">
+                        <mxPoint x="349.5949999999999" y="370" as="sourcePoint"/>
+                        <mxPoint x="354.59000000000003" y="510" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="79" value="Dataset 3" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10.000000000000227;" vertex="1" parent="76">
-                    <mxGeometry x="10" y="60" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="81" value="Dataset 4" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="76">
-                    <mxGeometry x="10" y="90" width="80" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="97" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="80" target="39">
+                <mxCell id="288" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="174">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="340" y="240" as="targetPoint"/>
+                        <mxPoint x="369.59000000000003" y="500" as="targetPoint"/>
                         <Array as="points">
-                            <mxPoint x="190" y="480"/>
-                            <mxPoint x="310" y="480"/>
-                            <mxPoint x="310" y="240"/>
+                            <mxPoint x="501.59000000000003" y="500"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="80" value="Test Dataset D" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="140" y="410" width="100" height="60" as="geometry"/>
+                <mxCell id="174" value="正規化" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fontFamily=Helvetica;fontSize=12;fontColor=default;align=center;strokeColor=default;fillColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="459.6" y="440" width="83.65" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="77" value="Dataset 1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=10;" vertex="1" parent="80">
-                    <mxGeometry x="10" y="30" width="80" height="20" as="geometry"/>
+                <mxCell id="281" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="176">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="369.59000000000003" y="500" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="607.59" y="500"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="103" value="" style="shape=loopLimit;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="341.5" y="280" width="247" height="40" as="geometry"/>
+                <mxCell id="176" value="標準化" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fontFamily=Helvetica;fontSize=12;fontColor=default;align=center;strokeColor=default;fillColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="565.9499999999999" y="410" width="83.65" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="181" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="178" target="179">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="182" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="181">
+                    <mxGeometry x="-0.2315" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="187" value="&amp;nbsp;No&amp;nbsp;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="178" target="186">
+                    <mxGeometry x="-0.7464" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="178" value="ハイパーパラメータチューニング？" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="152.00000000000009" y="710" width="290.03" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="179" target="185">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="179" value="ハイパーパラメータチューニング" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fontFamily=Helvetica;fontSize=12;fontColor=default;align=center;strokeColor=default;fillColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="162.02999999999994" y="790" width="269.98" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="190" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="185" target="189">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="185" value="最適なパラメータ" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+                    <mxGeometry x="215.23999999999998" y="850" width="163.55" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="191" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="186" target="189">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="186" value="デフォルトのパラメータ" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+                    <mxGeometry x="401.16999999999996" y="850" width="173.55" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="287" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.294;entryY=0.02;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="189" target="205">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="189" value="機械学習モデルを構築・学習" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="212.01999999999995" y="930" width="170" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="285" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="205" target="220">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="286" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="205" target="104">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="205" value="予測し，F-Accuracy 算出" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="212.02" y="990" width="287.57" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="217" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="195" target="178">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="229" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="220" target="226">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="220" value="F-accuracy" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+                    <mxGeometry x="555.76" y="990" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="297" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="226" target="296">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="226" value="A~D全てのF-Accuracyの平均値を算出" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="228.29999999999993" y="1110" width="255" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="239" value="前処理を行う？" style="shape=rhombus;html=1;dashed=0;whitespace=wrap;perimeter=rhombusPerimeter;" vertex="1" parent="1">
+                    <mxGeometry x="268.30000000000007" y="390" width="172.48" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="282" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="264">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="354.2856521739135" y="650" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="264" value="特徴量を拡張する" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+                    <mxGeometry x="218.10000000000005" y="580" width="273" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="266" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="237.09" y="650" width="235.02000000000004" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="195" value="Train` Dataset" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" vertex="1" parent="266">
+                    <mxGeometry width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="196" value="Test` Dataset" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" vertex="1" parent="266">
+                    <mxGeometry x="110" width="125.02" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="271" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="237.09" y="330" width="235.02000000000004" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="272" value="Train Dataset" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" vertex="1" parent="271">
+                    <mxGeometry width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="273" value="Test Dataset" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" vertex="1" parent="271">
+                    <mxGeometry x="110" width="125.02" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="284" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="196" target="205">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="609.59" y="670"/>
+                            <mxPoint x="609.59" y="950"/>
+                            <mxPoint x="427.59000000000003" y="950"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="293" value="パラメータ設定(config)の読み込み" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="256.59999999999997" y="10" width="203" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="296" value="結果を保存" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="312.8" y="1169" width="86" height="41" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

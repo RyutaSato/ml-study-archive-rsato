@@ -37,6 +37,13 @@
         \item 正規化した入力データをAutoEncoderに学習させ，そこから生成したAE特徴量も正規化する場合
     \end{itemize}
 
+    \item オートエンコーダに学習させるデータの種類によって，分類精度に影響するかどうかの検証
+    \begin{itemize}
+        \item 全てのデータを学習させたAutoEncoderから抽出したAE特徴量を加える場合
+        \item 多数派クラスのみを学習させたAutoEncoderから抽出したAE特徴量を加える場合
+        \item 少数派クラスのみを学習させたAutoEncoderから抽出したAE特徴量を加える場合
+    \end{itemize}
+
     
 
 \end{enumerate}
