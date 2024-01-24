@@ -12,4 +12,74 @@
 \end{center}
 aaa
 
+\begin{table}[hbtb]
+    \caption{表の例}
+    \label{tab:example}
+    \centering
+    \begin{tabular}{l|*{18}{c|}}
+
+        \hline
+
+        preprocessing&
+        \multicolumn{4}{|c|}{none} &
+
+        \multicolumn{7}{c|}{standardize} &
+
+        \multicolumn{7}{c}{normalize} \\
+        
+        ae\_preprocessing&
+        \multicolumn{4}{|c|}{none} &
+
+        \multicolumn{3}{c|}{standardize} &
+        \multicolumn{4}{c|}{none} &
+
+        \multicolumn{3}{c|}{normalize} & 
+        \multicolumn{4}{c}{none} \\
+        \multicolumn{1}{c|}{layers}&
+        none&[20,10,5]&[20,15,10]&[20,15,10,5]&
+        [20,10,5]&[20,15,10]&[20,15,10,5]&
+        none&[20,10,5]&[20,15,10]&[20,15,10,5]&
+        [20,10,5]&[20,15,10]&[20,15,10,5]&
+        none&[20,10,5]&[20,15,10]&[20,15,10,5]\\
+
+        \hline
+        Dataset &
+        \multicolumn{18}{c}{} \\
+        \hline
+
+        kdd99 &&&&&&&&&&&&&&&&&& \\
+        kdd\_dropped &&&&&&&&&&&&&&&&&& \\
+        creditcardfraud &&&&&&&&&&&&&&&&&& \\
+        ecoli &&&&&&&&&&&&&&&&&& \\
+        optical\_digits &&&&&&&&&&&&&&&&&& \\
+        satimage &&&&&&&&&&&&&&&&&& \\
+        pen\_digits &&&&&&&&&&&&&&&&&& \\
+        abalone &&&&&&&&&&&&&&&&&& \\
+        sick\_euthyroid &&&&&&&&&&&&&&&&&& \\
+        spectrometer &&&&&&&&&&&&&&&&&& \\
+        car\_eval\_34 &&&&&&&&&&&&&&&&&& \\
+        isolet &&&&&&&&&&&&&&&&&& \\
+        us\_crime &&&&&&&&&&&&&&&&&& \\
+        yeast\_ml8 &&&&&&&&&&&&&&&&&& \\
+        scene &&&&&&&&&&&&&&&&&& \\
+        libras\_move &&&&&&&&&&&&&&&&&& \\
+        thyroid\_sick &&&&&&&&&&&&&&&&&& \\
+        coil\_2000 &&&&&&&&&&&&&&&&&& \\
+        arrhythmia &&&&&&&&&&&&&&&&&& \\
+        solar\_flare\_m0 &&&&&&&&&&&&&&&&&& \\
+        oil &&&&&&&&&&&&&&&&&& \\
+        car\_eval\_4 &&&&&&&&&&&&&&&&&& \\
+        wine\_quality &&&&&&&&&&&&&&&&&& \\
+        letter\_img &&&&&&&&&&&&&&&&&& \\
+        yeast\_me2 &&&&&&&&&&&&&&&&&& \\
+        webpage &&&&&&&&&&&&&&&&&& \\
+        ozone\_level &&&&&&&&&&&&&&&&&& \\
+        mammography &&&&&&&&&&&&&&&&&& \\
+        protein\_homo &&&&&&&&&&&&&&&&&& \\
+        abalone\_19 &&&&&&&&&&&&&&&&&& \\
+
+    \end{tabular}
+
+\end{table}
+
 \newpage
