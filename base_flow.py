@@ -213,7 +213,8 @@ class BaseFlow(ABC):
             fetch_h5_model(k)
         if os.path.exists(file_name):
             # 保存しているモデルの読み込み
-            _encoder = keras.models.load_model(file_name)
+            _encoder = keras.models.load_model(file_name, compile=False)
+            _encoder.compile(optimizer='adam', loss='mse')
         # 保存済みモデルがない場合
         else:
             # エンコーダーの生成
@@ -251,7 +252,7 @@ class BaseFlow(ABC):
 
         return x_train_ae, x_test_ae
 
-    def k_fold_cross_validation(self) -> None:
+    def k_fold_cross_validation(self, only_generate_encoder=False) -> None:
         """
         モデルの訓練と予測を行います。
 
@@ -296,6 +297,10 @@ class BaseFlow(ABC):
                 # データを結合
                 x_train = pd.concat([x_train, x_train_ae], axis=1)
                 x_test = pd.concat([x_test, x_test_ae], axis=1)
+
+            # ONLY GENERATE ENCODER
+            if only_generate_encoder:
+                return
 
             # ハイパーパラメータのチューニング
             if self.model.optuna:
@@ -422,6 +427,7 @@ class BaseFlow(ABC):
                 min_samples_split=trial.suggest_int('min_samples_split', 2, 100),
                 min_samples_leaf=trial.suggest_int('min_samples_leaf', 1, 100),
                 max_features=trial.suggest_categorical('max_features', ['sqrt', 'log2']),
+                bootstrap=True,
             )
         elif self.model.name == 'mp':
             return dict(
@@ -502,6 +508,19 @@ class BaseFlow(ABC):
             params = self.aggregate()
             logger.info(f'task finished')
             logger.info(f'{params.dict()}')
+        except Exception as e:
+            err_msg = f"{self.model.name} {self.ae.layers} error: {e}"
+            logger.error(traceback.format_exc())
+            logger.error(err_msg)
+            self.send_error(err_msg)
+        finally:
+            return self
+
+    def run_only_generate_encoder(self):
+        try:
+            self.load()
+            self.preprocess()
+            self.k_fold_cross_validation(only_generate_encoder=True)
         except Exception as e:
             err_msg = f"{self.model.name} {self.ae.layers} error: {e}"
             logger.error(traceback.format_exc())
