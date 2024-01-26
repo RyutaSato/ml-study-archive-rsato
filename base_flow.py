@@ -132,43 +132,17 @@ class BaseFlow(ABC):
         # self.x = pd.DataFrame(StandardScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
 
     def _k_fold_preprocess(self, x_train, y_train, x_test, y_test) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """
-        データの前処理を行います。
-
-        このメソッドは、データの前処理を行います。
-        データの前処理は、以下の手順で行われます。
-        1. データの標準化
-        2. エンコーダーの生成
-        3. 新たな特徴量の生成
-
-        Args:
-            x_train (pd.DataFrame): 訓練データの入力データ。
-            y_train (pd.Series): 訓練データの目的変数。
-            x_test (pd.DataFrame): テストデータの入力データ。
-            y_test (pd.Series): テストデータの目的変数。
-
-        Returns:
-            tuple[pd.DataFrame, pd.DataFrame]: 前処理済みの入力データ。
-
-        """
         # 標準化
         if self.dataset.standardization:
             scaler = StandardScaler()
-            x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns, index=x_train.index)
-            x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)  # type: ignore
-
         # 正規化
-        if self.dataset.normalization:
+        elif self.dataset.normalization:
             scaler = MinMaxScaler()
-            x_train = pd.DataFrame(
-                scaler.fit_transform(x_train), 
-                columns=x_train.columns, 
-                index=x_train.index)
-            x_test = pd.DataFrame(
-                scaler.transform(x_test), 
-                columns=x_test.columns, 
-                index=x_test.index) 
-
+        else:
+            return x_train, x_test
+        x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns, index=x_train.index)
+        x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)
+        
         return x_train, x_test
 
     def _k_fold_generate_ae(self, x_train, y_train, x_test, y_test, fold: int) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -238,18 +212,15 @@ class BaseFlow(ABC):
 
         if self.ae.standardization:
             scaler = StandardScaler()
-            x_train_ae = pd.DataFrame(
-                scaler.fit_transform(x_train_ae), columns=x_train_ae.columns, index=x_train_ae.index)
-            x_test_ae = pd.DataFrame(
-                scaler.transform(x_test_ae), columns=x_test_ae.columns, index=x_test_ae.index)
         
-        if self.ae.normalization:
+        elif self.ae.normalization:
             scaler = MinMaxScaler()
-            x_train_ae = pd.DataFrame(
-                scaler.fit_transform(x_train_ae), columns=x_train_ae.columns, index=x_train_ae.index)
-            x_test_ae = pd.DataFrame(
-                scaler.transform(x_test_ae), columns=x_test_ae.columns, index=x_test_ae.index) 
-
+        else:
+            return x_train_ae, x_test_ae
+        x_train_ae = pd.DataFrame(
+            scaler.fit_transform(x_train_ae), columns=x_train_ae.columns, index=x_train_ae.index)
+        x_test_ae = pd.DataFrame(
+            scaler.transform(x_test_ae), columns=x_test_ae.columns, index=x_test_ae.index) 
         return x_train_ae, x_test_ae
 
     def k_fold_cross_validation(self, only_generate_encoder=False) -> None:
@@ -470,9 +441,15 @@ class BaseFlow(ABC):
 
     def optuna(self, x_train, y_train) -> dict:
 
-        # 検証とテストに分割
-        x_t, x_v, y_t, y_v = train_test_split(x_train, y_train, test_size=0.25, random_state=self.random_seed,
-                                              stratify=y_train)
+        # 学習とテストに分割．学習のサンプル数は，最大30,000件に制限
+        if x_train.shape[0] * (1 - 0.25) > 30_000: # ex: 100,000 * 0.75 > 30,000
+            test_size = 1 - 30000 / x_train.shape[0] # ex: 0.7
+            # ex: 30,000: 70,000
+            logger.info(f"sample size: {x_train.shape[0]} limitted to 30,000")  
+        else:
+            test_size = 0.25  # default
+        
+        x_t, x_v, y_t, y_v = train_test_split(x_train, y_train, test_size=test_size,random_state=self.random_seed,stratify=y_train)
 
         def objective(trial):
             self.current_task = f'optuna phase {trial.number + 1} / 100'
@@ -482,12 +459,16 @@ class BaseFlow(ABC):
             # モデルの学習
             assert self.Model is not None, "Model is None"
             model = self.Model(**best_params)
+
+
             model.fit(x_t, y_t)
 
             # 予測
             y_p = model.predict(x_v)
             # 精度の計算
-            return float(f1_score(y_v, y_p, average='macro'))
+            f1 = float(f1_score(y_v, y_p, average='macro'))
+            logger.info(f"optuna phase {trial.number + 1} / 100 score: {f1}")
+            return f1
 
         # Optunaでハイパーパラメータの最適化を行う
         # noinspection PyArgumentList
