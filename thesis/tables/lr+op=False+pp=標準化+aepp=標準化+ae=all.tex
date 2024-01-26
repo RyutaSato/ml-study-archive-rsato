@@ -1,0 +1,20 @@
+\begin{figure}[ht]
+    \centering
+    \caption{Logistic Regression optuna:False 前処理:標準化 AE前処理:標準化 AE 学習クラス:all}
+    \label{fig:lr+op=False+pp=標準化+aepp=標準化+ae=all}
+    \begin{tabular}{p{22mm}*3{p{14mm}}|*3{p{14mm}}}
+        
+        \hline
+        optuna&\multicolumn{6}{c}{False}\\
+        前処理&\multicolumn{6}{c}{標準化}\\
+        AE前処理&\multicolumn{6}{c}{標準化}\\
+        \hline
+        layers&\multicolumn{1}{r}{[20,10,5]}&\multicolumn{1}{r}{[20,15,10]}&\multicolumn{1}{r}{[20,15,10,5]}&\multicolumn{1}{r}{[20,10,5]}&\multicolumn{1}{r}{[20,15,10]}&\multicolumn{1}{r}{[20,15,10,5]}\\
+        \hline
+        Dataset&\multicolumn{3}{c}{minority F-accuracy}&\multicolumn{3}{c}{macro F-accuracy}\\
+        \hline
+        kdd99&\multicolumn{1}{r}{0.560}&\multicolumn{1}{r}{\textbf{0.568}}&\multicolumn{1}{r}{0.542}&\multicolumn{1}{r}{0.875}&\multicolumn{1}{r}{\textbf{0.878}}&\multicolumn{1}{r}{0.873}\\
+        kdd99\_dropped&\multicolumn{1}{r}{-}&\multicolumn{1}{r}{-}&\multicolumn{1}{r}{-}&\multicolumn{1}{r}{-}&\multicolumn{1}{r}{-}&\multicolumn{1}{r}{-}\\
+        creditcardfraud&\multicolumn{1}{r}{0.745}&\multicolumn{1}{r}{\textbf{0.766}}&\multicolumn{1}{r}{0.742}&\multicolumn{1}{r}{0.872}&\multicolumn{1}{r}{\textbf{0.883}}&\multicolumn{1}{r}{0.871}\\
+    \end{tabular}
+\end{figure}
