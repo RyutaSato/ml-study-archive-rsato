@@ -1,43 +1,43 @@
 \section{検証内容}
 本実験では，様々な設定を変え，精度への影響を調査する．
-検証目的と，その検証のために比較される実験設定は以下の通りである．
+検証内容と比較する条件設定は以下の通りである．
 
-\begin{enumerate}
-    \item AE特徴量を加えることで，分類精度が向上するかどうかの検証
+\begin{description}
+    \item [検証１] AE特徴量を加えることで，分類精度が向上するかどうかの検証
     \begin{itemize}
         \item 全てのデータを学習させたAutoEncoderから抽出したAE特徴量を加える場合
         \item AutoEncoderから抽出したAE特徴量を加えない場合
     \end{itemize}
 
-    \item AutoEncoderが学習するデータを特定のクラスに偏らせることが，分類精度に影響するかどうかの検証
+    \item [検証２] AutoEncoderが学習するデータを特定のクラスに偏らせることが，分類精度に影響するかどうかの検証
     \begin{itemize}
         \item 全てのデータを学習させたAutoEncoderから抽出したAE特徴量を加える場合
         \item 多数派クラスのみを学習させたAutoEncoderから抽出したAE特徴量を加える場合
         \item 少数派クラスのみを学習させたAutoEncoderから抽出したAE特徴量を加える場合
     \end{itemize}
 
-    \item AutoEncoderの隠れ層の構成が，分類精度に影響するかどうかの検証
+    \item [検証３] AutoEncoderの隠れ層の構成が，分類精度に影響するかどうかの検証
     \begin{itemize}
         \item Encoder層の次元数を[入力データの次元数, 20, 10, 5]とした場合
         \item Encoder層の次元数を[入力データの次元数, 20, 15, 10, 5]とした場合
     \end{itemize}
 
-    \item AE特徴量の数が，分類精度に影響するかどうかの検証
+    \item [検証４] AE特徴量の数が，分類精度に影響するかどうかの検証
     \begin{itemize}
         \item AE特徴量の数を[入力データの次元数, 20, 10, 5]とした場合
         \item AE特徴量の数を[入力データの次元数, 20, 15, 10]とした場合
     \end{itemize}
 
-    \item 入力データの前処理によって，分類精度に影響するかどうかの検証
+    \item [検証５] 入力データの前処理によって，分類精度に影響するかどうかの検証
     \begin{itemize}
         \item 入力データの前処理を行わず，AutoEncoderに学習させた場合
-        \item 標準化した入力データをAutoEncoderに学習させ，そこから生成したAE特徴量は標準化しない場合
-        \item 標準化した入力データをAutoEncoderに学習させ，そこから生成したAE特徴量も標準化する場合
-        \item 正規化した入力データをAutoEncoderに学習させ，そこから生成したAE特徴量は正規化しない場合
-        \item 正規化した入力データをAutoEncoderに学習させ，そこから生成したAE特徴量も正規化する場合
+        \item 標準化した入力データをAutoEncoderに学習させ，AE特徴量は標準化しない場合
+        \item 標準化した入力データをAutoEncoderに学習させ，E特徴量も標準化する場合
+        \item 正規化した入力データをAutoEncoderに学習させ，AE特徴量は正規化しない場合
+        \item 正規化した入力データをAutoEncoderに学習させ，AE特徴量も正規化する場合
     \end{itemize}
 
-    \item オートエンコーダに学習させるデータの種類によって，分類精度に影響するかどうかの検証
+    \item [検証６] オートエンコーダに学習させるデータの種類によって，分類精度に影響するかどうかの検証
     \begin{itemize}
         \item 全てのデータを学習させたAutoEncoderから抽出したAE特徴量を加える場合
         \item 多数派クラスのみを学習させたAutoEncoderから抽出したAE特徴量を加える場合
@@ -46,4 +46,4 @@
 
     
 
-\end{enumerate}
+\end{description}
