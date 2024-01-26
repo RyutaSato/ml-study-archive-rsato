@@ -84,6 +84,7 @@ class LatexTable:
 
     def _header(self):
         return r"""\begin{{figure}}[ht]
+    \centering
     \caption{{{caption}}}
     \label{{fig:{label}}}
 """.format(caption=self.caption, label=self.label, width=self.width)
@@ -98,6 +99,9 @@ class LatexTable:
 
     def _footer(self):
         return "\\end{figure}\n"
+
+    def _bf(self, text: str):
+        return r"\textbf{{{text}}}".format(text=text)
 
     def _hline(self):
         return "\\hline\n"
