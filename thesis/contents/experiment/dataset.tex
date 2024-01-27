@@ -1,38 +1,68 @@
 \section{データセット}
 \label{sec:dataset}
 本実験で使用する各データセットの詳細について述べる．
-なお，クラス数はデータセットによって異なるため，2値分類問題は，データ数の多いクラスを`majority`クラスとして，他方を`minority`クラスとして集計する．
-多クラスのデータセットにおいて，どのクラスを`minority`クラスとして評価するか，マクロ指標の定義については，別途定める．
+なお，クラス数はデータセットによって異なるため，2値分類問題は，データ数の多いクラスを'majority'クラスとして，他方を'minority'クラスとして集計する．
+多クラスのデータセットにおいて，どのクラスを'minority'クラスとして評価するか，マクロ指標の定義については，別途定める．
 
-\subsection{KDD CUP 1999 Data 10\%}
+\subsection{KDD Cup 1999 Data 10\%}
 \begin{description}
-    \item[概要] 1998年にアメリカの国防総省で開催されたKDD Cup 1999で使用されたデータセットの10\%データ．
+    \item[概要] 知識発見とデータマイニングのコンテストであるKDD Cupで使用された不正侵入検知タスクのためのデータセットの10\%抽出データ．
+    \item[発表年] 1999
     \item[サンプル数] 494,021
     \item[クラスごとのサンプル数] \mbox{}
-        \begin{itemize}
-            \item normal (majority):  97,278(19.7\%)
-            \item dos:      391,458(79.2\%)
-            \item probe:    4,628(0.9\%)
-            \item r2l:      1,605(0.3\%)
-            \item u2r (minority):      52(0.01\%)
-        \end{itemize}
+        \begin{table}
+            \centering
+            \caption{KDD Cup 1999 Data 10\%のクラスごとのサンプル数}
+                \label{tab:kddcup1999data10percent}
+                \begin{tabular}{lrc} \hline
+                    \multicolumn{1}{c}{クラス}&
+                    \multicolumn{1}{c}{サンプル数}&
+                    \multicolumn{1}{c}{割合}\\
+                    \hline
+                    \hline
+                    normal  (majority)& 97,278 & 19.7\% \\
+                    dos & 391,458 & 79.2\% \\
+                    probe & 4,628 & 0.9\% \\
+                    r2l & 1,605 & 0.3\% \\
+                    u2r (minority)& 52 & 0.01\% \\ 
+                    \hline
+                \end{tabular}
+        \end{table}
     \item[特徴量の数] 38 (カテゴリデータを除く)
     \item[各特徴量の種類] 正常アクセスと大きく４つに分類できる攻撃アクセスに関するインターネットトラフィックのデータが含まれている．
-            duration, src\_bytes, dst\_bytes, land, wrong\_fragment, urgent, hot, num\_failed\_logins, logged\_in, num\_compromised, root\_shell, su\_attempted, num\_root, num\_file\_creations, num\_shells, num\_access\_files, num\_outbound\_cmds, is\_host\_login, is\_guest\_login, count, srv\_count, serror\_rate, srv\_serror\_rate, rerror\_rate, srv\_rerror\_rate, same\_srv\_rate, diff\_srv\_rate, srv\_diff\_host\_rate, dst\_host\_count, dst\_host\_srv\_count, dst\_host\_same\_srv\_rate, dst\_host\_diff\_srv\_rate, dst\_host\_same\_src\_port\_rate, \\dst\_host\_srv\_diff\_host\_rate, dst\_host\_serror\_rate, dst\_host\_srv\_serror\_rate, \\dst\_host\_rerror\_rate, dst\_host\_srv\_rerror\_rate
     \item[留意事項] このデータセットに含まれる３つのカテゴリデータは使用しない．
-                   また，少数派クラスの評価にはu2rクラスのみを使用し，多数派クラスの評価にはnormalクラスのみを使用する．全体のmacro F1値は，これらのクラスを含めた５クラス全体で評価する．
+                   また，少数派クラスの評価にはu2rクラスのみを使用し，'majority'クラスの評価には'normal'クラスのみを使用する．全体のmacro F-accuracyは，５クラス全体で評価する．
+\end{description}
+
+\subsection{KDD CUP 1999 Data 10\% dropped}
+\begin{description}
+    \item[概要] KDD CUP 1999 Data 10\%から， 別の研究\cite{thesis1}により不要と判断された13個の特徴量とカテゴリ特徴量を除いたオリジナルのデータセット．
+    \item[サンプル数] 同上
+    \item[クラスごとのサンプル数] 同上
+    \item[特徴量の数] 25 
 \end{description}
 
 \subsection{Credit Card Fraud Detection Dataset}
 \begin{description}
     \item[概要] 金融取引データに基づくクレジットカード詐欺検出のためのデータセット．このデータセットは，正常な取引と不正な取引の２つのクラスに分類されたクレジットカード取引の情報を含んでいる．
-    \item[提供元] 
+    \item[提供元] Worldline and the Université Libre de Bruxelles (ULB)\cite{CreditCardFraudDetectionDataset}
     \item[サンプル数] 284,807
     \item[クラスごとのサンプル数と割合] \mbox{}
-        \begin{itemize}
-            \item 正常取引 (majority): 284,315（99.83\%）
-            \item 詐欺取引 (minority): 492（0.17\%）
-        \end{itemize}
+        \begin{table}
+            \centering
+            \caption{Credit Card Fraud Detection Datasetのクラスごとのサンプル数}
+                \label{tab:creditcardfrauddetectiondataset}
+                \begin{tabular}{lrc} \hline
+                    \multicolumn{1}{c}{クラス}&
+                    \multicolumn{1}{c}{サンプル数}&
+                    \multicolumn{1}{c}{割合}\\
+                    \hline
+                    \hline
+                    normal  (majority)& 284,315 & 99.83\% \\
+                    fraud (minority)& 492 & 0.17\% \\
+                    \hline
+                \end{tabular}
+        \end{table}
     \item[特徴量の数] 特徴量の総数（例: 30）
     \item[各特徴量の種類] \mbox{}
             V1, V2, ..., V28（PCAによる匿名化された特徴量）、取引金額（'Amount'）、取引後の時間（'Time'）
@@ -45,36 +75,66 @@
     \item[提供元] UCI Machine Learning Repository
     \item[サンプル数] 336
     \item[クラスごとのサンプル数と割合] \mbox{}
-        \begin{itemize}
-            \item cp (majority): 143 (42.560\%)
-            \item im (majority): 77 (22.917\%)
-            \item imS (majority): 2 (0.595\%)
-            \item imL (majority): 2 (0.595\%)
-            \item imU (minority): 35 (10.417\%)
-            \item om (majority): 20 (5.952\%)
-            \item omL (majority): 5 (1.488\%)
-            \item pp (majority): 52 (15.476\%)
-        \end{itemize}
+        \begin{table}
+            \centering
+            \caption{ecoliのクラスごとのサンプル数}
+            \label{tab:ecoli}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                cp (majority)& 143 & 42.560\% \\
+                im (majority)& 77 & 22.917\% \\
+                imS (majority)& 2 & 0.595\% \\
+                imL (majority)& 2 & 0.595\% \\
+                imU (minority)& 35 & 10.417\% \\
+                om (majority)& 20 & 5.952\% \\
+                omL (majority)& 5 & 1.488\% \\
+                pp (majority)& 52 & 15.476\% \\
+                \hline
+            \end{tabular}
+        \end{table}
     \item[特徴量の数] 7
     \item[各特徴量の種類] 特徴量は，分析により判明した科学的特性を示したもの．\\
             mcg, gvh, lip, chg, aac, alm1, alm2
-    \item[留意事項] 提供元により，`imU`クラスとそれ以外のクラスに2値化されている．
+    \item[留意事項] 提供元により，'imU'クラスとそれ以外のクラスに2値化されている．
 \end{description}
 
 \subsection{optical\_digits}
     \begin{description}
-    \item[概要] 手書きの数字の光学的認識を各ピクセルの値に基づいて示したデータセット．\cite{optical_digits}
+    \item[概要] 手書きの数字の光学的認識を各ピクセルの値に基づいて示したデータセット．\cite{opticaldigits}
     \item[提供元] UCI Machine Learning Repository
     \item[サンプル数] 5,620
-    \item[クラスごとのサンプル数と割合] \mbox{}
-        \begin{itemize}
-            \item 8以外の数字 (majority): 5,010 (89.0\%)
-            \item 8 (minority): 610 (11.0\%)
-        \end{itemize}
+    \item[クラスごとのサンプル数と割合] majority: 5066 (90.1\%), minority: 554 (9.8\%) (詳細は表\ref{tab:opticaldigits}を参照)
+        \begin{table}
+            \centering
+            \caption{optical\_digitsのクラスごとのサンプル数}
+            \label{tab:opticaldigits}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                0 (minority)& 514 & 9.1\% \\
+                1 (majority)& 571 & 10.2\% \\
+                2 (majority)& 557 & 9.9\% \\
+                3 (majority)& 572 & 10.2\% \\
+                4 (majority)& 568 & 10.1\% \\
+                5 (majority)& 558 & 9.9\% \\
+                6 (majority)& 558 & 9.9\% \\
+                7 (majority)& 566 & 10.1\% \\
+                8 (minority)& 554 & 9.8\% \\
+                9 (majority)& 562 & 10.0\% \\
+                \hline
+            \end{tabular}
+        \end{table}
     \item[特徴量の数] 64
     \item[各特徴量の種類] \mbox{}
         各特徴量は8$\times$8ピクセルのグリッドに基づく手書き数字の光学的特性を0から16の整数値で表したもの．
-    \item[留意事項] 提供元により，`8`クラスとそれ以外のクラスに2値化されている．
+    \item[留意事項] 提供元により，'8'クラスとそれ以外のクラスに2値化されている．
     \end{description}
 
     \subsection{satimage}
@@ -82,35 +142,777 @@
         \item[概要] 衛星画像データを基にした土地利用分類のためのデータセット．\cite{satimage}
         \item[提供元] UCI Machine Learning Repository
         \item[サンプル数] 6,435
-        \item[クラスごとのサンプル数と割合] \mbox{}
-            \begin{itemize}
-                \item 赤い土壌 (majority): 1,533 (23.8\%)
-                \item 綿作物 (majority): 703 (10.9\%)
-                \item 灰色の土壌 (majority): 1,358 (21.1\%)
-                \item 湿った灰色の土壌 (minority): 626 (9.7\%)
-                \item 切り株のある土壌 (majority): 707 (11.0\%)
-                \item 非常に湿った灰色の土壌 (majority): 1508 (23.5\%)
-            \end{itemize}
+        \item[クラスごとのサンプル数と割合] majority: 5,109 (79.4\%), minority: 1,326 (20.6\%) (詳細は表\ref{tab:satimage}を参照)
+            
+            \begin{table}
+                \centering
+                \caption{satimageのクラスごとのサンプル数}
+                \label{tab:satimage}
+                \begin{tabular}{lrc} \hline
+                    \multicolumn{1}{c}{クラス}&
+                    \multicolumn{1}{c}{サンプル数}&
+                    \multicolumn{1}{c}{割合}\\
+                    \hline
+                    \hline
+                    赤い土壌 (majority)& 1,533 & 23.8\% \\
+                    綿作物 (majority)& 703 & 10.9\% \\
+                    灰色の土壌 (majority)& 1,358 & 21.1\% \\
+                    湿った灰色の土壌 (minority)& 626 & 9.7\% \\
+                    切り株のある土壌 (majority)& 707 & 11.0\% \\
+                    非常に湿った灰色の土壌 (majority)& 1,508 & 23.5\% \\
+                    \hline
+                \end{tabular}
+            \end{table}
         \item[特徴量の数] 36
         \item[各特徴量の種類] \mbox{}
             各特徴量は，３$\times$3のピクセルそれぞれの４つのスペクトル (赤色，緑色，２種類の赤外線)の強さを0~255の値に変換したもの．
-        \item[留意事項]  提供元により，`湿った灰色の土壌`クラスとそれ以外のクラスに2値化されている．
+        \item[留意事項]  提供元により，'湿った灰色の土壌'クラスとそれ以外のクラスに2値化されている．
     \end{description}
 
 \subsection{pen\_digits}
 \begin{description}
-    \item[概要] 44人の人物によって書かれた0から9までの数字のデータセット．\cite{pen_digits}
-    \item[提供元] UCI Machine Learning Repository
+    \item[概要] 44人の人物によって書かれた0から9までの数字のデータセット．\cite{pendigits}
+    \item[提供元] Alpaydin, Ethem and Alimoglu, Fikret
     \item[サンプル数] 10,992
-    \item[クラスごとのサンプル数と割合] \mbox{}
-        \begin{itemize}
-            \item 5 (minority): 1,057 (9.6\%)
-            \item それ以外の数字 (majority): 9,935 (90.4\%) % TODO: データの数未確認
-        \end{itemize}
+    \item[クラスごとのサンプル数と割合] majority: 9,937 (90.4\%), minority: 1,055 (9.6\%) (詳細は表\ref{tab:pendigits}を参照)
+        \begin{table}
+            \centering
+            \caption{pen\_digitsのクラスごとのサンプル数}
+            \label{tab:pendigits}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                0 (majority)& 1,143 & 9.6\% \\
+                1 (majority)& 1,143 & 9.6\% \\
+                2 (majority)& 1,144 & 9.6\% \\
+                3 (majority)& 1,055 & 9.6\% \\
+                4 (majority)& 1,144 & 9.6\% \\
+                5 (minority)& 1,055 & 9.6\% \\
+                6 (majority)& 1,056 & 9.6\% \\
+                7 (majority)& 1,142 & 9.5\% \\
+                8 (majority)& 1,055 & 9.6\% \\
+                9 (majority)& 1,055 & 9.6\% \\
+                \hline
+            \end{tabular}
+        \end{table}
     \item[特徴量の数] 16
     \item[各特徴量の種類] \mbox{}
-        2次元座標上の描画における各点の座標を100msごとにサンプリングしたもの．
-    \item[留意事項]  提供元により，`5`クラスとそれ以外のクラスに2値化されている．
+        2次元座標上の描画における各点の座標を100msごとにサンプリングしたもののを等間隔に８点でサンプリングしたもののx座標とy座標の値．
+    \item[留意事項]  提供元により，'5'クラスとそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{shuttle}
+\begin{description}
+    \item[概要] NASAの宇宙シャトルの軌道運行中の観測データに基づくデータセット．\cite{shuttle}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 58,000
+    \item[クラスごとのサンプル数と割合] majority: 46,400 (80\%), minority: 11,600 (20\%) (詳細は表\ref{tab:shuttle}を参照)
+
+        \begin{table}
+            \centering
+            \caption{shuttleのクラスごとのサンプル数}
+            \label{tab:shuttle}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                クラス1 (majority)& 46,400 & 80\% \\
+                クラス2 (minority)& ?? & ??\% \\
+                ... & ... & ... \\
+                クラス9 (minority)& ?? & ??\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 9
+    \item[各特徴量の種類] \mbox{}
+        各特徴量はシャトルの軌道運行中の様々なセンサーからのデータを表しており、例えば温度、圧力、速度などが含まれる．
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
 \end{description}
 
 
+\subsection{abalone および abalone\_19}
+\begin{description}
+    \item[概要] 物理測定値から，アワビの年齢を推定するデータセット \cite{abalone}
+    \item[提供元] Nash,Warwick, Sellers,Tracy, Talbot,Simon, Cawthorn,Andrew, and Ford,Wes
+    \item[サンプル数] 4,177
+    \item[クラスごとのサンプル数と割合(abalone)] majority(クラス:7以外): 3786 (90.6\%), minority(クラス:7): 391 (9.4\%) (詳細は表\ref{tab:abalone}を参照)
+    \item[クラスごとのサンプル数と割合(abalone\_19)] majority(クラス:19以外): 3786 (90.6\%), minority(クラス:19): 391 (9.4\%) (詳細は表\ref{tab:abalone}を参照)
+
+    \begin{table}
+        \centering
+        \caption{abaloneのクラスごとのサンプル数}
+        \label{tab:abalone}
+        \begin{tabular}{lrc} \hline
+            \multicolumn{1}{c}{クラス} &
+            \multicolumn{1}{c}{サンプル数} &
+            \multicolumn{1}{c}{割合} \\
+            \hline
+            \hline
+            1 & 1 & 0.02\% \\
+            2 & 1 & 0.02\% \\
+            3 & 15 & 0.36\% \\
+            4 & 57 & 1.36\% \\
+            5 & 115 & 2.75\% \\
+            6 & 259 & 6.20\% \\
+            7 & 391 & 9.36\% \\
+            8 & 568 & 13.60\% \\
+            9 & 689 & 16.50\% \\
+            10 & 634 & 15.18\% \\
+            11 & 487 & 11.66\% \\
+            12 & 267 & 6.39\% \\
+            13 & 203 & 4.86\% \\
+            14 & 126 & 3.02\% \\
+            15 & 103 & 2.47\% \\
+            16 & 67 & 1.60\% \\
+            17 & 58 & 1.39\% \\
+            18 & 42 & 1.01\% \\
+            19 & 32 & 0.77\% \\
+            20 & 26 & 0.62\% \\
+            21 & 14 & 0.34\% \\
+            22 & 6 & 0.14\% \\
+            23 & 9 & 0.22\% \\
+            24 & 2 & 0.05\% \\
+            25 & 1 & 0.02\% \\
+            26 & 1 & 0.02\% \\
+            27 & 2 & 0.05\% \\
+            29 & 1 & 0.02\% \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    \item[特徴量の数] 10
+    \item[各特徴量の種類] \mbox{}
+        元の特徴量は，性別，長さ，直径，高さ，全体重量，シャック重量，内臓重量，殻重量，年齢の9つであり，性別は，ワンホット変換されている．
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{sick\_euthyroid}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{spectrometer}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{car\_eval\_34}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{isolet}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{us\_crime}
+\begin{description}
+    \item[概要] 1990年の米国センサスデータ、1990年の米国LEMAS調査の法執行データ、1995年のFBI UCRの犯罪データに基づく米国内のコミュニティと犯罪に関するデータセット。\cite{us_crime}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 1994
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 100
+    \item[各特徴量の種類] \mbox{}
+        人口統計，雇用統計，法執行データなど，様々な社会経済的指標を含む．例えば，人口，収入，失業率，警察の数，犯罪率など．
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{yeast\_ml8}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{scene}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{libras\_move}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{thyroid\_sick}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{coil\_2000}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{arrhythmia}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{solar\_flare\_m0}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{oil}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{car\_eval\_4}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{wine\_quality}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{letter\_img}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{yeast\_me2}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{webpage}
+\begin{description}
+    \item[概要] \cite{webpage}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 34,780
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{webpageのクラスごとのサンプル数}
+            \label{tab:webpage}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 300
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{ozone\_level}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{mammography}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{protein\_homo}
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{abalone\_19}
+
+\begin{description}
+    \item[概要] \cite{}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 
+    \item[クラスごとのサンプル数と割合] majority:  (\%), minority:  (\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
