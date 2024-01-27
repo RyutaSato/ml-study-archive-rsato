@@ -381,13 +381,13 @@ class BaseFlow(ABC):
     def _get_default_params(self, trial) -> dict:
         if self.model.name == 'lr':
             return dict(
-                C=trial.suggest_loguniform('C', 0.001, 100),
+                C=trial.suggest_loguniform('C', 0.001, 1000),
                 solver=trial.suggest_categorical('solver', ['lbfgs', 'sag']),
                 multi_class=trial.suggest_categorical('multi_class', ['ovr', 'multinomial']),
             )
         elif self.model.name == 'svm':
             return dict(
-                C=trial.suggest_loguniform('C', 0.001, 100),
+                C=trial.suggest_loguniform('C', 1, 10000),
                 kernel=trial.suggest_categorical('kernel', ['linear', 'rbf', 'poly', 'sigmoid']),
                 gamma=trial.suggest_categorical('gamma', ['scale', 'auto']),
             )
@@ -405,7 +405,7 @@ class BaseFlow(ABC):
                 hidden_layer_sizes=trial.suggest_categorical('hidden_layer_sizes', [(15, 10, 5), (10, 5), (5,)]),
                 activation=trial.suggest_categorical('activation', ['identity', 'logistic', 'tanh', 'relu']),
                 solver=trial.suggest_categorical('solver', ['lbfgs', 'sgd', 'adam']),
-                alpha=trial.suggest_loguniform('alpha', 0.0001, 1),
+                alpha=trial.suggest_loguniform('alpha', 0.001, 10),
                 learning_rate=trial.suggest_categorical('learning_rate', ['constant', 'invscaling', 'adaptive']),
             )
         elif self.model.name == 'lgb':
