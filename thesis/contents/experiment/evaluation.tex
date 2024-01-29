@@ -1,2 +1,43 @@
 \section{評価方法}
 \label{sec:evaluation}
+本実験における評価指標について説明する．
+評価には，minorityクラスのF-accuracyとマクロ平均のF-accuracyを用いた．
+F-accuracyは，適合率と再現率から計算される．
+\subsection{適合率(Precision)}
+適合率とは，陽性と予測されたサンプルのうち，実際に陽性であったサンプルの割合である．
+式\ref{eq:precision}で表される．
+\begin{equation}
+    \label{eq:precision}
+    Precision = \frac{TP}{TP + FP}
+\end{equation}
+ここで，$TP$は真陽率(True Positive)，$FP$は偽陽率(False Positive)である．
+なお真陽率とは，陽性と予測されたサンプルのうち，実際に陽性であったサンプルの割合であり，偽陽率とは，陽性と予測されたサンプルのうち，実際に陰性であったサンプルの割合である．
+
+\subsection{再現率(Recall)}
+再現率とは，実際に陽性であるサンプルのうち，陽性と予測されたサンプルの割合である．
+式\ref{eq:recall}で表される．
+\begin{equation}
+    \label{eq:recall}
+    Recall = \frac{TP}{TP + FN}
+\end{equation}
+ここで，$FN$は偽陰性(False Negative)である．
+偽陰性とは，陰性と予測されたサンプルのうち，実際に陽性であったサンプルの割合である．
+
+\subsection{F-accuracy}
+F-accuracyは，適合率と再現率の調和平均である．F-accuracyは，適合率と再現率の両方が高いほど高い値を示すが，どちらか一方でも低い場合は，低い値を示すため，本研究のように少数派クラスを正しく少数派クラスと予測し，そうでないものを正しくそうでないと予測することが重要な場合に適している．
+式\ref{eq:f-accuracy}で表される．
+\begin{equation}
+    \label{eq:f-accuracy}
+    F-accuracy = \frac{2 \times Precision \times Recall}{Precision + Recall}
+\end{equation}
+
+\subsection{マクロ平均}
+マクロ平均とは，各クラスごとの精度をクラス数で割った値である．
+式\ref{eq:macro-average}で表される．
+\begin{equation}
+    \label{eq:macro-average}
+    Macro Average = \frac{1}{n}\sum_{i=1}^{n}accuracy_i
+\end{equation}
+ここで，$n$はクラス数である．
+
+一般的に全体の精度を評価する際に使用されるマイクロ平均は，クラスごとのデータ数の差によって，少数派クラスの精度が低くなってしまうため，本研究ではマクロ平均を用いた．

@@ -1,3 +1,43 @@
 \section{実験結果}
-% 実験結果を表\ref{tab:results}に示す．
+実験結果を表\ref{tab:lr-none-all-0}から表\ref{tab:mp-aes-majority-0}に示す．
 
+\begin{description}
+    \item [検証１] AE特徴量を加えることで，分類精度が向上するかどうかの検証
+        表\ref{tab:lr-none-all-0}から表\ref{tab:mp-aes-majority-0}までのうち，macro指標において，同条件のAE特徴量を加えない場合よりも精度が向上した場合の数をカウントした表を\ref{tab: count-macro-better}に示す．
+
+        \begin{}
+
+    \item [検証２] AutoEncoderが学習するデータを特定のクラスに偏らせることが，分類精度に影響するかどうかの検証
+    \item 
+
+    \item [検証３] AutoEncoderの隠れ層の構成が，分類精度に影響するかどうかの検証
+    \begin{itemize}
+        \item Encoder層の次元数を[入力データの次元数, 20, 10, 5]とした場合
+        \item Encoder層の次元数を[入力データの次元数, 20, 15, 10, 5]とした場合
+    \end{itemize}
+
+    \item [検証４] AE特徴量の数が，分類精度に影響するかどうかの検証
+    \begin{itemize}
+        \item AE特徴量の数を[入力データの次元数, 20, 10, 5]とした場合
+        \item AE特徴量の数を[入力データの次元数, 20, 15, 10]とした場合
+    \end{itemize}
+
+    \item [検証５] 入力データの前処理によって，分類精度に影響するかどうかの検証
+    \begin{itemize}
+        \item 入力データの前処理を行わず，AutoEncoderに学習させた場合
+        \item 標準化した入力データをAutoEncoderに学習させ，AE特徴量は標準化しない場合
+        \item 標準化した入力データをAutoEncoderに学習させ，E特徴量も標準化する場合
+        \item 正規化した入力データをAutoEncoderに学習させ，AE特徴量は正規化しない場合
+        \item 正規化した入力データをAutoEncoderに学習させ，AE特徴量も正規化する場合
+    \end{itemize}
+
+    \item [検証６] オートエンコーダに学習させるデータを特定のクラス限定することによって，分類精度に影響するかどうかの検証
+    \begin{itemize}
+        \item 全てのデータを学習させたAutoEncoderから抽出したAE特徴量を加える場合
+        \item 多数派クラスのみを学習させたAutoEncoderから抽出したAE特徴量を加える場合
+        \item 少数派クラスのみを学習させたAutoEncoderから抽出したAE特徴量を加える場合
+    \end{itemize}
+
+    
+
+\end{description}

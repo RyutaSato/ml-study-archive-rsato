@@ -38,4 +38,22 @@ K分割交差検証とは，用意された学習用とテスト用のデータ�
 
 
 
-\subsection{制約事項}
+\subsection{オートエンコーダの構成}
+オートエンコーダは，全ての実験において統一して，エポック数10, バッチサイズ32,全ての層の活性化関数にReLU, 最適化関数Adam, 損失関数MSEで学習を行った．\\
+ReLUは，ニューラルネットワークにおいて，計算コスト面や，勾配消失問題の解決のために，特に有用な関数として知られており，式\ref{eq:relu}で表される．
+\begin{equation}
+    \label{eq:relu}
+    f(x) = \begin{cases}
+        x & (x > 0) \\
+        0 & (x \leq 0)
+    \end{cases}
+\end{equation}
+
+Adamは，勾配降下法の一種である．学習率を動的に変化させることで，学習の収束を早めることができる．\\
+MSEは，二乗誤差を表す損失関数である．式\ref{eq:mse}で表される．
+\begin{equation}
+    \label{eq:mse}
+    MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y_i})^2
+\end{equation}
+ここで，$y_i$は入力値，$\hat{y_i}$は出力値であり，$n$はデータ数である．\\
+

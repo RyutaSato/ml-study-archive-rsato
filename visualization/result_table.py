@@ -85,7 +85,7 @@ class ResultTable(LatexTable):
         else:
             raise ValueError
         self.pp_label = pp_label
-        label = f"{mdl}|{pp_label}|{aeclass}|{int(hpt)}"
+        label = f"{mdl}-{pp_label}-{aeclass}-{int(hpt)}"
         layers_col = ["layers", 'none', *layers_str[1:4], 'none', *layers_str[1:4]]
         super().__init__(
             caption=caption,
@@ -122,6 +122,8 @@ class ResultTable(LatexTable):
         self.aeclass = aeclass
 
         self.col_n = 8
+        self.minorities = []
+        self.macros = []
 
 
     def _header(self):
@@ -264,6 +266,9 @@ class ResultTable(LatexTable):
             max_macro = max(res_macro)
             min_minority = min(res_minority)
             min_macro = min(res_macro)
+            self.minorities.append(res_minority[:])
+            self.macros.append(res_macro[:])
+
 
             for i in range(len(res_minority)):
                 if res_minority[i] == max_minority != min_minority:
@@ -280,7 +285,6 @@ class ResultTable(LatexTable):
             cols.extend(res_minority)
             cols.extend(res_macro)
             self.add_columns(cols)
-
 
             
 
