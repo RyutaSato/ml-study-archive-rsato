@@ -4,7 +4,7 @@
     \label{fig:lgb|aen|majority|0}
     \begin{tabular}{p{35mm}p{35mm}p{35mm}p{35mm}}
         \hline
-        \hspace{15mm}optuna: & False & \hspace{5mm}AE学習クラス: & all\\
+        \hspace{15mm}optuna: & False & \hspace{5mm}AE学習クラス: & majority\\
         \hspace{15mm}前処理: & 正規化 & AE特徴量 前処理: & 正規化\\
     \end{tabular}
 
@@ -16,9 +16,9 @@
         \hline
         Dataset&\multicolumn{4}{c|}{minority F-accuracy}&\multicolumn{4}{c}{macro F-accuracy}\\
         \hline
-        kdd99&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{\textbf{0.012}}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.604}&\multicolumn{1}{c}{\textbf{0.644}}&\multicolumn{1}{c}{0.519}&\multicolumn{1}{c}{0.600}\\
-        kdd99\_dropped&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.457}&\multicolumn{1}{c}{\textbf{0.544}}&\multicolumn{1}{c}{0.291}&\multicolumn{1}{c}{0.501}\\
-        creditcardfraud&\multicolumn{1}{c}{0.316}&\multicolumn{1}{c}{0.336}&\multicolumn{1}{c}{\textbf{0.388}}&\multicolumn{1}{c|}{0.229}&\multicolumn{1}{c}{0.657}&\multicolumn{1}{c}{0.667}&\multicolumn{1}{c}{\textbf{0.693}}&\multicolumn{1}{c}{0.614}\\
+        kdd99&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{\textbf{0.012}}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.527}&\multicolumn{1}{c}{\textbf{0.644}}&\multicolumn{1}{c}{0.519}&\multicolumn{1}{c}{0.600}\\
+        kdd99\_dropped&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.527}&\multicolumn{1}{c}{\textbf{0.544}}&\multicolumn{1}{c}{0.291}&\multicolumn{1}{c}{0.501}\\
+        creditcardfraud&\multicolumn{1}{c}{0.384}&\multicolumn{1}{c}{0.336}&\multicolumn{1}{c}{\textbf{0.388}}&\multicolumn{1}{c|}{0.229}&\multicolumn{1}{c}{0.691}&\multicolumn{1}{c}{0.667}&\multicolumn{1}{c}{\textbf{0.693}}&\multicolumn{1}{c}{0.614}\\
         ecoli&\multicolumn{1}{c}{\textbf{0.668}}&\multicolumn{1}{c}{0.549}&\multicolumn{1}{c}{0.604}&\multicolumn{1}{c|}{0.544}&\multicolumn{1}{c}{\textbf{0.816}}&\multicolumn{1}{c}{0.751}&\multicolumn{1}{c}{0.781}&\multicolumn{1}{c}{0.750}\\
         optical\_digits&\multicolumn{1}{c}{\textbf{0.956}}&\multicolumn{1}{c}{0.949}&\multicolumn{1}{c}{0.941}&\multicolumn{1}{c|}{0.954}&\multicolumn{1}{c}{\textbf{0.976}}&\multicolumn{1}{c}{0.972}&\multicolumn{1}{c}{0.968}&\multicolumn{1}{c}{0.975}\\
         satimage&\multicolumn{1}{c}{0.693}&\multicolumn{1}{c}{0.688}&\multicolumn{1}{c}{0.689}&\multicolumn{1}{c|}{\textbf{0.698}}&\multicolumn{1}{c}{0.832}&\multicolumn{1}{c}{0.829}&\multicolumn{1}{c}{0.830}&\multicolumn{1}{c}{\textbf{0.834}}\\

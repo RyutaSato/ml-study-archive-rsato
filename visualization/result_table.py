@@ -1,4 +1,7 @@
+import base64
 from calendar import c
+import json
+from turtle import pd
 from db_query import fetch_latest_record
 from visualization.latex_table import LatexTable, MultiColumn
 
@@ -8,7 +11,7 @@ datasets = ( 'kdd99', 'kdd99_dropped', 'creditcardfraud', 'ecoli', 'optical_digi
 'ozone_level', 'mammography', 'protein_homo', 'abalone_19' )
 
 # for debug
-datasets = datasets[:3]
+# datasets = datasets[:3]
 
 # latex用のため，`_`を`\_`に置き換え
 datasets_ = [c.replace('_', r'\_') for c in datasets]
@@ -38,6 +41,25 @@ used_classes = ('all', 'minority', 'majority')
 
 pps = ('なし', '正規化', '標準化')
 
+pps_dict = {
+    'none':'none',
+    'aes':'ae_standardization',
+    'aen':'ae_normalization',
+    's':'standardization',
+    'n':'normalization'
+}
+
+
+def gen_hash(preprocess, layer, model, dataset, used_class, optuna) -> str:
+    return base64.b64encode("".join([
+        str(preprocess),
+        str(layer),
+        str(model),
+        str(dataset),
+        str(used_class),
+        str(optuna)
+    ]).encode()).decode()
+
 class ResultTable(LatexTable):
     def __init__(
             self, 
@@ -62,6 +84,7 @@ class ResultTable(LatexTable):
             pp_label = 's'
         else:
             raise ValueError
+        self.pp_label = pp_label
         label = f"{mdl}|{pp_label}|{aeclass}|{int(hpt)}"
         layers_col = ["layers", 'none', *layers_str[1:4], 'none', *layers_str[1:4]]
         super().__init__(
@@ -146,7 +169,7 @@ class ResultTable(LatexTable):
                 raise ValueError
 
             for layer in layers:
-                if layer == [0] and (ae_normalize or ae_standardize):
+                if layer == [0] and self.pp_label:
                     query = {
                     'dataset.name': dataset,
                     'dataset.standardization': standardize,
@@ -202,9 +225,68 @@ class ResultTable(LatexTable):
             cols.extend(res_macro)
             self.add_columns(cols)
 
+    
+    def aggregate_results(self):
+        with open("results/results.json") as f:
+            data = json.load(f)
+        results = dict()
+        for result in data:
+            results[result['hash']] = {
+                'minority': result['result']['minority']['f1'],
+                'macro': result['result']['macro']['f1'],
+            }
+        pp = pps_dict[self.pp_label]
+        mdl = self.mdl
+        aeclass = self.aeclass
+
+        for i in range(len(datasets)):
+            dataset = datasets[i]
+            cols = [datasets_[i]] # escaped underscore
+            res_minority = []
+            res_macro = []
+            for layer in layers:
+                if layer == [0] and self.pp_label == 'aes':
+                    hash = gen_hash('standardization', layer, mdl, dataset, aeclass, False)
+                elif layer == [0] and self.pp_label == 'aen':
+                    hash = gen_hash('normalization', layer, mdl, dataset, aeclass, False)
+                else:
+                    hash = gen_hash(pp, layer, mdl, dataset, aeclass, False)
+                record = results[hash]
+                if record is None:
+                    res_minority.append('-')
+                    res_macro.append('-')
+                else:
+                    res_minority.append(f"{record['minority']:.3f}")
+                    res_macro.append(f"{record['macro']:.3f}")
+            
+            # 最大値を太字にする,ただし0の場合は太字にしない
+            max_minority = max(res_minority)
+            max_macro = max(res_macro)
+            min_minority = min(res_minority)
+            min_macro = min(res_macro)
+
+            for i in range(len(res_minority)):
+                if res_minority[i] == max_minority != min_minority:
+                    res_minority[i] = self._bf(res_minority[i])
+                if res_macro[i] == max_macro != min_macro:
+                    res_macro[i] = self._bf(res_macro[i])
+                # align center
+                if i == 3:
+                    res_minority[i] = MultiColumn(res_minority[i], 1, 'c|')
+                else:
+                    res_minority[i] = MultiColumn(res_minority[i], 1, 'c')
+                res_macro[i] = MultiColumn(res_macro[i], 1, 'c')
+            
+            cols.extend(res_minority)
+            cols.extend(res_macro)
+            self.add_columns(cols)
+
+
+            
+
 if __name__ == '__main__':
     table = ResultTable('lr', False, 'false', 'false', 'all')
-    table.fetch_results()
+    table.aggregate_results()
     with open(f"thesis/tables/{table.label}.tex", "w") as f:
         f.write(table.compile())
 
