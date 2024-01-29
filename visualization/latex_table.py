@@ -87,6 +87,12 @@ class LatexTable:
     \centering
     \caption{{{caption}}}
     \label{{fig:{label}}}
+    \begin{{tabular}}{{p{{35mm}}p{{35mm}}p{{35mm}}p{{35mm}}}}
+        \hline
+        \hspace{{15mm}}optuna: & False & \hspace{{5mm}}AE学習クラス: & all\\
+        \hspace{{15mm}}前処理: & 正規化 & AE特徴量 前処理: & 正規化\\
+    \end{{tabular}}
+
 """.format(caption=self.caption, label=self.label, width=self.width)
 
     def _tabular_start(self, format: str):

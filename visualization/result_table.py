@@ -1,3 +1,4 @@
+from calendar import c
 from db_query import fetch_latest_record
 from visualization.latex_table import LatexTable, MultiColumn
 
@@ -44,38 +45,50 @@ class ResultTable(LatexTable):
             hpt: bool,  # Hyper Parameter Tuning
             pp: str = pps[0],  # Preprocess
             aepp: str = pps[0],  # AutoEncoder Preprocess
-            aeclass: str = 'all'
+            aeclass: str = 'all',
+            numbering: int = -1
             ):
-        caption = f"{mdl_dict[mdl]} optuna:{hpt} 前処理:{pp} AE前処理:{aepp} AE 学習クラス:{aeclass}"
-        label = f"{mdl}+op={hpt}+pp={pp}+aepp={aepp}+ae={aeclass}"
-        if aepp == pps[0]:
-            col_n = 8
-            layers_col = ["layers", 'none', *layers_str[1:4], 'none', *layers_str[1:4]]
+        # caption = f"{mdl_dict[mdl]} optuna:{hpt} 前処理:{pp} AE前処理:{aepp} AE 学習クラス:{aeclass}"
+        caption = f"{mdl_dict[mdl]}での実験結果({numbering})"
+        if pp == pps[0]:
+            pp_label = 'none'
+        elif aepp == pps[1]:
+            pp_label = 'aen'
+        elif aepp == pps[2]:
+            pp_label = 'aes'
+        elif pp == pps[1]:
+            pp_label = 'n'
+        elif pp == pps[2]:
+            pp_label = 's'
         else:
-            col_n = 6
-            layers_col = ["layers", *layers_str[1:4], *layers_str[1:4]]
+            raise ValueError
+        label = f"{mdl}|{pp_label}|{aeclass}|{int(hpt)}"
+        layers_col = ["layers", 'none', *layers_str[1:4], 'none', *layers_str[1:4]]
         super().__init__(
             caption=caption,
             label=label,
-            format=f"p{{22mm}}*{col_n // 2}{'{p{14mm}}|'}*{col_n // 2}{'{p{14mm}}'}",
-            column_num=col_n + 1,
+            format=f"p{{22mm}}|*4{{p{{14mm}}}}|*4{{p{{14mm}}}}",
+            column_num=9,
         )
         self.add_hline()
-        self.add_columns(["optuna", MultiColumn(hpt, col_n)])
-        self.add_columns(["前処理", MultiColumn(pp, col_n)])
-        self.add_columns(["AE前処理", MultiColumn(aepp, col_n)])
+        # self.add_columns(["optuna", MultiColumn(hpt, col_n)])
+        # self.add_columns([MultiColumn(f"optuna: {hpt}   AE学習クラス: {aeclass}", col_n+1)])
+        # self.add_columns([MultiColumn(f"前処理: {pp} AE特徴量前処理: {aepp}", col_n+1)])
         self.add_hline()
 
         # align right
         for i in range(len(layers_col)):
             if i == 0:
                 continue
-            layers_col[i] = MultiColumn(layers_col[i], 1, 'r')
+            elif i == 4:
+                layers_col[i] = MultiColumn(layers_col[i], 1, 'r|')
+            else:
+                layers_col[i] = MultiColumn(layers_col[i], 1, 'r')
         self.add_columns(layers_col)
         self.add_hline()
         self.add_columns(
-            ['Dataset', MultiColumn('minority F-accuracy', col_n // 2),
-                        MultiColumn('macro F-accuracy', col_n // 2),])
+            ['Dataset', MultiColumn('minority F-accuracy', 4, 'c|'),
+                        MultiColumn('macro F-accuracy', 4),])
         self.add_hline()
 
 
@@ -85,7 +98,23 @@ class ResultTable(LatexTable):
         self.aepp = aepp
         self.aeclass = aeclass
 
-        self.col_n = col_n
+        self.col_n = 8
+
+
+    def _header(self):
+        return r"""\begin{{figure}}[ht]
+    \centering
+    \caption{{{caption}}}
+    \label{{fig:{label}}}
+    \begin{{tabular}}{{p{{35mm}}p{{35mm}}p{{35mm}}p{{35mm}}}}
+        \hline
+        \hspace{{15mm}}optuna: & {optuna} & \hspace{{5mm}}AE学習クラス: & {aeclass}\\
+        \hspace{{15mm}}前処理: & {pp} & AE特徴量 前処理: & {aepp}\\
+    \end{{tabular}}
+
+""".format(caption=self.caption, label=self.label, width=self.width,
+            optuna=self.hpt, aeclass=self.aeclass, pp=self.pp, aepp=self.aepp)
+
 
     def fetch_results(self):
         for i in range(len(datasets)):
@@ -117,9 +146,17 @@ class ResultTable(LatexTable):
                 raise ValueError
 
             for layer in layers:
-                if layer == [0] and self.col_n == 6:
-                    continue
-                record = fetch_latest_record({
+                if layer == [0] and (ae_normalize or ae_standardize):
+                    query = {
+                    'dataset.name': dataset,
+                    'dataset.standardization': standardize,
+                    'dataset.normalization': normalize,
+                    'model.name': self.mdl,
+                    'model.optuna': self.hpt,
+                    'ae.layers': layer,
+                    }
+                else:
+                    query = {
                     'dataset.name': dataset,
                     'dataset.standardization': standardize,
                     'dataset.normalization': normalize,
@@ -129,7 +166,8 @@ class ResultTable(LatexTable):
                     'ae.used_class': self.aeclass,
                     'ae.standardization': ae_standardize,
                     'ae.normalization': ae_normalize,
-                    },
+                    }
+                record = fetch_latest_record(query,
                     projection={
                         '_id': 0,
                         "result.macro.f1": 1,
@@ -153,9 +191,12 @@ class ResultTable(LatexTable):
                     res_minority[i] = self._bf(res_minority[i])
                 if res_macro[i] == max_macro != min_macro:
                     res_macro[i] = self._bf(res_macro[i])
-                # align right
-                res_minority[i] = MultiColumn(res_minority[i], 1, 'r')
-                res_macro[i] = MultiColumn(res_macro[i], 1, 'r')
+                # align center
+                if i == 3:
+                    res_minority[i] = MultiColumn(res_minority[i], 1, 'c|')
+                else:
+                    res_minority[i] = MultiColumn(res_minority[i], 1, 'c')
+                res_macro[i] = MultiColumn(res_macro[i], 1, 'c')
             
             cols.extend(res_minority)
             cols.extend(res_macro)

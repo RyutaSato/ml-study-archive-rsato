@@ -56,8 +56,11 @@ def fetch_latest_record(conditions: dict, projection:dict = dict()) -> Optional[
     return result
 
 
-def fetch_all_records(conditions: dict):
-    results = _collection.find(conditions)
+def fetch_all_records(conditions: dict, projection:dict = dict()):
+    if projection:
+        results = _collection.find(conditions, projection)
+    else:
+        results = _collection.find(conditions)
     return list(results)
 
 

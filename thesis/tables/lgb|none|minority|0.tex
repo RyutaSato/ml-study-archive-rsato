@@ -1,0 +1,50 @@
+\begin{figure}[ht]
+    \centering
+    \caption{LightGBMでの実験結果(2)}
+    \label{fig:lgb|none|minority|0}
+    \begin{tabular}{p{35mm}p{35mm}p{35mm}p{35mm}}
+        \hline
+        \hspace{15mm}optuna: & False & \hspace{5mm}AE学習クラス: & all\\
+        \hspace{15mm}前処理: & 正規化 & AE特徴量 前処理: & 正規化\\
+    \end{tabular}
+
+    \begin{tabular}{p{22mm}|*4{p{14mm}}|*4{p{14mm}}}
+        
+        \hline
+        \hline
+        layers&\multicolumn{1}{r}{none}&\multicolumn{1}{r}{[20,10,5]}&\multicolumn{1}{r}{[20,15,10]}&\multicolumn{1}{r|}{[20,15,10,5]}&\multicolumn{1}{r}{none}&\multicolumn{1}{r}{[20,10,5]}&\multicolumn{1}{r}{[20,15,10]}&\multicolumn{1}{r}{[20,15,10,5]}\\
+        \hline
+        Dataset&\multicolumn{4}{c|}{minority F-accuracy}&\multicolumn{4}{c}{macro F-accuracy}\\
+        \hline
+        kdd99&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{\textbf{0.001}}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{\textbf{0.560}}&\multicolumn{1}{c}{0.469}&\multicolumn{1}{c}{0.543}&\multicolumn{1}{c}{0.524}\\
+        kdd99\_dropped&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{\textbf{0.005}}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.457}&\multicolumn{1}{c}{0.475}&\multicolumn{1}{c}{0.419}&\multicolumn{1}{c}{\textbf{0.483}}\\
+        creditcardfraud&\multicolumn{1}{c}{0.266}&\multicolumn{1}{c}{0.311}&\multicolumn{1}{c}{\textbf{0.370}}&\multicolumn{1}{c|}{0.296}&\multicolumn{1}{c}{0.631}&\multicolumn{1}{c}{0.654}&\multicolumn{1}{c}{\textbf{0.684}}&\multicolumn{1}{c}{0.647}\\
+        ecoli&\multicolumn{1}{c}{\textbf{0.668}}&\multicolumn{1}{c}{0.567}&\multicolumn{1}{c}{0.586}&\multicolumn{1}{c|}{0.589}&\multicolumn{1}{c}{\textbf{0.816}}&\multicolumn{1}{c}{0.762}&\multicolumn{1}{c}{0.771}&\multicolumn{1}{c}{0.775}\\
+        optical\_digits&\multicolumn{1}{c}{\textbf{0.956}}&\multicolumn{1}{c}{0.947}&\multicolumn{1}{c}{0.950}&\multicolumn{1}{c|}{0.953}&\multicolumn{1}{c}{\textbf{0.976}}&\multicolumn{1}{c}{0.971}&\multicolumn{1}{c}{0.973}&\multicolumn{1}{c}{0.974}\\
+        satimage&\multicolumn{1}{c}{0.693}&\multicolumn{1}{c}{0.678}&\multicolumn{1}{c}{\textbf{0.694}}&\multicolumn{1}{c|}{0.687}&\multicolumn{1}{c}{\textbf{0.832}}&\multicolumn{1}{c}{0.824}&\multicolumn{1}{c}{\textbf{0.832}}&\multicolumn{1}{c}{0.829}\\
+        pen\_digits&\multicolumn{1}{c}{0.986}&\multicolumn{1}{c}{\textbf{0.987}}&\multicolumn{1}{c}{0.985}&\multicolumn{1}{c|}{0.985}&\multicolumn{1}{c}{0.992}&\multicolumn{1}{c}{\textbf{0.993}}&\multicolumn{1}{c}{0.992}&\multicolumn{1}{c}{0.992}\\
+        abalone&\multicolumn{1}{c}{0.179}&\multicolumn{1}{c}{\textbf{0.203}}&\multicolumn{1}{c}{0.176}&\multicolumn{1}{c|}{0.186}&\multicolumn{1}{c}{0.558}&\multicolumn{1}{c}{\textbf{0.570}}&\multicolumn{1}{c}{0.557}&\multicolumn{1}{c}{0.562}\\
+        sick\_euthyroid&\multicolumn{1}{c}{0.871}&\multicolumn{1}{c}{0.877}&\multicolumn{1}{c}{\textbf{0.885}}&\multicolumn{1}{c|}{0.881}&\multicolumn{1}{c}{0.929}&\multicolumn{1}{c}{0.932}&\multicolumn{1}{c}{\textbf{0.937}}&\multicolumn{1}{c}{0.934}\\
+        spectrometer&\multicolumn{1}{c}{0.784}&\multicolumn{1}{c}{0.759}&\multicolumn{1}{c}{\textbf{0.826}}&\multicolumn{1}{c|}{0.768}&\multicolumn{1}{c}{0.883}&\multicolumn{1}{c}{0.870}&\multicolumn{1}{c}{\textbf{0.906}}&\multicolumn{1}{c}{0.875}\\
+        car\_eval\_34&\multicolumn{1}{c}{\textbf{0.981}}&\multicolumn{1}{c}{0.915}&\multicolumn{1}{c}{0.923}&\multicolumn{1}{c|}{0.945}&\multicolumn{1}{c}{\textbf{0.990}}&\multicolumn{1}{c}{0.954}&\multicolumn{1}{c}{0.959}&\multicolumn{1}{c}{0.970}\\
+        isolet&\multicolumn{1}{c}{0.899}&\multicolumn{1}{c}{0.897}&\multicolumn{1}{c}{\textbf{0.911}}&\multicolumn{1}{c|}{0.905}&\multicolumn{1}{c}{0.946}&\multicolumn{1}{c}{0.944}&\multicolumn{1}{c}{\textbf{0.952}}&\multicolumn{1}{c}{0.949}\\
+        us\_crime&\multicolumn{1}{c}{0.442}&\multicolumn{1}{c}{\textbf{0.449}}&\multicolumn{1}{c}{0.433}&\multicolumn{1}{c|}{0.446}&\multicolumn{1}{c}{0.703}&\multicolumn{1}{c}{\textbf{0.708}}&\multicolumn{1}{c}{0.699}&\multicolumn{1}{c}{0.707}\\
+        yeast\_ml8&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.481}&\multicolumn{1}{c}{0.481}&\multicolumn{1}{c}{0.481}&\multicolumn{1}{c}{0.481}\\
+        scene&\multicolumn{1}{c}{0.123}&\multicolumn{1}{c}{\textbf{0.142}}&\multicolumn{1}{c}{0.133}&\multicolumn{1}{c|}{0.124}&\multicolumn{1}{c}{0.543}&\multicolumn{1}{c}{\textbf{0.553}}&\multicolumn{1}{c}{0.548}&\multicolumn{1}{c}{0.543}\\
+        libras\_move&\multicolumn{1}{c}{0.609}&\multicolumn{1}{c}{0.738}&\multicolumn{1}{c}{\textbf{0.756}}&\multicolumn{1}{c|}{0.609}&\multicolumn{1}{c}{0.795}&\multicolumn{1}{c}{0.861}&\multicolumn{1}{c}{\textbf{0.871}}&\multicolumn{1}{c}{0.795}\\
+        thyroid\_sick&\multicolumn{1}{c}{0.877}&\multicolumn{1}{c}{0.887}&\multicolumn{1}{c}{\textbf{0.888}}&\multicolumn{1}{c|}{0.881}&\multicolumn{1}{c}{0.935}&\multicolumn{1}{c}{0.940}&\multicolumn{1}{c}{\textbf{0.941}}&\multicolumn{1}{c}{0.937}\\
+        coil\_2000&\multicolumn{1}{c}{0.082}&\multicolumn{1}{c}{0.077}&\multicolumn{1}{c}{0.077}&\multicolumn{1}{c|}{\textbf{0.096}}&\multicolumn{1}{c}{0.524}&\multicolumn{1}{c}{0.522}&\multicolumn{1}{c}{0.522}&\multicolumn{1}{c}{\textbf{0.531}}\\
+        arrhythmia&\multicolumn{1}{c}{0.625}&\multicolumn{1}{c}{\textbf{0.646}}&\multicolumn{1}{c}{0.642}&\multicolumn{1}{c|}{0.596}&\multicolumn{1}{c}{0.804}&\multicolumn{1}{c}{\textbf{0.815}}&\multicolumn{1}{c}{0.813}&\multicolumn{1}{c}{0.789}\\
+        solar\_flare\_m0&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.038}&\multicolumn{1}{c}{\textbf{0.085}}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.483}&\multicolumn{1}{c}{0.503}&\multicolumn{1}{c}{\textbf{0.527}}&\multicolumn{1}{c}{0.484}\\
+        oil&\multicolumn{1}{c}{0.416}&\multicolumn{1}{c}{0.363}&\multicolumn{1}{c}{\textbf{0.425}}&\multicolumn{1}{c|}{0.413}&\multicolumn{1}{c}{0.699}&\multicolumn{1}{c}{0.672}&\multicolumn{1}{c}{\textbf{0.703}}&\multicolumn{1}{c}{0.697}\\
+        car\_eval\_4&\multicolumn{1}{c}{\textbf{1.000}}&\multicolumn{1}{c}{0.939}&\multicolumn{1}{c}{0.939}&\multicolumn{1}{c|}{0.968}&\multicolumn{1}{c}{\textbf{1.000}}&\multicolumn{1}{c}{0.969}&\multicolumn{1}{c}{0.968}&\multicolumn{1}{c}{0.984}\\
+        wine\_quality&\multicolumn{1}{c}{0.312}&\multicolumn{1}{c}{\textbf{0.338}}&\multicolumn{1}{c}{0.319}&\multicolumn{1}{c|}{0.308}&\multicolumn{1}{c}{0.647}&\multicolumn{1}{c}{\textbf{0.660}}&\multicolumn{1}{c}{0.651}&\multicolumn{1}{c}{0.645}\\
+        letter\_img&\multicolumn{1}{c}{0.967}&\multicolumn{1}{c}{0.968}&\multicolumn{1}{c}{0.968}&\multicolumn{1}{c|}{\textbf{0.969}}&\multicolumn{1}{c}{0.983}&\multicolumn{1}{c}{0.983}&\multicolumn{1}{c}{0.983}&\multicolumn{1}{c}{\textbf{0.984}}\\
+        yeast\_me2&\multicolumn{1}{c}{\textbf{0.311}}&\multicolumn{1}{c}{0.268}&\multicolumn{1}{c}{0.301}&\multicolumn{1}{c|}{0.255}&\multicolumn{1}{c}{\textbf{0.646}}&\multicolumn{1}{c}{0.624}&\multicolumn{1}{c}{0.641}&\multicolumn{1}{c}{0.618}\\
+        webpage&\multicolumn{1}{c}{0.754}&\multicolumn{1}{c}{\textbf{0.756}}&\multicolumn{1}{c}{0.754}&\multicolumn{1}{c|}{0.749}&\multicolumn{1}{c}{0.874}&\multicolumn{1}{c}{\textbf{0.875}}&\multicolumn{1}{c}{0.874}&\multicolumn{1}{c}{0.872}\\
+        ozone\_level&\multicolumn{1}{c}{\textbf{0.206}}&\multicolumn{1}{c}{0.204}&\multicolumn{1}{c}{0.161}&\multicolumn{1}{c|}{0.175}&\multicolumn{1}{c}{\textbf{0.596}}&\multicolumn{1}{c}{0.595}&\multicolumn{1}{c}{0.573}&\multicolumn{1}{c}{0.580}\\
+        mammography&\multicolumn{1}{c}{\textbf{0.713}}&\multicolumn{1}{c}{0.687}&\multicolumn{1}{c}{0.704}&\multicolumn{1}{c|}{0.695}&\multicolumn{1}{c}{\textbf{0.854}}&\multicolumn{1}{c}{0.840}&\multicolumn{1}{c}{0.849}&\multicolumn{1}{c}{0.844}\\
+        protein\_homo&\multicolumn{1}{c}{\textbf{0.856}}&\multicolumn{1}{c}{\textbf{0.856}}&\multicolumn{1}{c}{0.848}&\multicolumn{1}{c|}{0.853}&\multicolumn{1}{c}{0.927}&\multicolumn{1}{c}{\textbf{0.928}}&\multicolumn{1}{c}{0.923}&\multicolumn{1}{c}{0.926}\\
+        abalone\_19&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c}{0.000}&\multicolumn{1}{c|}{0.000}&\multicolumn{1}{c}{0.498}&\multicolumn{1}{c}{0.498}&\multicolumn{1}{c}{0.498}&\multicolumn{1}{c}{0.498}\\
+    \end{tabular}
+\end{figure}
