@@ -1,14 +1,15 @@
 \section{機械学習モデル}\label{sec:ml-model}
 
-本研究で用いた，機械学習モデルについて述べる．
-機械学習モデルとして，Logistic Regression，Random Forest，Support Vector Machine，Multi Layer Perceptron(Neural Network)，LightGBMそれぞれの多クラス分類モデルを用いた．\\
+本研究で用いた，機械学習モデルと，設定パラメータについて述べる．
+機械学習モデルとして，ロジスティック回帰，Random Forest，Support Vector Machine，Multi Layer Perceptron(Neural Network)，LightGBMの多クラス分類モデルを用いた．\\
 実装には，OSSのライブラリである，scikit-learn\cite{scikit-learn}，LightGBM\cite{lightgbm}を利用した．
+なお，ハイパーパラメータチューニングを行なったモデルを除いては全て，デフォルトのパラメータを使用した．
 
-\subsection{Logistic Regression}
+\subsection{ロジスティック回帰(Logistic Regression)}
 
-Logistic Regressionは，線形分類器の一種である．
+ロジスティック回帰(Logistic Regression)は，線形分類器の一種である．
 線形分類器とは，入力データを線形な関数で分類するモデルである．
-Logistic Regressionは，線形分類器の中でも，入力データをシグモイド関数により確率に変換し，その確率を閾値と比較することで分類するモデルである．
+Logistic Regressionは，線形分類器の中でも，入力データをシグモイド関数(ロジスティック関数)により確率に変換し，その確率を閾値と比較することで分類するモデルである．
 シグモイド関数は，式\ref{eq:sigmoid}の通りである．
 
 \begin{equation}
@@ -16,7 +17,7 @@ Logistic Regressionは，線形分類器の中でも，入力データをシグ�
   \sigma(x) = \frac{1}{1 + e^{-x}}
 \end{equation}
 
-Logistic Regressionは，式\ref{eq:logistic-regression}の通りである．
+ロジスティック回帰は，式\ref{eq:logistic-regression}のような線形関数をシグモイド関数に通したものである．
 
 \begin{equation}
   \label{eq:logistic-regression}
@@ -25,25 +26,28 @@ Logistic Regressionは，式\ref{eq:logistic-regression}の通りである．
 
 なお，$\boldsymbol{w}$は重みベクトル，$\boldsymbol{x}$は入力ベクトル，$b$はバイアスである．
 
-\subsection{Random Forest}
-Random Forestは，決定木（Decision Tree）を基にしたアンサンブル学習法の一つである．アンサンブル学習とは，複数の学習モデルを組み合わせて，より強力な予測モデルを構築する手法である．Random Forestは，多数の決定木をランダムな特徴量のサブセットで学習させ，それらの木の予測を平均化することで，一つのモデルの予測に寄与する．
-
-Random Forestの特徴は，バギング（Bootstrap Aggregating）というアンサンブル方法を使用することである．バギングでは，トレーニングデータセットからランダムにサンプリングしてサブセットを作成し，各サブセットで決定木を訓練する．このプロセスにより，過学習を防ぎ，モデルの一般化能力を高めることができる．
+\subsection{ランダムフォレスト(Random Forest)}
+ランダムフォレスト(Random Forest)は，決定木（Decision Tree）を基にしたアンサンブル学習法の一つである．アンサンブル学習とは，複数の学習モデルを組み合わせて，より強力な予測モデルを構築する手法である．Random Forestは，多数の決定木をランダムな特徴量のサブセットで学習させ，それらの木の予測を平均化することで，一つのモデルの予測に寄与する．\\
+Random Forestの特徴は，バギング（Bootstrap Aggregating）というアンサンブル方法を使用することである．バギングでは，トレーニングデータセットからランダムにサンプリングしてサブセットを作成し，各サブセットで決定木を訓練する．このプロセスにより，過学習を防ぎつつ高速に学習を行うことができる．
 
 \subsection{Support Vector Machine}
 
 Support Vector Machine（SVM）は，特に二クラス分類において高い性能を示す教師あり学習モデルである．SVMは，データを線形分離する最適な超平面を見つけることを目的としている．超平面は，異なるクラスのデータを分けるための境界線であり，これによりクラス分類を行う．
 
 SVMは，線形分離可能なデータセットに対しては直接適用可能であるが，線形分離不可能な場合にはカーネルトリックを用いる．カーネルトリックは，データを高次元空間に射影し，線形分離を可能にするテクニックである．この方法により，複雑な非線形関係もモデル化できる．
+本研究に使用するSVMは，非線形カーネルであるRBFカーネルを用いた．
 
 \subsection{Multi Layer Perceptron}
 
-Multi Layer Perceptron（MLP）は，ニューラルネットワークの一種であり，特に深層学習の分野で広く用いられている．MLPは，複数の層（入力層，隠れ層，出力層）から構成され，各層は多数のニューロン（ノード）で構成されている．
+Multi Layer Perceptron(ニューラルネットワーク)は，複数の層（入力層，隠れ層，出力層）から構成され，各層は多数のニューロン（ノード）で構成されている．
 
 各ニューロンは，前の層からの入力に基づいて活性化し，次の層への信号を送る．これらの層は、非線形の活性化関数を介して接続されるため、MLPは非線形関数を学習する能力を持つ．
+AE特徴量の生成だけでなく，機械学習モデルの学習にもニューラルネットワークを用いたケースについても検証を行う．
 
 \subsection{LightGBM}
 
-LightGBMは，勾配ブースティングフレームワークの一種であり、特に大規模なデータセットや高次元データに対して高い性能を発揮する．LightGBMは決定木ベースのモデルであり、複数の決定木を逐次的に構築していく．
+LightGBM(Light Gradient Boosting Machine)\cite{lightgbm}は，マイクロソフトによって開発された勾配ブースティングフレームワークの一種であり、特に大規模なデータセットや高次元データに対して高い性能を発揮する．LightGBMは決定木ベースのモデルであり、複数の決定木を逐次的に構築していく．
 
 各決定木は前の木の残差（誤差）を学習することにより、モデルの精度を徐々に向上させる．LightGBMの特徴として、データのサンプリングや特徴量の選択において効率的なアルゴリズムを使用している点が挙げられる．これにより、計算コストが低減され、大規模データセットに対する高速な学習が可能となる．
+
+\newpage

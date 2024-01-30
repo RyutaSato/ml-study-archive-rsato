@@ -11,10 +11,10 @@ Webサーバーは，パラメータリクエストを受け取ったら，共�
 結果の精度はGoogle Cloud Platform上のデータベースに保存される．\\
 
 このようにすることで，各マシンでなるべく重複のないよう異なるパラメータで学習させた．
-また，オートエンコーダは，GPUでの学習が可能であるため，GPUを搭載したマシンで，先に学習を行い，学習したモデルをデータべースにアップし再利用することで，AE特徴量の生成時間を短縮した．\\
+また，オートエンコーダは，GPUでの学習が可能であるため，GPUを搭載したマシンで，先に学習を行い，学習したモデルをデータべースに保存し，全てのマシンで共有させることで，AE特徴量の生成時間を短縮した．\\
 
 
-\begin{table}
+\begin{table}[htbp]
     \centering
     \caption{実験に使用するマシンのスペックと，Pythonのバージョンおよび，使用する主なライブラリのバージョン}
     \label{tab:spec}
@@ -22,7 +22,7 @@ Webサーバーは，パラメータリクエストを受け取ったら，共�
         \hline
                      & \multicolumn{1}{c|}{Desktop PC}    & \multicolumn{1}{c|}{Macbook}       & \multicolumn{1}{c|}{Colab CPU} & \multicolumn{1}{c|}{Colab T4} & Colab TPU \\ \hline
         OS           & \multicolumn{1}{c|}{Windows11}     & \multicolumn{1}{c|}{Senoma 14.2.1} & \multicolumn{3}{c|}{Ubuntu 22.04.3 LTS}                                    \\ \hline
-        CPU          & \multicolumn{1}{c|}{Ryzen 7 5700X} & \multicolumn{1}{c|}{M1}            & \multicolumn{3}{c|}{Intel(R) Xeon(R) CPU @ 2.20GHz}                        \\ \hline
+        CPU          & \multicolumn{1}{c|}{Ryzen 7 5700X} & \multicolumn{1}{c|}{M1}            & \multicolumn{2}{c|}{Intel(R) Xeon(R) CPU @ 2.20GHz} & TPU                       \\ \hline
         core         & \multicolumn{1}{c|}{8(16threads)}  & \multicolumn{1}{c|}{8}             & \multicolumn{3}{c|}{2}                                                     \\ \hline
         Memory       & \multicolumn{1}{c|}{48GB}          & \multicolumn{1}{c|}{8GB}           & \multicolumn{3}{c|}{約12GB}                                                 \\ \hline
         GPU          & \multicolumn{1}{c|}{RTX 3060 12GB} & \multicolumn{1}{c|}{-}             & \multicolumn{1}{c|}{-}         & \multicolumn{1}{c|}{T4 16GB}  & -         \\ \hline
@@ -33,3 +33,5 @@ Webサーバーは，パラメータリクエストを受け取ったら，共�
         optuna       & \multicolumn{5}{c|}{3.4.0}                                                                                                                           \\ \hline
         \end{tabular}
 \end{table}
+
+\newpage

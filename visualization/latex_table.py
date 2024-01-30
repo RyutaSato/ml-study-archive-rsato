@@ -86,7 +86,7 @@ class LatexTable:
         return r"""\begin{{figure}}[ht]
     \centering
     \caption{{{caption}}}
-    \label{{fig:{label}}}
+    \label{{tab:{label}}}
     \begin{{tabular}}{{p{{35mm}}p{{35mm}}p{{35mm}}p{{35mm}}}}
         \hline
         \hspace{{15mm}}optuna: & False & \hspace{{5mm}}AE学習クラス: & all\\

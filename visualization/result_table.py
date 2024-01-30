@@ -130,7 +130,7 @@ class ResultTable(LatexTable):
         return r"""\begin{{figure}}[ht]
     \centering
     \caption{{{caption}}}
-    \label{{fig:{label}}}
+    \label{{tab:{label}}}
     \begin{{tabular}}{{p{{35mm}}p{{35mm}}p{{35mm}}p{{35mm}}}}
         \hline
         \hspace{{15mm}}optuna: & {optuna} & \hspace{{5mm}}AE学習クラス: & {aeclass}\\
@@ -248,12 +248,12 @@ class ResultTable(LatexTable):
             res_macro = []
             for layer in layers:
                 if layer == [0] and self.pp_label == 'aes':
-                    hash = gen_hash('standardization', layer, mdl, dataset, aeclass, False)
+                    hash = gen_hash('standardization', layer, mdl, dataset, aeclass, self.hpt)
                 elif layer == [0] and self.pp_label == 'aen':
                     hash = gen_hash('normalization', layer, mdl, dataset, aeclass, False)
                 else:
-                    hash = gen_hash(pp, layer, mdl, dataset, aeclass, False)
-                record = results[hash]
+                    hash = gen_hash(pp, layer, mdl, dataset, aeclass, self.hpt)
+                record = results.get(hash)
                 if record is None:
                     res_minority.append('-')
                     res_macro.append('-')
