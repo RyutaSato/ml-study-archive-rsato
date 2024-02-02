@@ -65,7 +65,7 @@ optunaを使用せず，特徴量拡張を行なった6750個のモデルのち�
 
 
 \subsection{[検証５] 入力データの異なる前処理による分類精度の比較}
-optunaを使用せず，特徴量拡張を行わなかった450個のモデルと，行なった6750個のモデルのうち，入力データの前処理を行わず，オートエンコーダに学習させ，AE特徴量は前処理を行わない場合，標準化した入力データをオートエンコーダに学習させ，AE特徴量は標準化しない場合，標準化した入力データをオートエンコーダに学習させ，AE特徴量も標準化する場合，正規化した入力データをオートエンコーダに学習させ，AE特徴量は正規化しない場合，正規化した入力データをAutoEncoderに学習させ，AE特徴量も正規化する場合の，それぞれの平均精度を表\ref{tab:compare-preprocess}および，表\ref{tab:compare-ae-preprocess}に示す．\\
+optunaを使用せず，特徴量拡張を行わなかった450個のモデルと，行なった6750個のモデルのうち，入力データの前処理を行わず，オートエンコーダに学習させ，AE特徴量は前処理を行わない場合，標準化した入力データをオートエンコーダに学習させ，AE特徴量は標準化しない場合，標準化した入力データをオートエンコーダに学習させ，AE特徴量も標準化する場合，正規化した入力データをオートエンコーダに学習させ，AE特徴量は正規化しない場合，正規化した入力データをオートエンコーダに学習させ，AE特徴量も正規化する場合の，それぞれの平均精度を表\ref{tab:compare-preprocess}および，表\ref{tab:compare-ae-preprocess}に示す．\\
 表\ref{tab:compare-preprocess}より，標準化した場合の精度が最も高く，前処理なしの場合と比較して少数派クラスにおいて平均0.0616ポイント，macroにおいて平均0.0371ポイント高い精度であった．\\
 表\ref{tab:compare-ae-preprocess}より，入力データ，AE特徴量ともに標準化した場合が最も精度が高く，前処理なしの場合と比較して少数派クラスにおいて平均0.0804ポイント，macroにおいて平均0.049ポイントと大幅に精度が改善された．\\
 AE特徴量を標準化することによって，しなかった場合と比較して，少数派クラスにおいて平均0.0038ポイント，macroにおいて平均0.0022ポイント高い精度であった．\\
@@ -168,6 +168,54 @@ optunaを使用しなかった，全7200個のモデルのそれぞれの機械�
         abalone\_19 & なし & なし & AE特徴量なし & Logistic Regression & 0.4981\\
         webpage & 標準化 & なし & [20,15,10] & Multi Perceptron & 0.8923\\
         protein\_homo & なし & なし & [20,10,5] & LightGBM & 0.9276\\
+        \hline
+
+    \end{tabular}
+\end{table}
+
+\subsection{[検証８] ハイパーパラメータチューニングを行なったモデルでの比較}
+optunaを使用して，ハイパーパラメータチューニングを行ったモデルのうち，入力データ，AE特徴量を標準化し，オートエンコーダには'majority'クラスのみを用いたモデルでの結果を表\ref{tab:lr-aes-majority-1}, 表\ref{tab:rf-aes-majority-1}, 表\ref{tab:lgb-aes-majority-1}, 表\ref{tab:svm-aes-majority-1}, 表\ref{tab:mp-aes-majority-1}に示す．
+なお，実行時間が数時間におよび，実験が終わらず精度がわからなかった結果は'-'で示されている．
+optunaを使用したモデルのうち，実験が完了し精度が分かったもののうち，各データセットで最も精度が高かったものを表\ref{tab:compare-dataset-optuna}に示す．
+
+\begin{table}[htbp]
+    \caption{optunaを使用した場合のデータセットごとに最も精度が高いモデルの比較}
+    \label{tab:compare-dataset-optuna}
+    \centering
+    \begin{tabular}{cccccc}
+        \hline
+        データセット& 前処理 & AE前処理 & オートエンコーダの構成 & 機械学習モデル & macro F値 \\ 
+        \hline
+        libras\_move & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.9217\\
+        arrhythmia & 標準化 & 標準化 & [20, 15, 10, 5] & LightGBM & 0.7506\\
+        oil & 標準化 & 標準化 & [20, 15, 10, 5] & SVM & 0.7913\\
+        solar\_flare\_m0 & なし & なし & AE特徴量なし & SVM & 0.6062\\
+        car\_eval\_4 & 標準化 & 標準化 & [20, 15, 10, 5] & SVM & 1.0000\\
+        yeast\_ml8 & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.5325\\
+        thyroid\_sick & 標準化 & なし & [20, 10, 5] & LightGBM & 0.9377\\
+        yeast\_me2 & 標準化 & 標準化 & [20, 15, 10, 5] & LightGBM & 0.6828\\
+        ozone\_level & 標準化 & なし & [20, 10, 5] & Multi Perceptron & 0.6311\\
+        wine\_quality & 標準化 & なし & [20, 10, 5] & Multi Perceptron & 0.6346\\
+        scene & 標準化 & なし & [20, 10, 5] & Multi Perceptron & 0.6004\\
+        coil\_2000 & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.5439\\
+        abalone\_19 & 標準化 & なし & [20, 15, 10, 5] & Multi Perceptron & 0.5187\\
+        mammography & 標準化 & なし & [20, 10, 5] & LightGBM & 0.8485\\
+        letter\_img & 標準化 & なし & [20, 15, 10, 5] & SVM & 0.9889\\
+        ecoli & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.8262\\
+        webpage & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.8948\\
+        protein\_homo & 標準化 & 標準化 & [20, 15, 10, 5] & SVM & 0.9290\\
+        satimage & 標準化 & なし & [20, 10, 5] & LightGBM & 0.8350\\
+        optical\_digits & 標準化 & 標準化 & AE特徴量なし & SVM & 0.9853\\
+        pen\_digits & 標準化 & なし & [20, 15, 10] & SVM & 0.9971\\
+        spectrometer & 標準化 & なし & [20, 10, 5] & Logistic Regression & 0.9315\\
+        creditcardfraud & 標準化 & なし & [20, 10, 5] & Random Forest & 0.9279\\
+        sick\_euthyroid & 標準化 & 標準化 & [20, 10, 5] & LightGBM & 0.9301\\
+        abalone & 標準化 & 標準化 & [20, 15, 10, 5] & LightGBM & 0.5822\\
+        car\_eval\_34 & なし & なし & [20, 15, 10, 5] & SVM & 0.9980\\
+        us\_crime & 標準化 & なし & [20, 15, 10] & Logistic Regression & 0.7355\\
+        isolet & なし & なし & [20, 15, 10] & SVM & 0.9618\\
+        kdd99\_dropped & 標準化 & なし & [20, 15, 10, 5] & LightGBM & 0.9375\\
+        kdd99 & 標準化 & 標準化 & [20, 10, 5] & LightGBM & 0.9339\\
         \hline
 
     \end{tabular}
