@@ -47,14 +47,20 @@ MODEL = "model.name" # version<2.0.0 -> `model_name`
 _collection = get_collection("2.0.0")
 
 
-def fetch_latest_record(conditions: dict) -> Optional[dict]:
+def fetch_latest_record(conditions: dict, projection:dict = dict()) -> Optional[dict]:
     # 条件に一致するものの中で、もっとも新しいデータを１つ得る
-    result = _collection.find_one(conditions, sort=[('_id', -1)])
+    if projection:
+        result = _collection.find_one(conditions, projection, sort=[('_id', -1)])
+    else:
+        result = _collection.find_one(conditions, sort=[('_id', -1)])
     return result
 
 
-def fetch_all_records(conditions: dict):
-    results = _collection.find(conditions)
+def fetch_all_records(conditions: dict, projection:dict = dict()):
+    if projection:
+        results = _collection.find(conditions, projection)
+    else:
+        results = _collection.find(conditions)
     return list(results)
 
 

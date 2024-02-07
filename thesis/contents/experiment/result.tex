@@ -1,0 +1,262 @@
+\section{実験結果}
+実験結果を表\ref{tab:lr-none-all-0}から表\ref{tab:mp-aes-majority-1}に示す．
+また，それらを集計した結果について以下に示す．
+
+\subsection{[検証１] AE特徴量の有無による分類精度の比較}
+
+optunaを使用しなかった表\ref{tab:lr-none-all-0}から表\ref{tab:mp-aes-majority-0}までに示される6750個のモデルのうち，特徴量拡張を行わなかったモデルと比較して，同条件のAE特徴量を加えない場合よりもmacro指標において，精度が向上したものは，2191個(32.5\%)であった．\\
+残りの4559個のモデルについては，特徴量を拡張しても変わらなかったか，精度が下がったものであった．実験全体でのminorityクラスの平均F値と，macroの平均F値を，表\ref{tab:compare-avg-f1}に示す．\\
+特徴量を拡張しないモデルの方が平均して，minorityクラスで0.0089ポイント，macroで0.0072ポイント高い精度であった．\\
+
+
+
+\begin{table}[htbp]
+\caption{特徴量拡張したモデルと，特徴量拡張しないモデルの分類精度の比較}
+\label{tab:compare-avg-f1}
+\centering
+\begin{tabular}{cccc}
+    \hline
+    & 平均 minority F値 & 平均 macro F値 & モデル数  \\ 
+    \hline
+    特徴量拡張したモデル  & 0.4577& 0.7233& 6750 \\ 
+    特徴量拡張しないモデル & 0.4660& 0.7261& 450  \\ 
+    \hline
+\end{tabular}
+\end{table}
+
+\subsection{[検証２] オートエンコーダの学習するクラスを変えた場合の分類精度の比較}
+optunaを使用せず，特徴量拡張を行った6750個のモデルのち，全てのクラスの学習データをオートエンコーダに学習させた場合，多数派クラスのみを学習データとしてオートエンコーダに学習させた場合，少数派クラスのみを学習データとしてオートエンコーダに学習させた場合の，それぞれの平均精度を表\ref{tab:compare-aeclass}に示す．\\
+最も精度が高いのは多数派クラスのみを学習データとしてオートエンコーダに学習させた場合であり，次に全てのクラスの学習データをオートエンコーダに学習させた場合であった．\\
+オートエンコーダ構築に多数派クラスのみを用いることで，全てを学習させる場合よりもmacroにおいて，平均0.0019ポイント，少数派クラスにおいて平均0.0046ポイント高い精度であった．\\
+
+\begin{table}[htbp]
+    \caption{全て・多数派のみ・少数派のみの学習データで構築したAE特徴量を用いた特徴量拡張における分類精度の比較}
+    \label{tab:compare-aeclass}
+    \centering
+    \begin{tabular}{cccc}
+        \hline
+        & 平均 minority F値 & 平均 macro F値 & モデル数  \\
+        all  & 0.4564& 0.7228& 2250 \\ 
+        majority  & 0.4610& 0.7247& 2250 \\ 
+        minority & 0.4556& 0.7223& 2250  \\ 
+        \hline
+    \end{tabular}
+    \end{table}
+
+\subsection{[検証3および4] 異なるオートエンコーダの構成とそれによる異なるAE特徴量数に伴う精度の比較}
+optunaを使用せず，特徴量拡張を行った6750個のモデルのち，異なるオートエンコーダの構成とそれによる異なるAE特徴量数に伴う精度を表\ref{tab:compare-layers}に示す．\\
+3層のーオートエンコーダで比較して，AE特徴量の数が10の場合，AE特徴量の数が5の場合よりも，少数派クラスにおいて平均0.0108ポイント，macroにおいて平均0.0067ポイント高い精度であった．\\
+また，同じAE特徴量5個の場合で，オートエンコーダの構成を3層にした場合，4層にした場合よりも，少数派クラスにおいて平均0.0022ポイント，macroにおいて平均0.0013ポイント高い精度であった．\\
+したがって，平均的にはオートエンコーダの隠れ層の次元数が[20,10,5]であるものが最も精度が高い結果となった．\\
+
+\begin{table}[htbp]
+    \caption{異なるオートエンコーダの構成とそれによる異なるAE特徴量数による分類精度の比較}
+    \label{tab:compare-layers}
+    \centering
+    \begin{tabular}{ccccc}
+        \hline
+        エンコーダの構成&AE特徴量の数&平均 minority F値 & 平均 macro F値 & モデル数\\ 
+        \lbrack 入力データの次元数,20,10,5 \rbrack & 5 & 0.4620& 0.7259& 2250 \\ 
+        \lbrack 入力データの次元数,20,15,10 \rbrack & 10 & 0.4512& 0.7192& 2250 \\ 
+        \lbrack 入力データの次元数,20,15,10,5 \rbrack & 5 & 0.4598& 0.7246& 2250 \\ 
+        \hline
+    \end{tabular}
+\end{table}
+
+
+\subsection{[検証５] 入力データの異なる前処理による分類精度の比較}
+optunaを使用せず，特徴量拡張を行わなかった450個のモデルと，行った6750個のモデルのうち，入力データの前処理を行わず，オートエンコーダに学習させ，AE特徴量は前処理を行わない場合，標準化した入力データをオートエンコーダに学習させ，AE特徴量は標準化しない場合，標準化した入力データをオートエンコーダに学習させ，AE特徴量も標準化する場合，正規化した入力データをオートエンコーダに学習させ，AE特徴量は正規化しない場合，正規化した入力データをオートエンコーダに学習させ，AE特徴量も正規化する場合の，それぞれの平均精度を表\ref{tab:compare-preprocess}および，表\ref{tab:compare-ae-preprocess}に示す．\\
+表\ref{tab:compare-preprocess}より，標準化した場合の精度が最も高く，前処理なしの場合と比較して少数派クラスにおいて平均0.0616ポイント，macroにおいて平均0.0371ポイント高い精度であった．\\
+表\ref{tab:compare-ae-preprocess}より，入力データ，AE特徴量ともに標準化した場合が最も精度が高く，前処理なしの場合と比較して少数派クラスにおいて平均0.0804ポイント，macroにおいて平均0.049ポイントと大幅に精度が改善された．\\
+AE特徴量を標準化することによって，しなかった場合と比較して，少数派クラスにおいて平均0.0038ポイント，macroにおいて平均0.0022ポイント高い精度であった．\\
+以上のことから，入力データ，AE特徴量ともに標準化することによって，特徴量拡張しないモデルで最も精度が高い標準化した場合と比較しても，macroで平均0.0003ポイント精度が改善される結果となった．\\
+
+\begin{table}[htbp]
+    \caption{特徴量拡張しないモデルにおける入力データの異なる前処理による分類精度の比較}
+    \label{tab:compare-preprocess}
+    \centering
+    \begin{tabular}{cccc}
+        \hline
+        入力データの前処理&平均 minority F値 & 平均 macro F値 & モデル数 \\ 
+        \hline
+        なし  & 0.4393& 0.7081 &150\\ 
+        標準化  & 0.5009& 0.7452 &150\\ 
+        正規化 & 0.4578& 0.7250  &150\\ 
+        \hline
+    \end{tabular}
+\end{table}
+\begin{table}[htbp]
+    \caption{特徴量拡張を行ったモデルでの入力データとAE特徴量の異なる前処理による分類精度}
+    \label{tab:compare-ae-preprocess}
+    \centering
+    \begin{tabular}{ccccc}
+        \hline
+        入力データの前処理& AE特徴量の前処理&平均 minority F値 & 平均 macro F値 & モデル数 \\ 
+        \hline
+        なし & なし & 0.4171& 0.6965 &1350\\ 
+        標準化 & なし & 0.4937& 0.7433 &1350\\ 
+        標準化 & 標準化 & 0.4975& 0.7455  &1350\\ 
+        正規化 & なし & 0.4382& 0.7157  &1350\\ 
+        正規化 & 正規化 & 0.4417& 0.7152  &1350\\ 
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{[検証６] 異なる機械学習モデルによる分類精度の比較}
+optunaを使用しなかった，全7200個のモデルのそれぞれの機械学習モデルにおける，オートエンコーダの構成ごとのマクロ平均精度を表\ref{tab:compare-model}に示す．\\
+ロジスティック回帰および，LightGBMにおいては，AE特徴量を用いた全てのケースで平均macroが特徴量拡張しなかったモデルよりも高い精度であった．\\
+しかし，SVM，ランダムフォレストにおいては，AE特徴量を用いた全てのケースで平均macroが特徴量拡張しなかったモデルよりも平均的には低い精度であった．\\
+
+\begin{table}[htbp]
+    \caption{異なる機械学習モデルによるmacro F値の比較}
+    \label{tab:compare-model}
+    \centering
+    \begin{tabular}{ccccc}
+        \hline
+        機械学習モデル& AE特徴量なし & [20,10,5] & [20,15,10]& [20,15,10,5] \\ 
+        \hline
+        ロジスティック回帰  & 0.6923& 0.6987&  0.7025& 0.6987\\
+        SVM & 0.6950& 0.6772& 0.6719& 0.6761\\
+        Random Forest & 0.7567& 0.7501& 0.7424&  0.7497\\
+        LightGBM & 0.7492& 0.7529& 0.7501& 0.7500\\
+        Multi-layer Perceptron & 0.7474& 0.7508&  0.7293& 0.7486\\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{[検証７] データセットごとに最も精度が高いモデルの比較}
+各データセットごとの240個のoptunaを使用しないモデルの中で最も精度が高いモデルが行った前処理，オートエンコーダ，機械学習モデルとその精度を比較した．\\
+その結果を表\ref{tab:compare-dataset}に示す．\\
+30のデータセットのうち25のデータセットで，特徴量拡張を行ったモデルが最も精度が高い結果となった．また，入力データおよび，AE特徴量の前処理として標準化されているものが最も多い結果となった．\\
+機械学習モデルとしては，LightGBMとMulti-layer Perceptronが最も多かった．\\
+
+\begin{table}[htbp]
+    \caption{データセットごとに最も精度が高いモデルの比較}
+    \label{tab:compare-dataset}
+    \centering
+    \begin{tabular}{cccccc}
+        \hline
+        データセット& 前処理 & AE前処理 & オートエンコーダの構成 & 機械学習モデル & macro F値 \\ 
+        \hline
+        kdd99 & なし & なし & [20,15,10] & Random Forest & 0.9458\\
+        kdd99\_dropped & なし & なし & [20,10,5] & Random Forest & 0.9385\\
+        creditcardfraud & 標準化 & なし & [20,10,5] & Random Forest & 0.9319\\
+        ecoli & 正規化 & 正規化 & [20,10,5] & LightGBM & 0.8427\\
+        optical\_digits & 正規化 & なし & [20,15,10] & Multi Perceptron & 0.9843\\
+        satimage & 正規化 & なし & [20,15,10] & LightGBM & 0.8402\\
+        pen\_digits & 標準化 & 標準化 & [20,10,5] & SVM & 0.9961\\
+        abalone & 正規化 & なし & [20,15,10] & LightGBM & 0.5848\\
+        car\_eval\_34 & なし & なし & AE特徴量なし & LightGBM & 0.9899\\
+        sick\_euthyroid & 標準化 & 標準化 & [20,15,10,5] & LightGBM & 0.9378\\
+        spectrometer & 標準化 & 標準化 & [20,15,10] & Multi Perceptron & 0.9369\\
+        us\_crime & 標準化 & 標準化 & [20,15,10] & Logistic Regression & 0.7598\\
+        yeast\_ml8 & 標準化 & 標準化 & [20,10,5] & Multi Perceptron & 0.5147\\
+        isolet & 標準化 & なし & [20,15,10] & Multi Perceptron & 0.9613\\
+        libras\_move & 標準化 & 標準化 & [20,15,10,5] & Multi Perceptron & 0.8982\\
+        scene & 標準化 & 標準化 & [20,10,5] & Multi Perceptron & 0.6099\\
+        thyroid\_sick & なし & なし & [20,15,10] & LightGBM & 0.9488\\
+        coil\_2000 & 標準化 & 標準化 & [20,10,5] & Multi Perceptron & 0.5566\\
+        arrhythmia & 正規化 & なし & [20,10,5] & LightGBM & 0.8838\\
+        solar\_flare\_m0 & なし & なし & [20,10,5] & Logistic Regression & 0.5375\\
+        car\_eval\_4 & なし & なし & AE特徴量なし & LightGBM & 1.0000\\
+        oil & 標準化 & 標準化 & [20,10,5] & Logistic Regression & 0.7791\\
+        wine\_quality & 標準化 & 標準化 & [20,10,5] & LightGBM & 0.6673\\
+        yeast\_me2 & 標準化 & 標準化 & [20,15,10] & Multi Perceptron & 0.6890\\
+        letter\_img & 標準化 & なし & [20,15,10] & Multi Perceptron & 0.9893\\
+        ozone\_level & 標準化 & なし & AE特徴量なし & Multi Perceptron & 0.6188\\
+        mammography & なし & なし & AE特徴量なし & LightGBM & 0.8536\\
+        abalone\_19 & なし & なし & AE特徴量なし & Logistic Regression & 0.4981\\
+        webpage & 標準化 & なし & [20,15,10] & Multi Perceptron & 0.8923\\
+        protein\_homo & なし & なし & [20,10,5] & LightGBM & 0.9276\\
+        \hline
+
+    \end{tabular}
+\end{table}
+
+\subsection{[検証８] ハイパーパラメータチューニングを行ったモデルでの比較}
+optunaを使用して，ハイパーパラメータチューニングを行ったモデルのうち，入力データ，AE特徴量を標準化し，オートエンコーダには'majority'クラスのみを用いたモデルでの結果を表\ref{tab:lr-aes-majority-1}, 表\ref{tab:rf-aes-majority-1}, 表\ref{tab:lgb-aes-majority-1}, 表\ref{tab:svm-aes-majority-1}, 表\ref{tab:mp-aes-majority-1}に示す．
+なお，実行時間が数時間におよび，実験が終わらず精度がわからなかった結果は'-'で示されている．
+optunaを使用したモデルのうち，実験が完了し精度が分かったもののうち，各データセットで最も精度が高かったものを表\ref{tab:compare-dataset-optuna}に示す．
+
+\begin{table}[htbp]
+    \caption{optunaを使用した場合のデータセットごとに最も精度が高いモデルの比較}
+    \label{tab:compare-dataset-optuna}
+    \centering
+    \begin{tabular}{cccccc}
+        \hline
+        データセット& 前処理 & AE前処理 & オートエンコーダの構成 & 機械学習モデル & macro F値 \\ 
+        \hline
+        kdd99 & 標準化 & 標準化 & [20, 10, 5] & LightGBM & 0.9339\\
+        kdd99\_dropped & 標準化 & なし & [20, 15, 10, 5] & LightGBM & 0.9375\\
+        libras\_move & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.9217\\
+        arrhythmia & 標準化 & 標準化 & [20, 15, 10, 5] & LightGBM & 0.7506\\
+        oil & 標準化 & 標準化 & [20, 15, 10, 5] & SVM & 0.7913\\
+        solar\_flare\_m0 & なし & なし & AE特徴量なし & SVM & 0.6062\\
+        car\_eval\_4 & 標準化 & 標準化 & [20, 15, 10, 5] & SVM & 1.0000\\
+        yeast\_ml8 & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.5325\\
+        thyroid\_sick & 標準化 & なし & [20, 10, 5] & LightGBM & 0.9377\\
+        yeast\_me2 & 標準化 & 標準化 & [20, 15, 10, 5] & LightGBM & 0.6828\\
+        ozone\_level & 標準化 & なし & [20, 10, 5] & Multi Perceptron & 0.6311\\
+        wine\_quality & 標準化 & なし & [20, 10, 5] & Multi Perceptron & 0.6346\\
+        scene & 標準化 & なし & [20, 10, 5] & Multi Perceptron & 0.6004\\
+        coil\_2000 & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.5439\\
+        abalone\_19 & 標準化 & なし & [20, 15, 10, 5] & Multi Perceptron & 0.5187\\
+        mammography & 標準化 & なし & [20, 10, 5] & LightGBM & 0.8485\\
+        letter\_img & 標準化 & なし & [20, 15, 10, 5] & SVM & 0.9889\\
+        ecoli & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.8262\\
+        webpage & 標準化 & 標準化 & [20, 15, 10, 5] & Multi Perceptron & 0.8948\\
+        protein\_homo & 標準化 & 標準化 & [20, 15, 10, 5] & SVM & 0.9290\\
+        satimage & 標準化 & なし & [20, 10, 5] & LightGBM & 0.8350\\
+        optical\_digits & 標準化 & 標準化 & AE特徴量なし & SVM & 0.9853\\
+        pen\_digits & 標準化 & なし & [20, 15, 10] & SVM & 0.9971\\
+        spectrometer & 標準化 & なし & [20, 10, 5] & Logistic Regression & 0.9315\\
+        creditcardfraud & 標準化 & なし & [20, 10, 5] & Random Forest & 0.9279\\
+        sick\_euthyroid & 標準化 & 標準化 & [20, 10, 5] & LightGBM & 0.9301\\
+        abalone & 標準化 & 標準化 & [20, 15, 10, 5] & LightGBM & 0.5822\\
+        car\_eval\_34 & なし & なし & [20, 15, 10, 5] & SVM & 0.9980\\
+        us\_crime & 標準化 & なし & [20, 15, 10] & Logistic Regression & 0.7355\\
+        isolet & なし & なし & [20, 15, 10] & SVM & 0.9618\\
+        \hline
+
+    \end{tabular}
+\end{table}
+
+\subsection{検証結果より最も精度の良い条件同士の組み合わせでの比較}
+ハイパーパラメータチューニングをしていないモデルにおける複数の検証結果より，より精度が良いとされる条件での比較を行う．[検証2]より，多数派クラスのみで学習されたオートエンコーダによって生成されたAE特徴量を用いたモデルが最も良いことが分かった．[検証5]より，入力データとAE特徴量を標準化したモデルが最も精度が良いことが分かった．以上から，多数派クラスのみ学習されたオートエンコーダを用い，かつ，入力データとAE特徴量を共に標準化したモデルにおける異なる機械学習モデルによるmacro F値の平均を表\ref{tab:compare-model-aes-majority}に示す．\\
+ロジスティック回帰モデル，およびLightGBMモデルにおいて，AE特徴量を用いた全てのケースで平均macroが特徴量拡張しなかったモデルよりも高い精度となった．
+
+\begin{table}[htbp]
+    \caption{optunaを使用せず，多数派クラスのみで学習されたオートエンコーダから生成したAE特徴量を用い，入力データとAE特徴量を共に標準化したモデルのmacro F値の平均}
+    \label{tab:compare-model-aes-majority}
+    \centering
+    \begin{tabular}{ccccc}
+        \hline
+        機械学習モデル& AE特徴量なし & [20,10,5] & [20,15,10]& [20,15,10,5] \\ 
+        \hline
+        ロジスティック回帰  & 0.7300& 0.7414&  0.7474& 0.7429\\
+        SVM & 0.7155& 0.7101& 0.7090& 0.7104\\
+        Random Forest & 0.7574& 0.7463& 0.7389&  0.7514\\
+        LightGBM & 0.7435& 0.7503& 0.7561& 0.7558\\
+        Multi-layer Perceptron & 0.7795& 0.7782&  0.7784& 0.7768\\
+        \hline
+    \end{tabular}
+\end{table}
+
+同様にoptunaを使用した場合の結果を表\ref{tab:compare-model-aes-majority-optuna}に示す．AE特徴量なしのモデルは，全てのデータセットにおいて検証を終えることができなかったため，結果を省いている．特にSVMで，optunaを使用しなかった場合と比較して大幅に精度が改善されている．\\
+なお，この結果は，一部のデータセットでの検証結果を含んでいないため，結果は参考程度に留める．
+\begin{table}[htbp]
+    \caption{optunaを使用し，多数派クラスのみで学習されたオートエンコーダから生成したAE特徴量を用い，入力データとAE特徴量を共に標準化したモデルのmacro F値の平均}
+    \label{tab:compare-model-aes-majority-optuna}
+    \centering
+    \begin{tabular}{cccc}
+        \hline
+        機械学習モデル& [20,10,5] & [20,15,10]& [20,15,10,5] \\ 
+        \hline
+        ロジスティック回帰  & 0.7396& 0.7483&  0.7453\\
+        SVM & 0.7787& 0.8255& 0.7707\\
+        Random Forest & 0.7105& 0.7113& 0.7156\\
+        LightGBM & 0.7746& 0.7684& 0.7777\\
+        Multi-layer Perceptron & 0.7703& 0.7592&  0.7778\\
+        \hline
+    \end{tabular}
+\end{table}

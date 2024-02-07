@@ -15,7 +15,7 @@
 \begin{document}
 \input{contents/front-cover.tex}  % タイトル情報
 \pagenumbering{roman}             % ページ番号をローマ数字で記載
-\input{contents/0abstract.tex}    % 概要（日本語，英語）
+% \input{contents/abstract.tex}    % 概要（日本語，英語）
 \tableofcontents                  % 目次
 \newpage
 \listoffigures                    % 図目次
@@ -24,14 +24,25 @@
 \newpage
 
 \pagenumbering{arabic}            % ページ番号をアラビア数字
-\input{contents/1introduction.tex}
-\input{contents/2figure-table.tex}
+\input{contents/introduction/index}
+\input{contents/purpose/index}
+\input{contents/method/index}
 
-\input{contents/acknowledgments.tex} % 謝辞
+\input{contents/experiment/index}
+\input{contents/consideration/index}
+
+\input{contents/outroduction/index}
+
+
+\input{contents/acknowledgments} % 謝辞
 
 \newpage
 \phantomsection
 \addcontentsline{toc}{chapter}{参考文献}  % 目次に参考文献を追加
 \bibliographystyle{junsrt}                % 参考文献のスタイル
-\bibliography{contents/references.bib}    % 参考文献を表示
+\bibliography{references}    % 参考文献を表示
+\newpage
+\input{contents/results}
+\input{contents/results-optuna}
+% \input{tables/lr|none|all|0}
 \end{document}

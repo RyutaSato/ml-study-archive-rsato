@@ -1,0 +1,812 @@
+\section{データセット}
+\label{sec:dataset}
+本実験で使用する各データセットの詳細について述べる．
+なお，クラス数はデータセットによって異なるため，2値分類問題は，データ数の多いクラスを'majority'クラスとして，他方を'minority'クラスとして集計する．
+多クラスのデータセットにおいて，どのクラスを'minority'クラスとして評価するか，マクロ指標の定義については，別途定める．
+
+\subsection{KDD Cup 1999 Data 10\%}
+\begin{description}
+    \item[概要] 知識発見とデータマイニングのコンテストであるKDD Cupで使用された不正侵入検知タスクのためのデータセットの10\%抽出データ．
+    \item[サンプル数] 494,021
+    \item[クラスごとのサンプル数] majority: 97,278 (19.7\%), minority: 52 (0.01\%) (詳細は表\ref{tab:kddcup1999data10percent}を参照)
+        \begin{table}[htbp]
+            \centering
+            \caption{KDD Cup 1999 Data 10\%のクラスごとのサンプル数}
+                \label{tab:kddcup1999data10percent}
+                \begin{tabular}{lrc} \hline
+                    \multicolumn{1}{c}{クラス}&
+                    \multicolumn{1}{c}{サンプル数}&
+                    \multicolumn{1}{c}{割合}\\
+                    \hline
+                    \hline
+                    normal  (majority)& 97,278 & 19.7\% \\
+                    dos & 391,458 & 79.2\% \\
+                    probe & 4,628 & 0.9\% \\
+                    r2l & 1,605 & 0.3\% \\
+                    u2r (minority)& 52 & 0.01\% \\ 
+                    \hline
+                \end{tabular}
+        \end{table}
+    \item[特徴量の数] 38 (カテゴリデータを除く)
+    \item[各特徴量の種類] 正常アクセスと大きく４つに分類できる攻撃アクセスに関するインターネットトラフィックのデータが含まれている．
+    \item[留意事項] このデータセットに含まれる３つのカテゴリデータは使用しない．
+                   また，少数派クラスの評価にはu2rクラスのみを使用し，'majority'クラスの評価には'normal'クラスのみを使用する．全体のmacro F-accuracyは，５クラス全体で評価する．
+\end{description}
+
+\subsection{KDD CUP 1999 Data 10\% dropped}
+\begin{description}
+    \item[概要] KDD CUP 1999 Data 10\%から， 別の研究\cite{thesis1}により不要と判断された13個の特徴量とカテゴリ特徴量を除いたオリジナルのデータセット．
+    \item[サンプル数] 同上
+    \item[クラスごとのサンプル数] 同上
+    \item[特徴量の数] 25 
+\end{description}
+
+\subsection{Credit Card Fraud Detection Dataset}
+\begin{description}
+    \item[概要] 金融取引データに基づくクレジットカード詐欺検出のためのデータセット．このデータセットは，正常な取引と不正な取引の２つのクラスに分類されたクレジットカード取引の情報を含んでいる．
+    \item[提供元] Worldline and the Université Libre de Bruxelles (ULB)\cite{CreditCardFraudDetectionDataset}
+    \item[サンプル数] 284,807
+    \item[クラスごとのサンプル数と割合] \mbox{}
+        \begin{table}[htbp]
+            \centering
+            \caption{Credit Card Fraud Detection Datasetのクラスごとのサンプル数}
+                \label{tab:creditcardfrauddetectiondataset}
+                \begin{tabular}{lrc} \hline
+                    \multicolumn{1}{c}{クラス}&
+                    \multicolumn{1}{c}{サンプル数}&
+                    \multicolumn{1}{c}{割合}\\
+                    \hline
+                    \hline
+                    normal  (majority)& 284,315 & 99.83\% \\
+                    fraud (minority)& 492 & 0.17\% \\
+                    \hline
+                \end{tabular}
+        \end{table}
+    \item[特徴量の数] 特徴量の総数（例: 30）
+    \item[各特徴量の種類] \mbox{}
+            V1, V2, ..., V28（PCAによる匿名化された特徴量）、取引金額（'Amount'）、取引後の時間（'Time'）
+    \item[留意事項] このデータセットには，主に数値特徴量が含まれており，PCAによって特徴量が匿名化されている．
+\end{description}
+
+\subsection{ecoli}
+\begin{description}
+    \item[概要] 大腸菌のタンパク質が細胞内のどの部分に局在するかを示すデータセット． \cite{ecoli}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 336
+    \item[クラスごとのサンプル数と割合] majority: 301 (89.6\%), minority: 35 (10.4\%) (詳細は表\ref{tab:ecoli}を参照)
+        \begin{table}[htbp]
+            \centering
+            \caption{ecoliのクラスごとのサンプル数}
+            \label{tab:ecoli}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                cp (majority)& 143 & 42.560\% \\
+                im (majority)& 77 & 22.917\% \\
+                imS (majority)& 2 & 0.595\% \\
+                imL (majority)& 2 & 0.595\% \\
+                imU (minority)& 35 & 10.417\% \\
+                om (majority)& 20 & 5.952\% \\
+                omL (majority)& 5 & 1.488\% \\
+                pp (majority)& 52 & 15.476\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+    \item[特徴量の数] 7
+    \item[各特徴量の種類] 特徴量は，分析により判明した科学的特性を示したもの．\\
+            mcg, gvh, lip, chg, aac, alm1, alm2
+    \item[留意事項] 提供元により，'imU'クラスとそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{optical\_digits}
+    \begin{description}
+    \item[概要] 手書きの数字の光学的認識を各ピクセルの値に基づいて示したデータセット．\cite{opticaldigits}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 5,620
+    \item[クラスごとのサンプル数と割合] majority: 5066 (90.1\%), minority: 554 (9.8\%) (詳細は表\ref{tab:opticaldigits}を参照)
+        \begin{table}[htbp]
+            \centering
+            \caption{optical\_digitsのクラスごとのサンプル数}
+            \label{tab:opticaldigits}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                0 (minority)& 514 & 9.1\% \\
+                1 (majority)& 571 & 10.2\% \\
+                2 (majority)& 557 & 9.9\% \\
+                3 (majority)& 572 & 10.2\% \\
+                4 (majority)& 568 & 10.1\% \\
+                5 (majority)& 558 & 9.9\% \\
+                6 (majority)& 558 & 9.9\% \\
+                7 (majority)& 566 & 10.1\% \\
+                8 (minority)& 554 & 9.8\% \\
+                9 (majority)& 562 & 10.0\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+    \item[特徴量の数] 64
+    \item[各特徴量の種類] \mbox{}
+        各特徴量は8$\times$8ピクセルのグリッドに基づく手書き数字の光学的特性を0から16の整数値で表したもの．
+    \item[留意事項] 提供元により，'8'クラスとそれ以外のクラスに2値化されている．
+    \end{description}
+
+    \subsection{satimage}
+    \begin{description}
+        \item[概要] 衛星画像データを基にした土地利用分類のためのデータセット．\cite{satimage}
+        \item[提供元] UCI Machine Learning Repository
+        \item[サンプル数] 6,435
+        \item[クラスごとのサンプル数と割合] majority: 5,109 (79.4\%), minority: 1,326 (20.6\%) (詳細は表\ref{tab:satimage}を参照)
+            
+            \begin{table}[htbp]
+                \centering
+                \caption{satimageのクラスごとのサンプル数}
+                \label{tab:satimage}
+                \begin{tabular}{lrc} \hline
+                    \multicolumn{1}{c}{クラス}&
+                    \multicolumn{1}{c}{サンプル数}&
+                    \multicolumn{1}{c}{割合}\\
+                    \hline
+                    \hline
+                    赤い土壌 (majority)& 1,533 & 23.8\% \\
+                    綿作物 (majority)& 703 & 10.9\% \\
+                    灰色の土壌 (majority)& 1,358 & 21.1\% \\
+                    湿った灰色の土壌 (minority)& 626 & 9.7\% \\
+                    切り株のある土壌 (majority)& 707 & 11.0\% \\
+                    非常に湿った灰色の土壌 (majority)& 1,508 & 23.5\% \\
+                    \hline
+                \end{tabular}
+            \end{table}
+        \item[特徴量の数] 36
+        \item[各特徴量の種類] \mbox{}
+            各特徴量は，３$\times$3のピクセルそれぞれの４つのスペクトル (赤色，緑色，２種類の赤外線)の強さを0~255の値に変換したもの．
+        \item[留意事項]  提供元により，'湿った灰色の土壌'クラスとそれ以外のクラスに2値化されている．
+    \end{description}
+
+\subsection{pen\_digits}
+\begin{description}
+    \item[概要] 44人の人物によって書かれた0から9までの数字のデータセット．\cite{pendigits}
+    \item[提供元] Alpaydin, Ethem and Alimoglu, Fikret
+    \item[サンプル数] 10,992
+    \item[クラスごとのサンプル数と割合] majority: 9,937 (90.4\%), minority: 1,055 (9.6\%) (詳細は表\ref{tab:pendigits}を参照)
+        \begin{table}[htbp]
+            \centering
+            \caption{pen\_digitsのクラスごとのサンプル数}
+            \label{tab:pendigits}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                0 (majority)& 1,143 & 9.6\% \\
+                1 (majority)& 1,143 & 9.6\% \\
+                2 (majority)& 1,144 & 9.6\% \\
+                3 (majority)& 1,055 & 9.6\% \\
+                4 (majority)& 1,144 & 9.6\% \\
+                5 (minority)& 1,055 & 9.6\% \\
+                6 (majority)& 1,056 & 9.6\% \\
+                7 (majority)& 1,142 & 9.5\% \\
+                8 (majority)& 1,055 & 9.6\% \\
+                9 (majority)& 1,055 & 9.6\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+    \item[特徴量の数] 16
+    \item[各特徴量の種類] \mbox{}
+        2次元座標上の描画における各点の座標を100msごとにサンプリングしたもののを等間隔に８点でサンプリングしたもののx座標とy座標の値．
+    \item[留意事項]  提供元により，'5'クラスとそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{shuttle}
+\begin{description}
+    \item[概要] NASAの宇宙シャトルの軌道運行中の観測データに基づくデータセット．\cite{shuttle}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 58,000
+    \item[クラスごとのサンプル数と割合] majority: 46,400 (80\%), minority: 11,600 (20\%) (詳細は表\ref{tab:shuttle}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{shuttleのクラスごとのサンプル数}
+            \label{tab:shuttle}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                クラス1 (majority)& 46,400 & 80\% \\
+                クラス2 (minority)& ?? & ??\% \\
+                ... & ... & ... \\
+                クラス9 (minority)& ?? & ??\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 9
+    \item[各特徴量の種類] \mbox{}
+        各特徴量はシャトルの軌道運行中の様々なセンサーからのデータを表しており、例えば温度、圧力、速度などが含まれる．
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+
+\subsection{abalone および abalone\_19}
+\label{sec:abalone}
+\begin{description}
+    \item[概要] 物理測定値から，アワビの年齢を推定するデータセット \cite{abalone}
+    \item[提供元] Nash,Warwick, Sellers,Tracy, Talbot,Simon, Cawthorn,Andrew, and Ford,Wes
+    \item[サンプル数] 4,177
+    \item[クラスごとのサンプル数と割合(abalone)] majority(クラス:7以外): 3786 (90.6\%), minority(クラス:7): 391 (9.4\%) (詳細は表\ref{tab:abalone}を参照)
+    \item[クラスごとのサンプル数と割合(abalone\_19)] majority(クラス:19以外): 4145 (99.2\%), minority(クラス:19): 32 (0.76\%) (詳細は表\ref{tab:abalone}を参照)
+
+    \begin{table}[htbp]
+        \centering
+        \caption{abaloneのクラスごとのサンプル数}
+        \label{tab:abalone}
+        \begin{tabular}{lrc} \hline
+            \multicolumn{1}{c}{クラス} &
+            \multicolumn{1}{c}{サンプル数} &
+            \multicolumn{1}{c}{割合} \\
+            \hline
+            \hline
+            1 & 1 & 0.02\% \\
+            2 & 1 & 0.02\% \\
+            3 & 15 & 0.36\% \\
+            4 & 57 & 1.36\% \\
+            5 & 115 & 2.75\% \\
+            6 & 259 & 6.20\% \\
+            7 & 391 & 9.36\% \\
+            8 & 568 & 13.60\% \\
+            9 & 689 & 16.50\% \\
+            10 & 634 & 15.18\% \\
+            11 & 487 & 11.66\% \\
+            12 & 267 & 6.39\% \\
+            13 & 203 & 4.86\% \\
+            14 & 126 & 3.02\% \\
+            15 & 103 & 2.47\% \\
+            16 & 67 & 1.60\% \\
+            17 & 58 & 1.39\% \\
+            18 & 42 & 1.01\% \\
+            19 & 32 & 0.77\% \\
+            20 & 26 & 0.62\% \\
+            21 & 14 & 0.34\% \\
+            22 & 6 & 0.14\% \\
+            23 & 9 & 0.22\% \\
+            24 & 2 & 0.05\% \\
+            25 & 1 & 0.02\% \\
+            26 & 1 & 0.02\% \\
+            27 & 2 & 0.05\% \\
+            29 & 1 & 0.02\% \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    \item[特徴量の数] 10
+    \item[各特徴量の種類] \mbox{}
+        元の特徴量は，性別，長さ，直径，高さ，全体重量，シャック重量，内臓重量，殻重量，年齢の9つであり，性別は，ワンホット変換されている．
+    \item[留意事項] 提供元により，abaloneは，'7'クラスとそれ以外，abalone\_19は，'19'クラスとそれ以外に2値化されている．
+\end{description}
+
+
+\subsection{sick\_euthyroid}
+\begin{description}
+    \item[概要] 甲状腺機能亢進症の診断のためのデータセット．\cite{thyroid}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 3,163
+    \item[クラスごとのサンプル数と割合] majority: 2870 (90.7\%), minority: 293 (9.3\%) (詳細は表\ref{tab:sick_euthyroid}を参照)
+        \begin{table}[htbp]
+            \centering
+            \caption{sick\_euthyroidのクラスごとのサンプル数}
+            \label{tab:sick_euthyroid}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                sick (minority)& 293 & 9.3\% \\
+                euthyroid (majority)& 2870 & 90.7\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 42
+    \item[各特徴量の種類] \mbox{}
+        年齢，性別，甲状腺機能亢進症の診断に関連する甲状腺ホルモンの値や，甲状腺刺激ホルモンの値などが含まれている．
+\end{description}
+
+
+\subsection{thyroid\_sick}
+\begin{description}
+    \item[提供元] 甲状腺機能低下症の診断のためのデータセット．\cite{thyroid}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 3,772
+    \item[クラスごとのサンプル数と割合] majority: 3,541 (93.9\%), minority: 231 (6.1\%) (詳細は表\ref{tab:thyroid_sick}を参照)
+        \begin{table}[htbp]
+            \centering
+            \caption{thyroid\_sickのクラスごとのサンプル数}
+            \label{tab:thyroid_sick}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                thyroid sick (minority)& 231 & 6.1\% \\
+                normal (majority)& 3541 & 93.9\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 52
+\end{description}
+
+\subsection{spectrometer}
+\begin{description}
+    \item[概要] IRAS 低分解能分光計データベースの一部\cite{spectrometer}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 531
+    \item[クラスごとのサンプル数と割合] majority: 486 (91.5\%), minority: 45 (8.5\%) (詳細は表\ref{tab:spectrometer}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{spectrometerのクラスごとのサンプル数}
+            \label{tab:spectrometer}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                LRSクラス$<$44 (majority)& 486 & 91.5\% \\
+                LRSクラス$>=$44 (minority)& 45 & 8.5\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 93
+    \item[各特徴量の種類] 様々なスペクトル強度の値を特徴量にもつ．クラスラベルは，10の位が基本クラス，1の位がサブクラスとして，スペクトル曲線の特徴に基づいて，0~99の値をとる．
+    \item[留意事項] 提供元により，LRSクラスが44以上と44未満で2値化されている．
+        
+\end{description}
+
+\subsection{car\_eval\_34およびcar\_eval\_4}
+\begin{description}
+    \item[概要] 自動車の評価に関するデータセット\cite{careval}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 1728
+    \item[car\_eval\_34: サンプル数と割合] majority: 1594 (92.2\%), minority: 134 (7.8\%) (詳細は表\ref{tab:careval}を参照)
+    \item[car\_eval\_4: サンプル数と割合] majority: 1663 (96.2\%), minority: 65 (3.8\%) (詳細は表\ref{tab:careval}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{car\_eval\_34およびcar\_eval\_4のクラスごとのサンプル数}
+            \label{tab:careval}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                unacc (majority)& 1210 & 70.0\% \\
+                acc (majority)& 384 & 22.2\% \\
+                good (car\_eval\_34: minority, car\_eval\_4:majority)& 69 & 4.0\% \\
+                vgood (minority)& 65 & 3.8\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 21
+    \item[各特徴量の種類] 車の価格や，構造に関するカテゴリーデータがワンホット化されている．
+\end{description}
+
+\subsection{isolet}
+\begin{description}
+    \item[概要] 150人の被験者にAからZまでのアルファベットを2回ずつ読み上げた音声データセット\cite{isolet}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 7,797
+    \item[クラスごとのサンプル数と割合] majority: 7,197 (92.3\%), minority: 600 (7.7\%) (詳細は表\ref{tab:isolet}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{isoletのクラスごとのサンプル数}
+            \label{tab:isolet}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                A(minority)&300&3.85\%\\
+                B(minority)&300&3.85\%\\
+                C(majority)&300&3.85\%\\
+                D(majority)&300&3.85\%\\
+                E(majority)&300&3.85\%\\
+                F(majority)&298&3.82\%\\
+                G(majority)&300&3.85\%\\
+                \dots(majority)&300&3.85\%\\
+                M(majority)&299&3.83\%\\
+                \dots(majority)&300&3.85\%\\
+                Z(majority)&300&3.85\%\\              
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 617
+    \item[各特徴量の種類] 音のスペクトル係数を含む音声データの特徴量．
+        
+    \item[留意事項] 提供元により，'A'，'B'クラスとそれ以外のクラスに2値化されている．また，特徴量は，全て提供元により正規化されている．
+\end{description}
+
+\subsection{us\_crime}
+\begin{description}
+    \item[概要] 1990年の米国センサスデータ、1990年の米国LEMAS調査の法執行データ、1995年のFBI UCRの犯罪データに基づく米国内のコミュニティと犯罪に関するデータセット。\cite{uscrime}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 1,994
+    \item[クラスごとのサンプル数と割合] majority(暴力犯罪変数$<=$0.65): 1844 (92.5\%), minority(暴力犯罪変数$>$0.65): 150 (7.5\%) 
+
+    \item[特徴量の数] 100
+    \item[各特徴量の種類] \mbox{}
+        人口統計，雇用統計，法執行データなど，様々な社会経済的指標を含む．例えば，人口，収入，失業率，警察の数，犯罪率など．
+    \item[留意事項] 全ての値は，提供元により0から1の範囲に正規化されている．また，元データに存在する欠損値は，除かれている．
+\end{description}
+
+\subsection{scene}
+\begin{description}
+    \item[概要] 風景に関する画像のラベリングデータセット
+    \cite{scene}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 2,407
+    \item[クラスごとのサンプル数と割合] majority: 2230 (92.6\%), minority: 177 (7.35\%) (詳細は表\ref{tab:scene}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{sceneのクラスごとのサンプル数}
+            \label{tab:scene}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                Beach(majority)& 369& 15.3\% \\
+                Sunset(majority) &364& 15.1\% \\
+                Fall foliage(majority)& 360& 14.9\% \\
+                Field(majority) &327& 13.6\% \\
+                Beach+Field(minority) &1& 0.04\% \\
+                Fall foliage+Field(minority) &23& 0.95\% \\
+                Mountain(majority) &405& 16.8\% \\
+                Beach+Mountain(minority) &38& 1.6\% \\
+                Fall foliage+Mountain(minority) &13& 0.54\% \\
+                Field+Mountain(minority)& 75& 3.1\% \\
+                Field+Fall foliage+Mountain(minority)& 1& 0.04\% \\
+                Urban(majority) &405& 16.8\% \\
+                Beach+Urban(minority)	 &19& 0.79\% \\
+                Field+Urban(minority)	&6& 0.25\% \\
+                Mountain+Urban (minority)&1& 0.04\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 294
+        
+    \item[留意事項] 提供元により，複数ラベルを含むものと１つのラベルのみのクラスに2値化されている．
+\end{description}
+
+\subsection{libras\_move}
+\begin{description}
+    \item[概要] LIBRAS(LÍngua BRAsileira de Sinais, ブラジルの手話)の動作認識のためのデータセット\cite{librasmove}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 360
+    \item[クラスごとのサンプル数と割合] majority: 336 (93.3\%), minority: 24 (6.7\%) (詳細は表\ref{tab:librasmove}を参照)
+    \begin{table}[htbp]
+        \centering
+        \caption{libras\_moveのクラスごとのサンプル数}
+        \label{tab:librasmove}
+        \begin{tabular}{lrc} \hline
+            \multicolumn{1}{c}{クラス}&
+            \multicolumn{1}{c}{サンプル数}&
+            \multicolumn{1}{c}{割合}\\
+            \hline
+            \hline
+	    curved swing(minority)& 24& 6.7\% \\
+		horizontal swing(majority)& 24& 6.7\% \\
+		vertical swing(majority)& 24& 6.7\% \\
+		anti-clockwise arc(majority)& 24& 6.7\% \\
+		clockwise arc(majority)& 24& 6.7\% \\
+		circle(majority)& 24& 6.7\% \\
+		horizontal straight-line(majority)& 24& 6.7\% \\
+		vertical straight-line(majority)& 24& 6.7\% \\
+		horizontal zigzag(majority)& 24& 6.7\% \\
+		vertical zigzag(majority)& 24& 6.7\% \\
+		horizontal wavy(majority)& 24& 6.7\% \\
+		vertical wavy(majority)& 24& 6.7\% \\
+		face-up curve(majority)& 24& 6.7\% \\
+		face-down curve (majority)& 24& 6.7\% \\
+		tremble(majority)& 24& 6.7\% \\
+        \hline
+        \end{tabular}
+    \end{table}
+
+    \item[特徴量の数] 90
+    \item[各特徴量の種類] \mbox{}
+        各特徴量は，動きの座標を２次元空間上で45回サンプリングしたものであり，全ての値は，提供元により0から1の範囲に正規化されている．
+    \item[留意事項] 提供元により，'curved swing'クラスとそれ以外に2値化されている．
+\end{description}
+
+\subsection{coil\_2000}
+\begin{description}
+    \item[概要] 保険会社の顧客予想データセット\cite{coil2000}
+    \item[提供元] Sentient Machine Research
+    \item[サンプル数] 9,822
+    \item[クラスごとのサンプル数と割合] majority: 9,236 (94.0\%), minority: 586 (5.97\%) 
+
+    \item[特徴量の数] 85
+    \item[各特徴量の種類] 各特徴量は，製品使用データや，社会人工統計データが含まれる．
+\end{description}
+
+\subsection{arrhythmia}
+\begin{description}
+    \item[概要] 心臓の不整脈の診断のためのデータセット\cite{arrhythmia}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 452
+    \item[クラスごとのサンプル数と割合] majority: 427 (94.5\%), minority: 25 (5.5\%) (詳細は表\ref{tab:arrhythmia}を参照)
+    \begin{table}[htbp]
+        \centering
+        \caption{arrhythmiaのクラスごとのサンプル数}
+        \label{tab:arrhythmia}
+        \begin{tabular}{lrc} \hline
+            \multicolumn{1}{c}{クラス}&
+            \multicolumn{1}{c}{サンプル数}&
+            \multicolumn{1}{c}{割合}\\
+            \hline
+            \hline
+            Normal(majority) & 245 & 54.2\% \\
+            Ischemic changes (Coronary Artery Disease)(majority) & 44 & 9.73\% \\
+            Old Anterior Myocardial Infarction(majority) & 15 & 3.32\% \\
+            Old Inferior Myocardial Infarction(majority) & 15 & 3.32\% \\
+            Sinus tachycardy(majority) & 13 & 2.88\% \\
+            Sinus bradycardy(minority) & 25 & 5.53\% \\
+            Ventricular Premature Contraction (PVC)(majority) & 3 & 0.66\% \\
+            Supraventricular Premature Contraction(majority) & 2 & 0.44\% \\
+            Left bundle branch block(majority) & 9 & 1.99\% \\
+            Right bundle branch block(majority) & 50 & 11.1\% \\
+            Left ventricule hypertrophy(majority) & 4 & 0.88\% \\
+            Atrial Fibrillation or Flutter(majority) & 5 & 1.11\% \\
+            Others(majority) & 22 & 4.87\% \\
+            \hline
+        \end{tabular}
+    \end{table}
+    \item[特徴量の数] 278
+    \item[各特徴量の種類] 年齢，性別，身長，体重，心電図の波形に関する値などが含まれる．
+        
+    \item[留意事項] 提供元により，'Sinus bradycardy'クラスとそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{solar\_flare\_m0}
+\begin{description}
+    \item[概要] 太陽フレアの観測に関するデータセット\cite{solarflare}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 1,389
+    \item[クラスごとのサンプル数と割合] majority(minorityのケース以外の場合): 1,321 (95.1\%), minority(中程度のフレア後の24時間以内にフレアが発生しなかった場合): 68 (4.9\%) 
+
+    \item[特徴量の数] 32
+\end{description}
+
+\subsection{oil}
+\begin{description}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 937
+    \item[クラスごとのサンプル数と割合] majority: 896 (95.6\%), minority: 41 (4.4\%)
+
+    \item[特徴量の数] 49
+        
+\end{description}
+
+\subsection{wine\_quality}
+\begin{description}
+    \item[概要] ワインの品質に関するデータセット\cite{winequality}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 4,898
+    \item[クラスごとのサンプル数と割合] majority: 4,715 (96.3\%), minority: 183 (3.7\%)(詳細は表\ref{tab:winequality}を参照)
+    \begin{table}[htbp]
+        \centering
+        \caption{wine\_qualityのクラスごとのサンプル数}
+        \label{tab:winequality}
+        \begin{tabular}{lrc} \hline
+            \multicolumn{1}{c}{クラス}&
+            \multicolumn{1}{c}{サンプル数}&
+            \multicolumn{1}{c}{割合}\\
+            \hline
+            \hline
+            quality$<=$4& 183& 3.7\% \\
+            quality$>$4& 4,715& 96.3\% \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    \item[特徴量の数] 11
+    \item[各特徴量の種類] ワインの酸度，pH，アルコール度数，残糖分，塩化ナトリウム濃度などが含まれる．
+    \item[留意事項] 0から10までの品質スコアが，4以下とそれ以外に2値化されている．
+\end{description}
+
+
+\subsection{letter\_img}
+\begin{description}
+    \item[概要] AからZまでの文字認識のデータセット
+    \cite{letterimg}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 20,000
+    \item[クラスごとのサンプル数と割合] majority: 19,266 (96.3\%), minority: 734 (3.7\%) 
+    (詳細は表\ref{tab:letterimg}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:letterimg}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                A&789&3.94\%\\
+                B&766&3.83\%\\
+                C&736&3.68\%\\
+                D&805&4.0\%\\
+                E&768&3.88\%\\
+                F&775&3.87\%\\
+                G&773&3.87\%\\
+                H&734&3.67\%\\
+                I&755&3.78\%\\
+                J&747&3.74\%\\
+                K&739&3.69\%\\
+                L&761&3.8\%\\
+                M&792&3.96\%\\
+                N&783&3.92\%\\
+                O&753&3.77\%\\
+                P&803&4.02\%\\
+                Q&783&3.92\%\\
+                R&758&3.79\%\\
+                S&748&3.74\%\\
+                T&796&3.98\%\\
+                U&813&4.07\%\\
+                V&764&3.82\%\\
+                W&752&3.76\%\\
+                X&787&3.94\%\\
+                Y&786&3.93\%\\
+                Z(minority)&734&3.67\%\\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 16
+    \item[各特徴量の種類] 画像データに関する特徴量で構成される．
+        
+    \item[留意事項] 提供元により，特徴量は0から15までの整数にスケールされている．また，ターゲットのZとそれ以外に2値化されている．
+\end{description}
+
+
+\subsection{yeast\_me2}
+\begin{description}
+    \item[概要] 酵母のタンパク質の機能に関する分類データセット\cite{yeast}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 1,484
+    \item[クラスごとのサンプル数と割合] majority: 1,433 (96.6\%), minority: 51 (3.44\%)
+
+    \item[特徴量の数] 8
+    \item[各特徴量の種類] \mbox{}
+        
+    \item[留意事項] 提供元により，クラス1とそれ以外のクラスに2値化されている．
+\end{description}
+
+\subsection{yeast\_ml8}
+\begin{description}
+    \item[提供元] A Library for Support Vector Machines
+    \item[サンプル数] 2,417
+    \item[クラスごとのサンプル数と割合] majority: 2,239 (92.6\%), minority: 178 (7.4\%)
+
+    \item[特徴量の数] 103
+\end{description}
+
+
+\subsection{webpage}
+\begin{description}
+    \item[サンプル数] 34,780
+    \item[クラスごとのサンプル数と割合] majority: 33799 (97.2\%), minority: 981 (2.8\%)
+
+    \item[特徴量の数] 300
+\end{description}
+
+
+\subsection{ozone\_level}
+\begin{description}
+    \item[概要] 1998年から2004年にかけてヒューストン，ガルベストン，ブラゾリア地域で収集された地上オゾンレベルが基準を超えているかどうかを予測するためのデータセット\cite{ozonelevel}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 2536
+    \item[クラスごとのサンプル数と割合] majority: 2463 (97.1\%), minority: 73 (2.9\%) (詳細は表\ref{tab:}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+
+                基準未満(majority) & 2463 & 97.1\% \\
+                基準超過(minority) & 73 & 2.9\% \\
+
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 72
+    \item[各特徴量の種類] 24時間の１時間ごとに記録した温度，風速，その他気象データを含む
+\end{description}
+
+
+\subsection{mammography}
+\begin{description}
+    \item[概要] 乳房X線画像に基づく乳がんの早期発見に関する分類データセット.乳がんの初期兆候となりうる微小石灰化の検出を目的とする．\cite{mammography}
+    \item[提供元] UCI Machine Learning Repository
+    \item[サンプル数] 11,183
+    \item[クラスごとのサンプル数と割合] majority: 10,923 (97.7\%), minority: 260 (2.3\%) (詳細は表\ref{tab:mammography}を参照)
+        \begin{table}[htbp]
+            \centering
+            \caption{のクラスごとのサンプル数}
+            \label{tab:mammography}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                微小石灰化ではない(majority) & 10,923 & 97.7\% \\
+                微小石灰化である(minority) & 260 & 2.3\% \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 6
+    \item[各特徴量の種類] 物体検出によって候補となった画像オブジェクトに関して抽出された６つの特徴量
+\end{description}
+
+
+\subsection{protein\_homo}
+\begin{description}
+    \item[概要] Protein Homology(タンパク質同相性)を予想するデータセット\cite{proteinhomo}
+    \item[提供元] KDD CUP 2004
+    \item[サンプル数] 145,751
+    \item[クラスごとのサンプル数と割合] majority: 144,455 (99.1\%), minority: 1,296 (0.89\%) (詳細は表\ref{tab:proteinhomo}を参照)
+
+        \begin{table}[htbp]
+            \centering
+            \caption{protein\_homoのクラスごとのサンプル数}
+            \label{tab:proteinhomo}
+            \begin{tabular}{lrc} \hline
+                \multicolumn{1}{c}{クラス}&
+                \multicolumn{1}{c}{サンプル数}&
+                \multicolumn{1}{c}{割合}\\
+                \hline
+                \hline
+                存在しないタンパク質ペア(majority)&144,455&99.1\%\\
+                相同性が存在するタンパク質ペア(minority)&1,296&0.89\%\\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item[特徴量の数] 74
+    \item[各特徴量の種類] タンパク質の配列や構造情報に関する特徴量を含む．
+\end{description}
+
+
+\newpage

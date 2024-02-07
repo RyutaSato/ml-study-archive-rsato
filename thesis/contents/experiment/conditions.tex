@@ -1,0 +1,37 @@
+\section{実験環境}
+実験には，デスクトップPC，Macbook，Google Colaboratoryを使用した．各マシンのスペックと，Pythonのバージョンおよび，使用する主なライブラリのバージョンを表\ref{tab:spec}に示す．
+Colabは，ランタイムごとにいずれかのスペックのマシンを選択して使用した．\\
+全てのプログラムは，Gitで管理され，すべての環境で同じプログラムが実行されるようにした．
+ただし，並列処理を行う部分は，OSによって一部処理を変えている他，CPUアーキテクチャの違いとそれによる命令セットの違い，GPUの有無，バージョンの違いにより，ライブラリの挙動が異なる可能性がある．\\
+
+各マシンは，CPUコア数分の並列にPythonプロセスと，Webサーバーを起動し，HTTP通信により実験のパラメータリクエストを受け付ける状態にする．\\
+Webサーバーは，パラメータリクエストを受け取ったら，共通のキューにパラメータを追加する．\\
+各プロセスは，共通のキューでパラメータを受け取る．
+パラメータを受け取ったプロセスは，他のマシンで既に同条件で実験が終えていないかをデータベースに確認をし，その時点で精度の結果がアップロードされていなかった場合は，そのパラメータで学習を行う．
+結果の精度はGoogle Cloud Platform上のデータベースに保存される．\\
+
+このようにすることで，各マシンでなるべく重複のないよう異なるパラメータで学習させた．
+また，オートエンコーダは，GPUでの学習が可能であるため，GPUを搭載したマシンで，先に学習を行い，学習したモデルをデータべースに保存し，全てのマシンで共有させることで，AE特徴量の生成時間を短縮した．\\
+
+
+\begin{table}[htbp]
+    \centering
+    \caption{実験に使用するマシンのスペックと，Pythonのバージョンおよび，使用する主なライブラリのバージョン}
+    \label{tab:spec}
+    \begin{tabular}{|c|ccccc|}
+        \hline
+                     & \multicolumn{1}{c|}{Desktop PC}    & \multicolumn{1}{c|}{Macbook}       & \multicolumn{1}{c|}{Colab CPU} & \multicolumn{1}{c|}{Colab T4} & Colab TPU \\ \hline
+        OS           & \multicolumn{1}{c|}{Windows11}     & \multicolumn{1}{c|}{Senoma 14.2.1} & \multicolumn{3}{c|}{Ubuntu 22.04.3 LTS}                                    \\ \hline
+        CPU          & \multicolumn{1}{c|}{Ryzen 7 5700X} & \multicolumn{1}{c|}{M1}            & \multicolumn{2}{c|}{Intel(R) Xeon(R) CPU @ 2.20GHz} & TPU                       \\ \hline
+        core         & \multicolumn{1}{c|}{8(16threads)}  & \multicolumn{1}{c|}{8}             & \multicolumn{3}{c|}{2}                                                     \\ \hline
+        Memory       & \multicolumn{1}{c|}{48GB}          & \multicolumn{1}{c|}{8GB}           & \multicolumn{3}{c|}{約12GB}                                                 \\ \hline
+        GPU          & \multicolumn{1}{c|}{RTX 3060 12GB} & \multicolumn{1}{c|}{-}             & \multicolumn{1}{c|}{-}         & \multicolumn{1}{c|}{T4 16GB}  & -         \\ \hline
+        Python       & \multicolumn{1}{c|}{3.9.18}        & \multicolumn{1}{c|}{3.9.6}         & \multicolumn{3}{c|}{3.10.12}                                               \\ \hline
+        Tensorflow   & \multicolumn{1}{c|}{2.10.0}        & \multicolumn{1}{c|}{2.15.0}        & \multicolumn{3}{c|}{2.15.0}                                                \\ \hline
+        Scikit-learn & \multicolumn{1}{c|}{1.3.0}         & \multicolumn{1}{c|}{1.3.1}         & \multicolumn{3}{c|}{1.3.1}                                                 \\ \hline
+        LightGBM     & \multicolumn{1}{c|}{4.1.0}         & \multicolumn{1}{c|}{4.2.0}         & \multicolumn{3}{c|}{4.2.0}                                                 \\ \hline
+        optuna       & \multicolumn{5}{c|}{3.4.0}                                                                                                                           \\ \hline
+        \end{tabular}
+\end{table}
+
+\newpage
