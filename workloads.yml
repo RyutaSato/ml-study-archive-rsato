@@ -1,28 +1,28 @@
 general:
-  preprocess: [ none, standardization, ae_standardization ]
+  preprocess: [ standardization ]
   layers:
-    - [ 0 ]
-    - [ 20, 10, 5 ]
+    # - [ 0 ]
+    # - [ 20, 10, 5 ]
     - [ 20, 15, 10, 5 ]
     - [ 20, 15, 10 ]
   models: [ lr, svm, rf, mp, lgb ]
-  datasets: [ creditcardfraud, 'ecoli', 'optical_digits', 'satimage', 'pen_digits', 'abalone', 'sick_euthyroid',
-              'spectrometer', 'car_eval_34', 'isolet', 'us_crime', 'yeast_ml8', 'scene', 'libras_move', 'thyroid_sick', 'coil_2000',
-              'arrhythmia', 'solar_flare_m0', 'oil', 'car_eval_4', 'wine_quality', 'letter_img', 'yeast_me2', 'webpage',
-              'ozone_level', 'mammography', 'protein_homo', 'abalone_19' ]
-  ae_used_class: [ all, minority, majority ]
-  optuna: [ false ]
+  datasets: [ kdd99, kdd99_dropped, creditcardfraud, ecoli, optical_digits, satimage, pen_digits, abalone, sick_euthyroid,
+              spectrometer, car_eval_34, isolet, us_crime, yeast_ml8, scene, libras_move, thyroid_sick, coil_2000,
+              arrhythmia, solar_flare_m0, oil, car_eval_4, wine_quality, letter_img, yeast_me2, webpage,
+              ozone_level, mammography, protein_homo, abalone_19 ]
+  ae_used_class: [ majority ]
+  optuna: [ true ]
 
-individual:
-  - preprocess: standardization
-    layers: [ 20, 10, 5 ]
-    model: lr
-    dataset: kdd99
-    ae_used_class: all
-    optuna: false
-  - preprocess: standardization
-    layers: [ 20, 10, 5 ]
-    model: svm
-    dataset: kdd99
-    ae_used_class: minority
-    optuna: false
+#individual:
+#  - preprocess: standardization
+#    layers: [ 20, 10, 5 ]
+#    model: lr
+#    dataset: kdd99
+#    ae_used_class: all
+#    optuna: false
+#  - preprocess: standardization
+#    layers: [ 20, 10, 5 ]
+#    model: svm
+#    dataset: kdd99
+#    ae_used_class: minority
+#    optuna: false

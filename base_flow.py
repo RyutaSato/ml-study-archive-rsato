@@ -17,20 +17,19 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 load_dotenv()
 # from lightgbm import log_evaluation TODO
 from lightgbm import log_evaluation, early_stopping
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-from general_utils import generate_encoder, insert_results
+from general_utils import fetch_h5_model, generate_encoder, insert_h5_model, insert_results
 from notifier import LineClient
 from tensorflow import keras
 import optuna
 
 VERSION = '2.0.0'
 
-# logger.add('logs/base_flow.log', rotation='5 MB', retention='10 days', level='INFO')
 ROOT_DIR = os.getcwd()
 warnings.simplefilter('ignore')
 logger.info(f"GPU {tf.config.list_physical_devices('GPU')}")
@@ -133,30 +132,17 @@ class BaseFlow(ABC):
         # self.x = pd.DataFrame(StandardScaler().fit_transform(self.x), columns=self.x.columns, index=self.x.index)
 
     def _k_fold_preprocess(self, x_train, y_train, x_test, y_test) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """
-        データの前処理を行います。
-
-        このメソッドは、データの前処理を行います。
-        データの前処理は、以下の手順で行われます。
-        1. データの標準化
-        2. エンコーダーの生成
-        3. 新たな特徴量の生成
-
-        Args:
-            x_train (pd.DataFrame): 訓練データの入力データ。
-            y_train (pd.Series): 訓練データの目的変数。
-            x_test (pd.DataFrame): テストデータの入力データ。
-            y_test (pd.Series): テストデータの目的変数。
-
-        Returns:
-            tuple[pd.DataFrame, pd.DataFrame]: 前処理済みの入力データ。
-
-        """
-        # データの標準化
+        # 標準化
         if self.dataset.standardization:
             scaler = StandardScaler()
-            x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns, index=x_train.index)
-            x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)  # type: ignore
+        # 正規化
+        elif self.dataset.normalization:
+            scaler = MinMaxScaler()
+        else:
+            return x_train, x_test
+        x_train = pd.DataFrame(scaler.fit_transform(x_train), columns=x_train.columns, index=x_train.index)
+        x_test = pd.DataFrame(scaler.transform(x_test), columns=x_test.columns, index=x_test.index)
+        
         return x_train, x_test
 
     def _k_fold_generate_ae(self, x_train, y_train, x_test, y_test, fold: int) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -187,19 +173,22 @@ class BaseFlow(ABC):
             x_train_ae = x_train[y_train == self.correspondence[self.ae.used_class]]
 
         # モデルのファイル名
-        file_name = self.dataset.name
-        file_name += str(self.dataset.standardization)
-        file_name += str(self.dataset.normalization)
-        file_name += str(self.ae.used_class)
-        file_name += str(self.ae.layers)
-        file_name += str(fold)
-        file_name += str(self.env.version)
-        file_name = base64.b64encode(file_name.encode()).decode() + ".h5"
-
+        k = self.dataset.name
+        k += str(self.dataset.standardization)
+        k += str(self.dataset.normalization)
+        k += str(self.ae.used_class)
+        k += str(self.ae.layers)
+        k += str(fold)
+        k += str(self.env.version)
+        k: str = base64.b64encode(k.encode()).decode()
+        file_name = ROOT_DIR + "/models/" + k + ".h5"
         # 保存済みモデルがある場合
-        if os.path.exists(ROOT_DIR + "/models/" + file_name):
+        if not os.path.exists(file_name):
+            fetch_h5_model(k)
+        if os.path.exists(file_name):
             # 保存しているモデルの読み込み
-            _encoder = keras.models.load_model(ROOT_DIR + "/models/" + file_name)
+            _encoder = keras.models.load_model(file_name, compile=False)
+            _encoder.compile(optimizer='adam', loss='mse')
         # 保存済みモデルがない場合
         else:
             # エンコーダーの生成
@@ -207,7 +196,8 @@ class BaseFlow(ABC):
                 self.current_task = f"train phase: encoder generating"
                 _encoder = generate_encoder(x_train_ae, **self.ae.dict())
             # モデルの保存
-            _encoder.save(ROOT_DIR + "/models/" + file_name)
+            _encoder.save(file_name)
+            insert_h5_model(k)
         # 新たな特徴量を生成
         x_train_ae = pd.DataFrame(
             _encoder.predict(x_train, verbose=0),  # type: ignore
@@ -222,14 +212,18 @@ class BaseFlow(ABC):
 
         if self.ae.standardization:
             scaler = StandardScaler()
-            x_train_ae = pd.DataFrame(
-                scaler.fit_transform(x_train_ae), columns=x_train_ae.columns, index=x_train_ae.index)
-            x_test_ae = pd.DataFrame(
-                scaler.transform(x_test_ae), columns=x_test_ae.columns, index=x_test_ae.index)
-
+        
+        elif self.ae.normalization:
+            scaler = MinMaxScaler()
+        else:
+            return x_train_ae, x_test_ae
+        x_train_ae = pd.DataFrame(
+            scaler.fit_transform(x_train_ae), columns=x_train_ae.columns, index=x_train_ae.index)
+        x_test_ae = pd.DataFrame(
+            scaler.transform(x_test_ae), columns=x_test_ae.columns, index=x_test_ae.index) 
         return x_train_ae, x_test_ae
 
-    def k_fold_cross_validation(self) -> None:
+    def k_fold_cross_validation(self, only_generate_encoder=False) -> None:
         """
         モデルの訓練と予測を行います。
 
@@ -274,6 +268,10 @@ class BaseFlow(ABC):
                 # データを結合
                 x_train = pd.concat([x_train, x_train_ae], axis=1)
                 x_test = pd.concat([x_test, x_test_ae], axis=1)
+
+            # ONLY GENERATE ENCODER
+            if only_generate_encoder:
+                return
 
             # ハイパーパラメータのチューニング
             if self.model.optuna:
@@ -383,13 +381,13 @@ class BaseFlow(ABC):
     def _get_default_params(self, trial) -> dict:
         if self.model.name == 'lr':
             return dict(
-                C=trial.suggest_loguniform('C', 0.001, 100),
+                C=trial.suggest_loguniform('C', 0.001, 1000),
                 solver=trial.suggest_categorical('solver', ['lbfgs', 'sag']),
                 multi_class=trial.suggest_categorical('multi_class', ['ovr', 'multinomial']),
             )
         elif self.model.name == 'svm':
             return dict(
-                C=trial.suggest_loguniform('C', 0.001, 100),
+                C=trial.suggest_loguniform('C', 1, 10000),
                 kernel=trial.suggest_categorical('kernel', ['linear', 'rbf', 'poly', 'sigmoid']),
                 gamma=trial.suggest_categorical('gamma', ['scale', 'auto']),
             )
@@ -400,13 +398,14 @@ class BaseFlow(ABC):
                 min_samples_split=trial.suggest_int('min_samples_split', 2, 100),
                 min_samples_leaf=trial.suggest_int('min_samples_leaf', 1, 100),
                 max_features=trial.suggest_categorical('max_features', ['sqrt', 'log2']),
+                bootstrap=True,
             )
         elif self.model.name == 'mp':
             return dict(
                 hidden_layer_sizes=trial.suggest_categorical('hidden_layer_sizes', [(15, 10, 5), (10, 5), (5,)]),
                 activation=trial.suggest_categorical('activation', ['identity', 'logistic', 'tanh', 'relu']),
                 solver=trial.suggest_categorical('solver', ['lbfgs', 'sgd', 'adam']),
-                alpha=trial.suggest_loguniform('alpha', 0.0001, 1),
+                alpha=trial.suggest_loguniform('alpha', 0.001, 10),
                 learning_rate=trial.suggest_categorical('learning_rate', ['constant', 'invscaling', 'adaptive']),
             )
         elif self.model.name == 'lgb':
@@ -442,9 +441,15 @@ class BaseFlow(ABC):
 
     def optuna(self, x_train, y_train) -> dict:
 
-        # 検証とテストに分割
-        x_t, x_v, y_t, y_v = train_test_split(x_train, y_train, test_size=0.25, random_state=self.random_seed,
-                                              stratify=y_train)
+        # 学習とテストに分割．学習のサンプル数は，最大30,000件に制限
+        if x_train.shape[0] * (1 - 0.25) > 30_000: # ex: 100,000 * 0.75 > 30,000
+            test_size = 1 - 30000 / x_train.shape[0] # ex: 0.7
+            # ex: 30,000: 70,000
+            logger.info(f"sample size: {x_train.shape[0]} limitted to 30,000")  
+        else:
+            test_size = 0.25  # default
+        
+        x_t, x_v, y_t, y_v = train_test_split(x_train, y_train, test_size=test_size,random_state=self.random_seed,stratify=y_train)
 
         def objective(trial):
             self.current_task = f'optuna phase {trial.number + 1} / 100'
@@ -454,17 +459,21 @@ class BaseFlow(ABC):
             # モデルの学習
             assert self.Model is not None, "Model is None"
             model = self.Model(**best_params)
+
+
             model.fit(x_t, y_t)
 
             # 予測
             y_p = model.predict(x_v)
             # 精度の計算
-            return float(f1_score(y_v, y_p, average='macro'))
+            f1 = float(f1_score(y_v, y_p, average='macro'))
+            logger.info(f"optuna phase {trial.number + 1} / 100 score: {f1}")
+            return f1
 
         # Optunaでハイパーパラメータの最適化を行う
         # noinspection PyArgumentList
         study = optuna.create_study(direction='maximize')
-        study.optimize(objective, n_trials=100)
+        study.optimize(objective, n_trials=100, n_jobs=2)
 
         # 最適なハイパーパラメータの表示
         best_params = study.best_params
@@ -480,6 +489,19 @@ class BaseFlow(ABC):
             params = self.aggregate()
             logger.info(f'task finished')
             logger.info(f'{params.dict()}')
+        except Exception as e:
+            err_msg = f"{self.model.name} {self.ae.layers} error: {e}"
+            logger.error(traceback.format_exc())
+            logger.error(err_msg)
+            self.send_error(err_msg)
+        finally:
+            return self
+
+    def run_only_generate_encoder(self):
+        try:
+            self.load()
+            self.preprocess()
+            self.k_fold_cross_validation(only_generate_encoder=True)
         except Exception as e:
             err_msg = f"{self.model.name} {self.ae.layers} error: {e}"
             logger.error(traceback.format_exc())

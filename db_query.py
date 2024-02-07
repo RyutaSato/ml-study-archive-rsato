@@ -64,24 +64,24 @@ def fetch_all_records(conditions: dict, projection:dict = dict()):
     return list(results)
 
 
-def done_experiment(hash: str) -> bool:
+def done_experiment(h: str) -> bool:
     try:
-        value = _collection.find_one({"hash": hash}) is not None
+        value = _collection.find_one({"hash": h}, {"_id": 0, "hash": 1})
     except Exception:
         _collection = get_collection("2.0.0")
-        value = _collection.find_one({"hash": hash}) is not None
+        value = _collection.find_one({"hash": h}, {"_id": 0, "hash": 1})
         globals()['_collection'] = _collection
-    return value
+    return value is not None
 
 
 def done_experiments() -> set:
     try:
-        values = _collection.find({"hash": hash}) is not None
+        hashes = _collection.find({}, {"_id": 0, "hash": 1})
     except Exception:
         _collection = get_collection("2.0.0")
-        values = _collection.find_one({"hash": hash}) is not None
+        hashes = [res["hash"] for res in _collection.find({}, {"_id": 0, "hash": 1})]
         globals()['_collection'] = _collection
-    return set([v['hash'] for v in values])
+    return set(hashes)
 
 
 if __name__ == '__main__':

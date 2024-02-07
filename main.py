@@ -1,12 +1,11 @@
 """全ての実験プログラムのエントリポイント
 このプログラムは、原則変更禁止。
-非破壊的変更を加える際は、メジャーバージョンを上げること。
+破壊的変更を加える際は、メジャーバージョンを上げること。
 
 Supported BaseFlow: 2.0.0
 """
 import json
-from multiprocessing import Process, Queue, Lock
-from os import cpu_count
+from multiprocessing import Process, Queue, Lock, cpu_count
 
 from schemas import Params
 
@@ -18,11 +17,21 @@ app = FastAPI()
 queue = Queue()
 lock = Lock()
 processes = []
+not_finished = []
+process_num = 8  # cpu_count() - 1
+if process_num <= 1:
+    process_num = 1
+    from threading import Thread as Process
+    from threading import Lock
+    from queue import Queue
+
+    lock = Lock()
+    queue = Queue()
 
 
 @app.on_event("startup")
 def startup_event():
-    for _ in range(4):
+    for _ in range(process_num):
         p = Process(target=worker, args=(queue, lock))
         p.start()
         processes.append(p)
@@ -34,9 +43,25 @@ def run(params: Params):
     return {"message": "ok"}
 
 
+@app.get("/kill", status_code=200)
+def kill():
+    while not queue.empty():
+        not_finished.append(queue.get().json())
+    for _ in processes:
+        queue.put(None)
+    return {"message": "ok"}
+
+
+@app.get("/new", status_code=200)
+def new():
+    p = Process(target=worker, args=(queue, lock))
+    p.start()
+    processes.append(p)
+    return {"message": "ok", "total": len(processes)}
+
+
 @app.on_event("shutdown")
 def shutdown_event():
-    not_finished = []
     while not queue.empty():
         not_finished.append(queue.get().json())
     # Read existing data from the file
